@@ -41,23 +41,23 @@ to be update
 ### User Story
 
 As Bobby,
-> I want more log in and record that I own Alice 1x coffee
+> I want more log in and record that I own Alice 1x coffee.
 > I can also upload photo as proof that I gave Alice 1x coffee - and then delete the favor owned to Alice.
 
 As Alice,
 > I also see what I owns other people, and other people who owns me things.
 
 As James,
-> I can  remove the favor that people owned me, without upload any photo
+> I can  remove the favor that people owned me, without upload any photo.
 > I can add a favor that Alice owned me, but I have to upload a photo as proof first.
 
 As Kim,
-> I'm an unregistered user, I can see the Leaderboard but cannot interact with it
-> I can also see the Request Board
+> I'm an unregistered user, I can see the Leaderboard but cannot interact with it.
+> I can also see the Request Board.
 > I can either Login with username/password or Register.
 
 As Carol,
-> I post a request to clean a fridge and add rewards (the request should show 1x coffee and 1x chocolate offered by Carol)
+> I post a request to clean a fridge and add rewards (the request should show 1x coffee and 1x chocolate offered by Carol).
 > I have a request to give me a lift home with a reward of 1x pizza. However as not needed anymore, I remove the reward of 1x Pizza and now the request has been deleted.
 
 As Greg,
@@ -66,8 +66,7 @@ As Greg,
 As Peter,
 > I logged in and check out the Request Board
 > I see Request detail & name of people offering rewards, I upload photo as proof and now see 2 people own me favor:
-> Carol owns me 1x coffee + 1x chocolate
-> Greg owns me 1x chocolate.
+> Carol owns me 1x coffee + 1x chocolate, Greg owns me 1x chocolate.
 
 ### A workflow diagram of the user journey
 
@@ -81,12 +80,10 @@ As Peter,
 ### /Leaderboard
 
 
-### /Request
-![Imgur](https://i.imgur.com/YcGuY7M.png)
+### /Request Board
+
 
 ### Database Entity Relationship Diagrams
-
-
 
 
 ### Data Flow Diagram
