@@ -11,9 +11,11 @@ const PublicRequestSchema = new mongoose.Schema({
     unique:true
   },
   requestDetail: {
-    any: Schema.Types.Mixed
+    type: String
   },
-  reward
+  reward:{
+    any: Schema.Types.Mixed
+  }
 });
 
 export default mongoose.model('Public Request', PublicRequestSchema);
