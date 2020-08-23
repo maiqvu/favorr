@@ -1,11 +1,11 @@
-import express from express;
-import PublicRequest from '../models/publicRequest.model';
+import express from 'express';
+import { PublicRequest } from '../models/publicRequest.model';
 
 const requestRouter = express.Router();
 
 // Create a Public request
 requestRouter.post('/create-publicRequest', async (req, res) => {
-    const { creator, requestDetail, reward } = req.body;
+    const { creator, taker, requestDetail, reward } = req.body;
     // Condition to have required field filled out
     if (!creator || !requestDetail || !reward) {
         return res.status(400).json({ message: 'Please enter all required fields.' });
@@ -13,9 +13,10 @@ requestRouter.post('/create-publicRequest', async (req, res) => {
     
     try {
         const newPublicRequest = new PublicRequest({
-            creator,
-            requestDetail,
-            reward
+            creator: creator,
+            taker: taker,
+            requestDetail: requestDetail,
+            reward: reward
         });
 
         await newPublicRequest.save();
