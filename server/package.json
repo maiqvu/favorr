@@ -4,19 +4,25 @@
   "description": "Favorr's back-end",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "ENV=prod node index.js"
+    "dev": "nodemon -r esm index.js",
+    "start": "ENV=prod node -r esm index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
     "express": "^4.17.1",
-    "mongodb": "^3.6.0",
+    "express-jwt": "^6.0.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.0"
   },
   "devDependencies": {
-    "dotenv": "^8.2.0",
     "nodemon": "^2.0.4"
   }
 }

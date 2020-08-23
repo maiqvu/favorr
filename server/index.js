@@ -1,14 +1,35 @@
+// Import dependencies
+import express from 'express';
+import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+require('dotenv').config();
 
-const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://admin:nUU1mLYzQqEm8KPx@cluster0.0f8ww.mongodb.net/<dbname>?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true });
-client.connect(err => {
-  const collection = client.db("favor").collection("users");
-  // perform actions on the collection object
-  var myobj = { username: "admin", password: "admin" };
-  collection.insertOne(myobj, () => {
-      if (err) throw err;
-      console.log("1 document inserted");
-  })
-  client.close();
+// Import route handlers
+import authRouter from './routes/auth.route';
+import userRouter from './routes/users.route';
+
+// Initialize an Express app
+const app = express();
+
+// Middleware
+app.use(bodyParser.json());
+app.use(cors());
+
+// Connect to database
+mongoose
+  .connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Successfully connected to database.'))
+  .catch(err => console.log(`Failed to connect to database: ${err}`));
+
+// Routing
+app.use('/auth', authRouter);
+app.use('/users', userRouter);
+
+app.listen(process.env.PORT, err => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log(`Server running on port ${process.env.PORT}...`);
+  }
 });
