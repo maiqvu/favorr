@@ -1,21 +1,28 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-const PublicRequestSchema = new mongoose.Schema({
+const PublicRequestSchema = new Schema({
   creator: {
     type: String,
     required: true,
-    unique: true
   },
   taker: {
     type: String,
-    unique:true
   },
   requestDetail: {
-    type: String
+    type: String,
+    required: true
   },
-  reward:{
-    any: Schema.Types.Mixed
-  }
+  reward: [{
+      name: {
+        type: String,
+        required: true
+      },
+      item: {
+        type: String,
+        required: true
+      }
+    }
+  ]
 });
 
-export default mongoose.model('Public Request', PublicRequestSchema);
+export const PublicRequest = mongoose.model('publicRequest', PublicRequestSchema);
