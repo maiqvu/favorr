@@ -8,6 +8,7 @@ require('dotenv').config();
 // Import route handlers
 import authRouter from './routes/auth.route';
 import userRouter from './routes/users.route';
+import requestRouter from './routes/publicRequest.route';
 
 // Initialize an Express app
 const app = express();
@@ -25,6 +26,7 @@ mongoose
 // Routing
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
+app.use('/publicRequest', requestRouter);
 
 app.listen(process.env.PORT, err => {
   if (err) {
