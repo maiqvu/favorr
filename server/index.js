@@ -5,10 +5,10 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import passport from 'passport';
-
+import { applyPassportStrategy } from './utils/passport';
 
 // Import route handlers
-import users from './routes/users.route';
+import usersRouter from './routes/users.route';
 import requestRouter from './routes/publicRequest.route';
 
 
@@ -16,11 +16,10 @@ import requestRouter from './routes/publicRequest.route';
 const app = express();
 
 // Middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors());
-app.use(passport.initialize());
-require('./utils/passport')(passport);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+applyPassportStrategy(passport);
 
 
 // Connect to database
@@ -31,7 +30,7 @@ mongoose
 
 
 // Routing
-app.use('/api/users', users);
+app.use('/api/users', usersRouter);
 app.use('/api/publicRequest', requestRouter);
 
 

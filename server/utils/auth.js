@@ -1,19 +1,23 @@
-import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { check } from 'express-validator';
 
-export default (req, res, next) => {
-  const token = req.header('x-auth-token');
+export const generateHashedPassword = async (password) => {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(password, salt);
+};
 
-  if (!token) {
-    return res.status(401).json({ message: 'Authorization denied.' });
-  }
+export const validateRegistration = [
+  check('email')
+    .exists().withMessage('Email cannot be empty.')
+    .isEmail().withMessage('Please enter a valid email format.'),
+  check('password')
+    .exists().withMessage('Password cannot be empty.')
+    .isLength({ min: 5 }).withMessage('Password must have at least 5 characters.')
+];
 
-  try {
-    // Verify token
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    // Add user from token's payload
-    req.user = decodedToken;
-    next();
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-}
+export const validateLogIn = [
+  check('email')
+    .exists().withMessage('Email cannot be empty.'),
+  check('password')
+    .exists().withMessage('Password cannot be empty.')
+];
