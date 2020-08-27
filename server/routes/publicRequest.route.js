@@ -51,11 +51,9 @@ requestRouter.patch('/publicRequest/:id', async (req, res) => {
 
 // Delete a Public Request
 requestRouter.delete('/publicRequest/:id', async (req, res) => {
-    try {
-        const content = await PublicRequest.findByIdAndDelete(req.params.id);
-        if (!content) res.status(404).send("No Public Request Found")
-        res.status(200).send()
-    } catch 
+    const content = await PublicRequest.findByIdAndDelete(req.params.id);
+    if (!content) res.status(404).send("No Public Request Found")
+    res.status(200).send()
 });
 
 export default requestRouter;
