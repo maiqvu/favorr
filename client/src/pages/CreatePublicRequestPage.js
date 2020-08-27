@@ -3,8 +3,8 @@ import axios from 'axios';
 
 export default class CreatePublicRequestPage extends Component {
     
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.user = "123Alex"
         this.state = {
@@ -17,7 +17,7 @@ export default class CreatePublicRequestPage extends Component {
     onSubmit = (event) => {
         event.preventDefault();
 
-        axios.post("http://localhost:8081/publicRequest/create-publicRequest", {
+        axios.post("http://localhost:8081/api/publicRequest/publicRequest", {
             creator: this.user,
             taker: this.state.taker,
             requestDetail: this.state.task,
@@ -26,12 +26,9 @@ export default class CreatePublicRequestPage extends Component {
                 item: this.state.reward,
             }
         }).then(res => {
-            console.log(res);
-            console.log(res.data);
-        })
-
-        this.setState({task: ""});
-        this.setState({reward: ""});
+            this.setState({task: ""});
+            this.setState({reward: ""});
+        }).catch(error => console.err(error))
     }
 
     render() {
