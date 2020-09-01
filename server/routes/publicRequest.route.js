@@ -56,4 +56,23 @@ requestRouter.delete('/publicRequest/:id', async (req, res) => {
     res.status(200).send()
 });
 
+// Add a reward to an existing request
+requestRouter.post('/:id/add-reward', async (req, res) => {
+    const requestId = req.params.id;
+    const newReward = {
+        name: req.body.name,
+        item: req.body.item
+    };
+    
+    try {
+        const updatedRequest = await PublicRequest.findOneAndUpdate(
+            {_id: requestId},
+            {$push: {reward: newReward}}
+        );
+        res.send(updatedRequest);
+    } catch (err) {
+        console.error(err)
+    }
+})
+
 export default requestRouter;
