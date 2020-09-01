@@ -17,7 +17,7 @@ export default class CreatePublicRequestPage extends Component {
     event.preventDefault();
 
     axios
-      .post('http://localhost:8081/api/publicRequest/publicRequest', {
+      .post('/api/publicRequest/publicRequest', {
         creator: this.user,
         taker: this.state.taker,
         requestDetail: this.state.task,
