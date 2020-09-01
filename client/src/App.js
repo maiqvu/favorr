@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import CreatePublicRequestPage from './components/Request/CreatePublicRequestPage';
-import PublicRequestPage from './components/PublicRequestPage';
+import PublicRequestPage from './components/Request/PublicRequestPage';
 import NavBar from './NavBar';
 import './App.css';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends Component {
   render() {
