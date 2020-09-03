@@ -26,12 +26,22 @@ requestRouter.post('/publicRequest', async (req, res) => {
     }
 });
 
-// Read All Public Requests
+// Get All Public Requests
 requestRouter.get('/publicRequest', async (req, res) => {
-    const allContent = await PublicRequest.find({});
+    const allRequest = await PublicRequest.find({});
 
     try {
-        res.send(allContent);
+        res.status(200).send(allRequest);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+//get one Request
+requestRouter.get('/publicRequest/:id', async (req, res) => {
+    const oneRequest = await PublicRequest.findById(req.params.id);
+    try {
+        res.status(200).send(oneRequest);
     } catch (err) {
         res.status(500).send(err);
     }
