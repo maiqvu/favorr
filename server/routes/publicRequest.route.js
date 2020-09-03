@@ -89,4 +89,21 @@ requestRouter.post('/:id/add-reward', async (req, res) => {
     }
 })
 
+// Add username to the claimed request
+requestRouter.patch('/:id/claim/:username', async (req, res) => {
+    const requestId = req.params.id;
+    const username = req.params.username;
+
+    try {
+        const updatedRequest = await PublicRequest.findOneAndUpdate(
+            {_id: requestId},
+            {$set: {taker: username}},
+            {new: true}
+        );
+        res.send(updatedRequest)
+    } catch (err) {
+        console.error(err);
+    }
+})
+
 export default requestRouter;
