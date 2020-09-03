@@ -51,7 +51,11 @@ requestRouter.get('/publicRequest/:id', async (req, res) => {
 // Update a Public request
 requestRouter.patch('/publicRequest/:id', async (req, res) => {
     try {
-        await PublicRequest.findByIdAndUpdate(req.params.id, req.body);
+        await PublicRequest.findByIdAndUpdate(
+            { _id: req.params.id },
+            req.body,
+            { omitUndefined: true } //delete any properties whose value is undefined when casting an update
+        );
         await PublicRequest.save();
         res.status(200).send("Update sucess!");
     } catch (err) {
@@ -73,11 +77,11 @@ requestRouter.post('/:id/add-reward', async (req, res) => {
         name: req.body.name,
         item: req.body.item
     };
-    
+
     try {
         const updatedRequest = await PublicRequest.findOneAndUpdate(
-            {_id: requestId},
-            {$push: {reward: newReward}}
+            { _id: requestId },
+            { $push: { reward: newReward } }
         );
         res.send(updatedRequest);
     } catch (err) {
