@@ -13,16 +13,17 @@ const PublicRequestSchema = new Schema({
     required: true
   },
   reward: [{
-      name: {
-        type: String,
-        required: true
-      },
-      item: {
-        type: String,
-        required: true
-      }
+    name: {
+      type: String,
+      required: true
+    },
+    item: {
+      type: String,
+      required: true
     }
+  }
   ]
-});
+},
+  { timestamps: true });
 
 export const PublicRequest = mongoose.model('publicRequest', PublicRequestSchema);
