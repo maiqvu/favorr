@@ -4,11 +4,13 @@ import axios from 'axios';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 
 export default class PublicRequestPage extends Component {
   constructor(props) {
     super(props);
 
+    this.username = 'Alex';
     this.state = {
       requestList: [],
       newReward: '',
@@ -85,6 +87,24 @@ export default class PublicRequestPage extends Component {
     this.setState({ requestList: newRequestList });
   }
 
+  async claim(requestId, requestIndex) {
+    try {
+      let response = await axios.patch(
+        `/api/publicRequest/${requestId}/claim/${this.username}`
+      );
+
+      let modifiedRequestList = [...this.state.requestList];
+      let modifiedRequest = { ...modifiedRequestList[requestIndex] };
+      modifiedRequest = response.data;
+      modifiedRequest['expanded'] = true; //expanded should really be a field in the db
+      modifiedRequestList[requestIndex] = modifiedRequest;
+      this.setState({ requestList: modifiedRequestList });
+      console.log(this.state.requestList);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   render() {
     return (
       <div>
@@ -92,12 +112,14 @@ export default class PublicRequestPage extends Component {
         <Container className="px-lg-5">
           <Row>
             <Col className="col-sm-5 text-left font-weight-bold">Task</Col>
-            <Col className="col-sm-3 text-left font-weight-bold">Date Submitted</Col>
+            <Col className="col-sm-3 text-left font-weight-bold">
+              Date Submitted
+            </Col>
             <Col className="col-sm-3 text-left font-weight-bold">Rewards</Col>
             <Col className="col-sm-1 text-right"></Col>
           </Row>
-          <hr />
-          {this.state.requestList.map((request) => (
+          <hr className="border border-light" />
+          {this.state.requestList.map((request, index) => (
             <React.Fragment>
               <Row>
                 <Col className="col-sm-5 text-left">
@@ -133,6 +155,28 @@ export default class PublicRequestPage extends Component {
                         <strong>Task:&ensp;</strong>
                         <span>{request.requestDetail}</span>
                       </div>
+                      <div className="p-2 col-example text-left">
+                        <strong>Add Reward:&ensp;</strong>
+                        <form
+                          class="form-inline"
+                          className="text-left"
+                          onSubmit={() => this.addReward(request._id)}
+                        >
+                          <input
+                            class="form-control"
+                            className="input-small"
+                            type="text"
+                            value={this.state.newReward}
+                            onChange={(event) => {
+                              this.setState({ newReward: event.target.value });
+                            }}
+                          />
+                          &ensp;
+                          <button class="btn btn-outline-primary" type="submit">
+                            Add
+                          </button>
+                        </form>
+                      </div>
                     </div>
                     <div>
                       <div className="p-2 col-example text-left">
@@ -145,30 +189,22 @@ export default class PublicRequestPage extends Component {
                           {this.constructFullRewardItemList(request.reward)}
                         </span>
                       </div>
+                      <div className="p-2 col-example text-left">
+                        {request.taker ? (
+                          <div>
+                            <strong>Claimed By:&ensp;</strong>
+                            <span>{request.taker}</span>
+                          </div>
+                        ) : (
+                          <Button
+                            onClick={() => this.claim(request._id, index)}
+                          >
+                            Claim
+                          </Button>
+                        )}
+                      </div>
                     </div>
                     <div></div>
-                  </div>
-                  <div className="p-2 col-example text-left">
-                    <strong>Add Reward:&ensp;</strong>
-                    <form
-                      class="form-inline"
-                      className="text-left"
-                      onSubmit={() => this.addReward(request._id)}
-                    >
-                      <input
-                        class="form-control"
-                        className="input-small"
-                        type="text"
-                        value={this.state.newReward}
-                        onChange={(event) => {
-                          this.setState({ newReward: event.target.value });
-                        }}
-                      />
-                      &ensp;
-                      <button class="btn btn-outline-primary" type="submit">
-                        Add
-                      </button>
-                    </form>
                   </div>
                 </div>
               ) : null}
