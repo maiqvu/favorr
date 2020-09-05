@@ -8,32 +8,24 @@ import NavBar from './NavBar';
 import './App.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Layout } from './components/Layout';
 
 class App extends Component {
   render() {
     return (
       <React.Fragment>
         <Router>
-          <Switch>
-            <Route exact path="/" component={PublicRequestPage}/>
-            <Route path="/createPublicRequest" component= {CreatePublicRequestPage}/>
-            <Route path="/login" component= {Login}/>
-            <Route path="/register" component= {Register}/>
-          </Switch>
-
-
-          
-        {/* <div className="App">
           <NavBar />
-          <Switch>
-            <Route path="/" component={PublicRequestPage} exact />
-            <Route
-              path="/createPublicRequest"
-              component={CreatePublicRequestPage}
-            />
-          </div>
-        </div> */}
-      </Router>
+          <Layout
+          ><Switch>
+              <Route exact path="/" component={PublicRequestPage} />
+              <Route path="/createPublicRequest" component={CreatePublicRequestPage} />
+              <Route path="/login" component={Login} />
+              <Route path="/register" component={Register} />
+            </Switch>
+          </Layout>
+
+        </Router>
       </React.Fragment>
     );
   }
