@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import CreatePublicRequestPage from './components/Request/CreatePublicRequestPage';
 import PublicRequestPage from './components/Request/PublicRequestPage';
 import NavBar from './NavBar';
@@ -10,8 +10,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 class App extends Component {
   render() {
     return (
-      <Router>
-        <div className="App">
+      <React.Fragment>
+        <Router>
+          <Switch>
+            <Route exact path="/" component={PublicRequestPage}/>
+            <Route path="/createPublicRequest" component= {CreatePublicRequestPage}/>
+          </Switch>
+
+
+          
+        {/* <div className="App">
           <NavBar />
           <div>
             <Route path="/" component={PublicRequestPage} exact />
@@ -20,8 +28,9 @@ class App extends Component {
               component={CreatePublicRequestPage}
             />
           </div>
-        </div>
+        </div> */}
       </Router>
+      </React.Fragment>
     );
   }
 }
