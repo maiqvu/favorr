@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import CreatePublicRequestPage from './components/Request/CreatePublicRequestPage';
 import PublicRequestPage from './components/Request/PublicRequestPage';
+import Login from './components/Request/Login';
+import Register from './components/Request/Register';
 import NavBar from './NavBar';
 import './App.css';
 
@@ -21,7 +23,7 @@ class App extends Component {
           
         {/* <div className="App">
           <NavBar />
-          <div>
+          <Switch>
             <Route path="/" component={PublicRequestPage} exact />
             <Route
               path="/createPublicRequest"
