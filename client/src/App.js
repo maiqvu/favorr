@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import CreatePublicRequestPage from './components/Request/CreatePublicRequestPage';
 import PublicRequestPage from './components/Request/PublicRequestPage';
+import Login from './components/Request/Login';
+import Register from './components/Request/Register';
 import NavBar from './NavBar';
 import './App.css';
 
@@ -13,13 +15,12 @@ class App extends Component {
       <Router>
         <div className="App">
           <NavBar />
-          <div>
+          <Switch>
             <Route path="/" component={PublicRequestPage} exact />
-            <Route
-              path="/createPublicRequest"
-              component={CreatePublicRequestPage}
-            />
-          </div>
+            <Route path="/createPublicRequest" component={CreatePublicRequestPage}/>
+            <Route path="/login" component={Login}/>
+            <Route path="/register" commponent={Register}/>
+          </Switch>
         </div>
       </Router>
     );
