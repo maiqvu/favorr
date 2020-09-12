@@ -64,7 +64,7 @@ requestRouter.patch('/publicRequest/:id', async (req, res) => {
 });
 
 // Delete a Public Request
-requestRouter.delete('/publicRequest/:id', async (req, res) => {
+requestRouter.delete('/:id', async (req, res) => {
     const content = await PublicRequest.findByIdAndDelete(req.params.id);
     if (!content) res.status(404).send("No Public Request Found")
     res.status(200).send()
@@ -81,12 +81,31 @@ requestRouter.post('/:id/add-reward', async (req, res) => {
     try {
         const updatedRequest = await PublicRequest.findOneAndUpdate(
             { _id: requestId },
-            { $push: { reward: newReward } }
+            { $push: { reward: newReward } },
+            { new: true }
         );
         res.send(updatedRequest);
     } catch (err) {
         console.error(err)
     }
+})
+
+// Remove a reward in an existing request
+requestRouter.patch('/:id/remove-reward', async (req, res) => {
+    const requestId = req.params.id;
+    const rewardIdToRemove = req.body.rewardId;
+
+    try {
+        const updatedRequest = await PublicRequest.findOneAndUpdate(
+            { _id: requestId},
+            { $pull: { reward: { _id: rewardIdToRemove }}},
+            { new: true })
+    
+        res.send(updatedRequest)
+    } catch (err) {
+        res.status(500).send(err);
+    }
+    
 })
 
 // Add username to the claimed request
@@ -102,8 +121,17 @@ requestRouter.patch('/:id/claim/:username', async (req, res) => {
         );
         res.send(updatedRequest)
     } catch (err) {
-        console.error(err);
+        res.status(500).send(err);
     }
 })
+
+// Get All available Public Requests (requests that have not been claimed)
+requestRouter.get('/available', async (req, res) => {
+    const allRequest = await PublicRequest.find({
+        taker: {$eq: ""}
+    });
+
+    res.status(200).send(allRequest);
+});
 
 export default requestRouter;
