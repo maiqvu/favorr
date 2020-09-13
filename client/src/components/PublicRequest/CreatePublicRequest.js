@@ -1,72 +1,74 @@
 import React, { Component } from 'react';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Select from 'react-select';
 import axios from 'axios';
 
-export default class CreatePublicRequest extends Component {
+const rewardOptions = [
+  { value: 'Chocolate', label: 'Chocolate' },
+  { value: 'Strawberry', label: 'Strawberry' },
+  { value: 'Coke', label: 'Coke' },
+  { value: 'Breakfast', label: 'Breakfast' },
+  { value: 'Coffee', label: 'Coffee' },
+  { value: 'Candy', label: 'Candy' }
+]
+
+export default class CreatePublicRequestPage extends Component {
   constructor(props) {
-    super(props);
+    super();
 
     this.user = 'alex';
     this.state = {
       task: '',
       reward: '',
-      taker: '',
     };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  onSubmit = (event) => {
+  handleChange = event => {
+    
+  };
+  handleSubmit = event => {
     event.preventDefault();
-
+    const data = {
+      name: this.user,
+      requestDetail: this.state.task,
+      reward: this.state.reward,
+    }
     axios
-      .post('/api/publicRequest/publicRequest', {
-        creator: this.user,
-        taker: this.state.taker,
-        requestDetail: this.state.task,
-        reward: {
-          name: this.user,
-          item: this.state.reward,
-        },
-      })
-      .then((res) => {
-        this.setState({ task: '' });
-        this.setState({ reward: '' });
-      })
-      .catch((error) => console.err(error));
+      .post('/api/publicRequest/publicRequest', data)
+      .then(res => console.log(res));
   };
 
   render() {
     return (
-      <div>
+      <Form onSubmit={this.handleSubmit}>
         <h3>Create a Public Request</h3>
-        <form onSubmit={this.onSubmit}>
-          <div>
-            <label>
-              Task
-              <input
-                type="text"
-                value={this.state.task}
-                onChange={(event) => {
-                  this.setState({ task: event.target.value });
-                }}
-              />
-            </label>
-          </div>
-          <div>
-            <label>
-              Reward
-              <input
-                type="text"
-                value={this.state.reward}
-                onChange={(event) =>
-                  this.setState({ reward: event.target.value })
-                }
-              />
-            </label>
-          </div>
-          <div>
-            <button type="submit">Submit</button>
-          </div>
-        </form>
-      </div>
+        <Form.Group controlId="taskDetail">
+          <Form.Label>Task Details:</Form.Label>
+          <Form.Control
+            required
+            as="textarea"
+            rows="2"
+            value={this.state.task}
+            onChange={this.handleChange}
+          />
+        </Form.Group>
+        <Form.Group controlId="dropdownReward">
+          <Form.Label>Reward(s):</Form.Label>
+          <Select
+            isSearchable
+            isMulti
+            options={rewardOptions}
+            value={this.props.value}
+            onChange={this.handleChange}
+          />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Submit
+          </Button>
+      </Form>
     );
   }
 }
