@@ -6,11 +6,6 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import NavBar from './NavBar';
 import './App.css';
-import '@fortawesome/fontawesome-free/css/all.min.css'; 
-import 'bootstrap-css-only/css/bootstrap.min.css'; 
-import 'bootstrap/dist/css/bootstrap.min.css';
-//import 'mdbreact/dist/css/mdb.css';
-
 import { Layout } from './components/Layout';
 
 class App extends Component {
