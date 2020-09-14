@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { MDBContainer, MDBRow, MDBCol, MDBBtn } from 'mdbreact';
-import 'mdbreact/dist/css/mdb.css';
+import {Container, Row, Col, Button} from 'react-bootstrap';
 
 export default class Register extends Component {
   constructor(props) {
@@ -49,10 +48,10 @@ export default class Register extends Component {
 
   render() {
     return (
-      <MDBContainer>
-        <MDBRow>
-          <MDBCol md="3"></MDBCol>
-          <MDBCol md="6">
+      <Container>
+        <Row>
+          <Col md="3"></Col>
+          <Col md="6">
             <form onSubmit={this.handleSubmit}>
               <p className="h4 text-center mb-4">Register</p>
               <label htmlFor="email" className="grey-text">
@@ -94,14 +93,14 @@ export default class Register extends Component {
                 required
               />
               <div className="text-center mt-4">
-                <MDBBtn color="indigo" type="submit" className="white-text">Register</MDBBtn>
+                <Button color="indigo" type="submit" className="white-text">Register</Button>
               </div>
             </form>
-          </MDBCol>
-          <MDBCol md="3"></MDBCol>
-        </MDBRow>
+          </Col>
+          <Col md="3"></Col>
+        </Row>
         
-      </MDBContainer>
+      </Container>
     );
   }
 }

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBInput } from 'mdbreact';
-import 'mdbreact/dist/css/mdb.css';
+import {Container, Row, Col, Button} from 'react-bootstrap';
 
 export default class Login extends Component{
     constructor(props){
@@ -47,14 +46,16 @@ export default class Login extends Component{
 
     render() {
         return (
-            <MDBContainer>
-                <MDBRow>
-                <MDBCol md="3"></MDBCol>
-                <MDBCol md="6">
+            <Container>
+                <Row>
+                <Col md="3"></Col>
+                <Col md="6">
                     <form onSubmit={this.handleSubmit}>
                     <p className="h4 text-center mb-4">Sign In</p>
-                    <MDBInput
-                        label="Email" 
+                    <label htmlFor="email" className="grey-text">
+                        Your email
+                    </label>
+                    <input
                         type="email"
                         id="email" 
                         name="email" 
@@ -62,10 +63,13 @@ export default class Login extends Component{
                         onChange={this.handleChange}
                         required
                         className="form-control" 
+                        placeholder="Enter email"
                     />
-
-                    <MDBInput
-                        label="Password" 
+                    <br />
+                    <label htmlFor="password" className="grey-text">
+                        Your password
+                    </label>
+                    <input
                         type="password" 
                         id="password" 
                         name="password"
@@ -73,20 +77,21 @@ export default class Login extends Component{
                         value={this.state.password}
                         onChange={this.handleChange}
                         required
+                        placeholder="Enter password"
                     />
                     <div className="text-center mt-4">
-                        <MDBBtn color="indigo" type="submit" className="white-text pl-3 pr-3">Login</MDBBtn>
+                        <Button color="indigo" type="submit" className="white-text pl-3 pr-3">Login</Button>
                     </div>
                     </form>
                     <p className="font-small grey-text d-flex justify-content-end">
                         Not a member?
                         <a href="/register" className="blue-text ml-1">Sign up</a>
                     </p>
-                </MDBCol>
-                <MDBCol md="3"></MDBCol>
-                </MDBRow>
+                </Col>
+                <Col md="3"></Col>
+                </Row>
                 
-            </MDBContainer>
+            </Container>
         );
       }
 };
