@@ -1,21 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function NavBar (){
-
-    const navStyle = {
-        color: 'white'
-    };
-    
+function NavBar() {    
     return(
-        <nav>
-            <h3>Logo</h3>
-            <ul className="nav-links">
-                <li><Link style={navStyle} to="/">Public Request</Link></li>
-                <li><Link style={navStyle}  to="/createPublicRequest">Create Public Request</Link></li>
-                <li><Link style={navStyle} to="/login">Login</Link></li>
-                <li><Link style={navStyle} to="/register">Register</Link></li>
-            </ul>
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+            <Link className="navbar-brand" to="/">Favorr</Link>
+            <div class="collapse navbar-collapse">
+                <div class="navbar-nav">
+                    <Link className="nav-item nav-link" to="/">Public Request</Link>
+                    <Link className="nav-item nav-link" to="/createPublicRequest">Create Public Request</Link>
+                    <Link className="nav-item nav-link" to="/login">Login</Link>
+                    <Link className="nav-item nav-link" to="/register">Register</Link>
+                </div>
+            </div>
         </nav>
     );
 }
