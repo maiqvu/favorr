@@ -10,6 +10,7 @@ import { applyPassportStrategy } from './utils/passport';
 // Import route handlers
 import usersRouter from './routes/users.route';
 import requestRouter from './routes/publicRequest.route';
+import favorsRouter from './routes/favors.route';
 
 
 // Initialize an Express app
@@ -32,6 +33,7 @@ mongoose
 // Routing
 app.use('/api/users', usersRouter);
 app.use('/api/publicRequest', requestRouter);
+app.use('/api/favors', favorsRouter);
 
 
 // Start the Express server
