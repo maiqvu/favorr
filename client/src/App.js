@@ -7,7 +7,6 @@ import Register from './components/Auth/Register';
 import NavBar from './NavBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-
 import { Layout } from './components/Layout';
 
 class App extends Component {
