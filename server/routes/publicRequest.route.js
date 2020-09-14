@@ -7,9 +7,9 @@ const requestRouter = express.Router();
 requestRouter.post('/publicRequest', async (req, res) => {
     const { creator, taker, requestDetail, reward } = req.body;
     // Condition to have required field filled out
-    if (!creator || !requestDetail || !reward) {
-        return res.status(400).json({ message: 'Please enter all required fields.' });
-    }
+    // if (!creator || !requestDetail || !reward) {
+    //     return res.status(400).json({ message: 'Please enter all required fields.' });
+    // }
 
     try {
         const newPublicRequest = new PublicRequest({
