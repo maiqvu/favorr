@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Button, Modal } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 
 import axios from 'axios';
 export default class CreatePublicRequestPage extends Component {
@@ -7,10 +7,11 @@ export default class CreatePublicRequestPage extends Component {
     super(props);
 
     this.state = {
-      creator: 'John',
+      creator: 'alex',
       requestDetail: '',
       reward: '',
-      taker: ''
+      //to be used in future validation
+      formIsValid: true
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -23,18 +24,18 @@ export default class CreatePublicRequestPage extends Component {
   };
 
   handleSubmit = async event => {
-    const { creator, taker, requestDetail, reward } = this.state;
+    const { creator, requestDetail, reward } = this.state;
     event.preventDefault();
 
     await axios
       .post(`/api/publicRequest/publicRequest`,
         {
           creator: creator,
+          taker: "",
           requestDetail: requestDetail,
-          reward: reward,
-          taker: taker
+          reward: [{ name: creator, item: reward }],
         })
-      .then(res => console.log(res))
+      .then(alert("Your Public Request has been succesfully created!"))
       .catch(err => console.log(err));
   };
 
@@ -45,7 +46,7 @@ export default class CreatePublicRequestPage extends Component {
         <Form.Group controlId="taskDetail">
           <Form.Label>Task Details:</Form.Label>
           <Form.Control as="textarea"
-            //required
+            required
             name="requestDetail"
             rows="2"
             value={this.state.requestDetail}
@@ -58,7 +59,7 @@ export default class CreatePublicRequestPage extends Component {
             name="reward"
             value={this.state.reward}
             onChange={this.handleChange}
-            custom
+            custom='true'
           >
             <option value="">Add a reward</option>
             <option value="Chocolate Bar">Chocolate Bar</option>
@@ -68,7 +69,11 @@ export default class CreatePublicRequestPage extends Component {
             <option value="Breakfast">Breakfast</option>
           </Form.Control>
         </Form.Group>
-        <Button variant="primary" type="submit">
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={this.state.reward === "" && this.state.formIsValid}
+        >
           Submit
           </Button>
       </Form>
