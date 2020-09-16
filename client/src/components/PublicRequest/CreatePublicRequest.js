@@ -28,11 +28,12 @@ export default class CreatePublicRequestPage extends Component {
     event.preventDefault();
 
     await axios
-      .post(`/api/publicRequest/publicRequest`,
+      .post(`/api/publicRequests`,
         {
           creator: creator,
-          taker: "",
-          requestDetail: requestDetail,
+          claimedBy: null,
+          claimedByTime: null,
+          task: requestDetail,
           reward: [{ name: creator, item: reward }],
         })
       .then(alert("Your Public Request has been succesfully created!"))

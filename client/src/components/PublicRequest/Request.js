@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import AddReward from './AddReward';
 import RemoveReward from './RemoveReward';
+import UploadProof from './UploadProof';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -16,19 +17,37 @@ export default class Request extends Component {
     this.state = {
       newReward: '',
       removeRewardId: '',
+      showUploadOption: false,
+      showGiveUpConfirmation: false
     };
 
     this.handleChange = this.handleChange.bind(this);
+    this.toggleUploadOption = this.toggleUploadOption.bind(this);
+    this.toggleGiveUpConfirmation = this.toggleGiveUpConfirmation.bind(this);
   }
 
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
   }
 
+  toggleUploadOption() {
+    if (this.state.showGiveUpConfirmation === true) {
+      this.setState({ showGiveUpConfirmation: !this.state.showGiveUpConfirmation});
+    }
+    this.setState({ showUploadOption: !this.state.showUploadOption});
+  }
+
+  toggleGiveUpConfirmation() {
+    if (this.state.showUploadOption === true) {
+      this.setState({ showUploadOption: !this.state.showUploadOption});
+    }
+    this.setState({ showGiveUpConfirmation: !this.state.showGiveUpConfirmation})
+  }
+
   async addReward(requestId, index) {
     try {
       let response = await axios.post(
-        `/api/publicRequest/${requestId}/add-reward`,
+        `/api/publicRequests/${requestId}/add-reward`,
         {
           name: this.props.username,
           item: this.state.newReward,
@@ -44,7 +63,7 @@ export default class Request extends Component {
   async removeReward(requestId, index) {
     try {
       let response = await axios.patch(
-        `/api/publicRequest/${requestId}/remove-reward`,
+        `/api/publicRequests/${requestId}/remove-reward`,
         { rewardId: this.state.removeRewardId }
       );
       this.setState({ removeRewardId: '' });
@@ -86,15 +105,15 @@ export default class Request extends Component {
       <React.Fragment>
         <Row>
           <Col className="col-sm-5 text-left">
-            {this.props.request.requestDetail}
+            {this.props.request.task}
           </Col>
           <Col className="col-sm-3 text-left">
-            {new Date(Date.parse(this.props.request.createdAt))
+            {new Date(Date.parse(this.props.date))
               .toString()
               .slice(0, 15)}
           </Col>
           <Col className="col-sm-3 text-left">
-            {this.constructLimitedRewardItemList(this.props.request.reward)}
+            {this.constructLimitedRewardItemList(this.props.request.rewards)}
           </Col>
           <Col className="col-sm-1 text-right">
             <Dropdown>
@@ -117,7 +136,7 @@ export default class Request extends Component {
                 </Col>
                 <Col className="col-sm-7">
                   <strong>Task:&ensp;</strong>
-                  <span>{this.props.request.requestDetail}</span>
+                  <span>{this.props.request.task}</span>
                 </Col>
               </Row>
               <Row className="mb-4">
@@ -133,40 +152,43 @@ export default class Request extends Component {
                   <strong>Rewards:&ensp;</strong>
                   <span>
                     {this.constructFullRewardItemList(
-                      this.props.request.reward
+                      this.props.request.rewards
                     )}
                   </span>
                 </Col>
               </Row>
-              <Row>
-                <Col className="col-sm-5">
-                  <AddReward
-                    newReward={this.state.newReward}
-                    onChange={this.handleChange}
-                    addReward={() =>
-                      this.addReward(this.props.request._id, this.props.index)
-                    }
-                  />
-                </Col>
-                <Col className="col-sm-5">
-                  <RemoveReward
-                    request={this.props.request}
-                    focusedRequestId={this.props.focusedRequestId}
-                    username={this.props.username}
-                    removeRewardId={this.state.removeRewardId}
-                    onChange={this.handleChange}
-                    removeReward={() =>
-                      this.removeReward(
-                        this.props.request._id,
-                        this.props.index
-                      )
-                    }
-                  />
-                </Col>
-              </Row>
+              {this.props.username && !this.props.request.claimedBy ? (
+                <Row>
+                  <Col className="col-sm-5">
+                    <AddReward
+                      newReward={this.state.newReward}
+                      onChange={this.handleChange}
+                      addReward={() =>
+                        this.addReward(this.props.request._id, this.props.index)
+                      }
+                    />
+                  </Col>
+                  <Col className="col-sm-5">
+                    <RemoveReward
+                      request={this.props.request}
+                      focusedRequestId={this.props.focusedRequestId}
+                      username={this.props.username}
+                      removeRewardId={this.state.removeRewardId}
+                      onChange={this.handleChange}
+                      removeReward={() =>
+                        this.removeReward(
+                          this.props.request._id,
+                          this.props.index
+                        )
+                      }
+                    />
+                  </Col>
+                </Row>
+              ) : null}
             </div>
             <div className="text-right">
-              {this.props.username ? (
+              {(this.props.username && (this.props.username !== this.props.request.creator)
+                && (this.props.username !== this.props.request.claimedBy) )? (
                 <Button
                   variant="primary"
                   onClick={() =>
@@ -175,6 +197,23 @@ export default class Request extends Component {
                 >
                   Claim
                 </Button>
+              ) : null}
+              {this.props.username && (this.props.username === this.props.request.claimedBy) ? (
+                <div>
+                  <Button onClick={this.toggleUploadOption}>Resolve</Button>
+                  &ensp;
+                  <Button onClick={this.toggleGiveUpConfirmation} variant="danger">Give Up</Button>
+                </div>
+              ) : null}
+              {this.state.showUploadOption ? (
+                <UploadProof />
+              ) : null}
+              {this.state.showGiveUpConfirmation ? (
+                <div>
+                  <br />
+                  <h6>Are you sure?</h6>
+                  <Button variant="danger">Yes</Button>
+                </div>
               ) : null}
             </div>
           </div>
