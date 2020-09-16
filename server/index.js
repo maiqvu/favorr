@@ -4,8 +4,6 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import passport from 'passport';
-import { applyPassportStrategy } from './utils/passport';
 
 // Import route handlers
 import usersRouter from './routes/users.route';
@@ -20,12 +18,15 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-applyPassportStrategy(passport);
 
 
 // Connect to database
 mongoose
-  .connect(process.env.MONGODB_URI, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true })
+  .connect(process.env.MONGODB_URI, 
+    { useNewUrlParser: true, 
+      useCreateIndex: true, 
+      useUnifiedTopology: true, 
+      useFindAndModify: false })
   .then(() => console.log('Successfully connected to database.'))
   .catch(err => console.log(`Failed to connect to database: ${err}`));
 
