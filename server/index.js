@@ -7,7 +7,7 @@ import cors from 'cors';
 
 // Import route handlers
 import usersRouter from './routes/users.route';
-import requestRouter from './routes/publicRequest.route';
+import publicRequestsRouter from './routes/publicRequests.route';
 import favorsRouter from './routes/favors.route';
 
 
@@ -33,7 +33,7 @@ mongoose
 
 // Routing
 app.use('/api/users', usersRouter);
-app.use('/api/publicRequest', requestRouter);
+app.use('/api/publicRequests', publicRequestsRouter);
 app.use('/api/favors', favorsRouter);
 
 
