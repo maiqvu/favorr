@@ -9,7 +9,6 @@ const MyFavors = (props) => {
   
   useEffect(() => {
     FavorService.getFavors('5f43ce92511127371f476dd5').then(data => {
-      // console.log(data);
       setFavorsOwedByMe(data.owedByMe);
       setFavorsOwedToMe(data.owedToMe);
     })
@@ -33,10 +32,10 @@ const MyFavors = (props) => {
                   { favor.description }
                 </Col>
                 <Col className="col-sm-3 text-left">
-                  { favor.owedBy }
+                  { favor.owedBy.email }
                 </Col>
                 <Col className="col-sm-3 text-left">
-                  { favor.owedTo }
+                  { favor.owedTo.email }
                 </Col>
               </Row>
             )
@@ -60,10 +59,10 @@ const MyFavors = (props) => {
                   { favor.description }
                 </Col>
                 <Col className="col-sm-3 text-left">
-                  { favor.owedBy }
+                  { favor.owedBy.email }
                 </Col>
                 <Col className="col-sm-3 text-left">
-                  { favor.owedTo }
+                  { favor.owedTo.email }
                 </Col>
               </Row>
             )
