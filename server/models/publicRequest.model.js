@@ -1,18 +1,21 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 
-const PublicRequestSchema = new Schema({
+const PublicRequestSchema = new mongoose.Schema({
   creator: {
     type: String,
     required: true,
   },
-  taker: {
+  claimedBy: {
     type: String,
   },
-  requestDetail: {
+  claimedByTime: {
+    type: Date
+  },
+  task: {
     type: String,
     required: true
   },
-  reward: [{
+  rewards: [{
     name: {
       type: String,
       required: true
@@ -21,9 +24,8 @@ const PublicRequestSchema = new Schema({
       type: String,
       required: true
     }
-  }
-  ]
+  }]
 },
   { timestamps: true });
 
-export const PublicRequest = mongoose.model('publicRequest', PublicRequestSchema);
+export default mongoose.model('PublicRequest', PublicRequestSchema);
