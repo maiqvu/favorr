@@ -11,11 +11,20 @@ export default class CreatePublicRequestPage extends Component {
       requestDetail: '',
       reward: '',
       //to be used in future validation
-      formIsValid: true
+      formIsValid: true,
+      successText: ""
     };
+    this.handleReset = this.handleReset.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+
   }
+  handleReset = () => {
+    this.setState({
+      requestDetail: '',
+      reward: ''
+    });
+  };
 
   handleChange = event => {
     this.setState({
@@ -36,8 +45,8 @@ export default class CreatePublicRequestPage extends Component {
           task: requestDetail,
           reward: [{ name: creator, item: reward }],
         })
-      .then(alert("Your Public Request has been succesfully created!"))
-      .catch(err => console.log(err));
+      .then(this.setState({ successText: 'Request has been successfully posted.' }))
+      .catch(err => this.setState({ successText: 'Error! Please contact Admin' }));
   };
 
   render() {
@@ -45,17 +54,18 @@ export default class CreatePublicRequestPage extends Component {
       <Form onSubmit={this.handleSubmit}>
         <h3>Create a Public Request</h3>
         <Form.Group controlId="taskDetail">
-          <Form.Label>Task Details:</Form.Label>
+          <Form.Label>Task Details*:</Form.Label>
           <Form.Control as="textarea"
             required
             name="requestDetail"
             rows="2"
             value={this.state.requestDetail}
             onChange={this.handleChange}
+            placeholder="Eg: Collect parcels..."
           />
         </Form.Group>
         <Form.Group controlId="selectReward">
-          <Form.Label>Reward:</Form.Label>
+          <Form.Label>Reward*:</Form.Label>
           <Form.Control as="select"
             name="reward"
             value={this.state.reward}
@@ -70,13 +80,24 @@ export default class CreatePublicRequestPage extends Component {
             <option value="Breakfast">Breakfast</option>
           </Form.Control>
         </Form.Group>
-        <Button
-          variant="primary"
-          type="submit"
-          disabled={this.state.reward === "" && this.state.formIsValid}
-        >
-          Submit
+        <div className="disclaimer">*required</div>
+        <Form.Group controlId="buttonGroup">
+          <Button
+            variant="secondary"
+            onClick={this.handleReset}
+          >
+            Reset
+          </Button>{' '}
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={this.state.reward === "" && this.state.formIsValid}
+          >
+            Submit
           </Button>
+          {' '}
+          {this.state.successText}
+        </Form.Group>
       </Form>
     );
   }
