@@ -4,6 +4,7 @@ import AvailablePublicRequests from './components/PublicRequest/AvailablePublicR
 import CreatePublicRequest from './components/PublicRequest/CreatePublicRequest';
 import MyClaimedRequests from './components/PublicRequest/MyClaimedRequests';
 import MyFavors from './components/Favor/MyFavors';
+import AddFavor from './components/Favor/AddFavor';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import NavBar from './NavBar';
@@ -23,6 +24,7 @@ class App extends Component {
               <Route path="/createPublicRequest" component={CreatePublicRequest} />
               <Route path="/myClaimedRequests" component={MyClaimedRequests} />
               <Route path="/myFavors" component={MyFavors} />
+              <Route path="/addFavor" component={AddFavor} />
               <Route path="/login" component={Login} />
               <Route path="/register" component={Register} />
             </Switch>
