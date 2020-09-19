@@ -16,6 +16,7 @@ const createUser = async (email, password) => {
   return new User(data).save();
 };
 
+
 usersRouter.post('/register', validateRegistration, async (req, res) => {
   console.log(req.body);
   const errorsAfterValidation = validationResult(req);
@@ -42,8 +43,7 @@ usersRouter.post('/register', validateRegistration, async (req, res) => {
 
       // Return a sanitized user object and the signed token back to client
       const dataToReturn = { ...newUser.toJSON(), ...{ token } };
-      delete dataToReturn.hashedPassword;   
-      // I use the delete operator instead of reassigning hashedPassword to null because I want to completely remove/unmask it from the dataToReturn object (causing hasOwnProperty or for(...in...) to not record the hashedPassword property as existing in dataToReturn).
+      delete dataToReturn.hashedPassword;
       res.status(201).json( dataToReturn );
     }
   } catch (err) {
@@ -88,6 +88,22 @@ usersRouter.post('/login', validateLogIn, async (req, res) => {
     res.status(500).json({ message: 'Something went wrong.' });
   }
 });   // end of .post('/login')
+
+
+usersRouter.patch('/:id', async (req, res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    const dataToReturn = { ...updatedUser.toJSON() };
+    delete dataToReturn.hashedPassword;
+    res.status(200).json(dataToReturn);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
 
 
 export default usersRouter;
