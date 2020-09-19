@@ -41,3 +41,7 @@
   padding-left: 10px;
   padding-right: 10px;
 }
+
+.nav-item a{
+  color: white
+}

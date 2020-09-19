@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import {RouterComponentProps} from 'react-router-dom'; 
+import CookieService from '../../context/CookieService';
 import {Container, Row, Col, Button} from 'react-bootstrap';
 
 export default class Login extends Component{
@@ -34,12 +36,36 @@ export default class Login extends Component{
                 },
             )
             .then(response => {
-                console.log(response.data);
+                //console.log(response.data);
+                let {token, _id, name} = response.data;
+                this.handleLoginSuccess(token, _id, name);
             })
-            .catch(error=>{
-                this.setState({errors: error.response.data})
-                console.log("login Error", error);
-            })
+            .catch((err)=>{
+                this.setState({ errors: err.response.data });
+                console.log("Login Error", err);
+            });
+    }
+
+    handleLoginSuccess(token, _id, name){
+        let expiresAt = 60;
+        let date = new Date();
+        date.setTime(date.getTime() + (expiresAt*60 * 1000)); //60 seconds * 60 mins * 1000 miliseconds = 1 hour
+        const options = {
+            path:'/', 
+            expires: date
+        };
+
+        try{
+            CookieService.set('access_token', token, options);
+            CookieService.set('ID', _id, options);
+            CookieService.set('name', name, options);
+        }
+        catch (e){
+            console.log("Cookie Error: ", e);
+        };
+        
+
+        this.props.history.push('/'); //Redirect Back to Dashboard
     }
 
     render() {
