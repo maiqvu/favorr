@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import FavorService from './FavorService';
+import { AuthContext } from '../../context/AuthContext';
 
 import { Container, Row, Col } from 'react-bootstrap';
 
@@ -7,12 +8,14 @@ const MyFavors = (props) => {
   const [ favorsOwedByMe, setFavorsOwedByMe ] = useState([]);
   const [ favorsOwedToMe, setFavorsOwedToMe ] = useState([]);
   
+  const authContext = useContext(AuthContext);
+  
   useEffect(() => {
-    FavorService.getFavors('5f4625758b6e864b0b455f86').then(data => {
+    FavorService.getFavors(authContext.user._id).then(data => {
       setFavorsOwedByMe(data.owedByMe);
       setFavorsOwedToMe(data.owedToMe);
     })
-  }, []);
+  }, [authContext.user._id]);
   
   return (
     <React.Fragment>
@@ -43,7 +46,7 @@ const MyFavors = (props) => {
         }
       </Container>
       <br/>
-      <h3 className="text-center">Favors owed to me:</h3>
+      <h3 className="text-center">Favors owed to me</h3>
       <Container className="px-lg-5">
         <Row>
           <Col className="col-sm-5 text-left font-weight-bold">Description</Col>
