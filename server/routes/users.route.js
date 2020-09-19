@@ -8,8 +8,9 @@ import { generateHashedPassword, validateRegistration, validateLogIn } from '../
 
 const usersRouter = express.Router();
 
-const createUser = async (email, password) => {
+const createUser = async (name, email, password) => {
   const data = {
+    name,
     email,
     hashedPassword: await generateHashedPassword(password)
   };
@@ -18,19 +19,20 @@ const createUser = async (email, password) => {
 
 usersRouter.post('/register', validateRegistration, async (req, res) => {
   console.log(req.body);
-  const errorsAfterValidation = validationResult(req);
-  if (!errorsAfterValidation.isEmpty()) {
-    res.status(400).json({ message: errorsAfterValidation.mapped() });
+  const isValid = validationResult(req);
+  if (!isValid.isEmpty()) {
+    //return res.status(400).json({ message: errorsAfterValidation.mapped() });
+    res.status(400).json({message: isValid.array()})
   }
 
   try {
-    const { email, password } = req.body;
+    const { name, email, password } = req.body;
     const user = await User.findOne({ email });
 
     if (user) {
       res.status(403).json({ message: 'An account already exists for this email address.' });
     } else {
-      await createUser(email, password);
+      await createUser(name, email, password);
 
       // Sign a token
       const newUser = await User.findOne({ email });
@@ -54,8 +56,8 @@ usersRouter.post('/register', validateRegistration, async (req, res) => {
 
 
 usersRouter.post('/login', validateLogIn, async (req, res) => {
-  const errorsAfterValidation = validationResult(req);
-  if (!errorsAfterValidation.isEmpty()) {
+  const isValid = validationResult(req);
+  if (!isValid.isEmpty()) {
     res.status(400).json({ message: errorsAfterValidation.mapped() });
   }
 

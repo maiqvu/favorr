@@ -7,12 +7,14 @@ export const generateHashedPassword = async (password) => {
 };
 
 export const validateRegistration = [
+  check('name')
+    .exists().withMessage('Name cannot be empty'),
   check('email')
     .exists().withMessage('Email cannot be empty.')
     .isEmail().withMessage('Please enter a valid email format.'),
   check('password')
     .exists().withMessage('Password cannot be empty.')
-    .isLength({ min: 5 }).withMessage('Password must have at least 5 characters.')
+    .isLength({ min: 5 }).withMessage('Password must have at least 5 characters.'),
 ];
 
 export const validateLogIn = [

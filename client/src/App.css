@@ -37,23 +37,7 @@
   }
 }
 
-nav{
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  min-width: 10vh;
-  background-color: rgb(73,79, 82);
-  color: white;
-}
-nav h3{
-  float: left;
-  padding-left: 2%;
-}
-.nav-links{
-  width: 50%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  list-style: none;
-  padding: 10px;
+.nav-item{
+  padding-left: 10px;
+  padding-right: 10px;
 }
