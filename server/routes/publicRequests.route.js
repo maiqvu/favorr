@@ -1,22 +1,27 @@
+// Import packages
 import express from 'express';
-import { PublicRequest } from '../models/publicRequest.model';
+import formidable from 'express-formidable';
 
-const requestRouter = express.Router();
+// Import mongoose model
+import PublicRequest from '../models/publicRequest.model';
+
+const publicRequestsRouter = express.Router();
 
 // Create a Public request
-requestRouter.post('/publicRequest', async (req, res) => {
-    const { creator, taker, requestDetail, reward } = req.body;
+publicRequestsRouter.post('/', async (req, res) => {
+    const { creator, claimedBy, claimedByTime, task, reward } = req.body;
     // Condition to have required field filled out
-    if (!creator || !requestDetail || !reward) {
+    if (!creator || !task || !reward) {
         return res.status(400).json({ message: 'Please enter all required fields.' });
     }
 
     try {
         const newPublicRequest = new PublicRequest({
             creator: creator,
-            taker: taker,
-            requestDetail: requestDetail,
-            reward: reward
+            claimedBy: claimedBy,
+            claimedByTime: claimedByTime,
+            task: task,
+            rewards: reward
         });
 
         await newPublicRequest.save();
@@ -27,7 +32,7 @@ requestRouter.post('/publicRequest', async (req, res) => {
 });
 
 // Get All Public Requests
-requestRouter.get('/publicRequest', async (req, res) => {
+publicRequestsRouter.get('/publicRequest', async (req, res) => {
     const allRequest = await PublicRequest.find({});
 
     try {
@@ -38,7 +43,7 @@ requestRouter.get('/publicRequest', async (req, res) => {
 });
 
 //get one Request
-requestRouter.get('/publicRequest/:id', async (req, res) => {
+publicRequestsRouter.get('/publicRequest/:id', async (req, res) => {
     const oneRequest = await PublicRequest.findById(req.params.id);
     try {
         res.status(200).send(oneRequest);
@@ -49,7 +54,7 @@ requestRouter.get('/publicRequest/:id', async (req, res) => {
 
 
 // Update a Public request
-requestRouter.patch('/publicRequest/:id', async (req, res) => {
+publicRequestsRouter.patch('/publicRequest/:id', async (req, res) => {
     try {
         await PublicRequest.findByIdAndUpdate(
             { _id: req.params.id },
@@ -64,14 +69,14 @@ requestRouter.patch('/publicRequest/:id', async (req, res) => {
 });
 
 // Delete a Public Request
-requestRouter.delete('/:id', async (req, res) => {
+publicRequestsRouter.delete('/:id', async (req, res) => {
     const content = await PublicRequest.findByIdAndDelete(req.params.id);
     if (!content) res.status(404).send("No Public Request Found")
     res.status(200).send()
 });
 
 // Add a reward to an existing request
-requestRouter.post('/:id/add-reward', async (req, res) => {
+publicRequestsRouter.post('/:id/add-reward', async (req, res) => {
     const requestId = req.params.id;
     const newReward = {
         name: req.body.name,
@@ -81,7 +86,7 @@ requestRouter.post('/:id/add-reward', async (req, res) => {
     try {
         const updatedRequest = await PublicRequest.findOneAndUpdate(
             { _id: requestId },
-            { $push: { reward: newReward } },
+            { $push: { rewards: newReward } },
             { new: true }
         );
         res.send(updatedRequest);
@@ -91,17 +96,17 @@ requestRouter.post('/:id/add-reward', async (req, res) => {
 })
 
 // Remove a reward in an existing request
-requestRouter.patch('/:id/remove-reward', async (req, res) => {
+publicRequestsRouter.patch('/:id/remove-reward', async (req, res) => {
     const requestId = req.params.id;
     const rewardIdToRemove = req.body.rewardId;
 
     try {
         const updatedRequest = await PublicRequest.findOneAndUpdate(
             { _id: requestId},
-            { $pull: { reward: { _id: rewardIdToRemove }}},
+            { $pull: { rewards: { _id: rewardIdToRemove }}},
             { new: true })
     
-        res.send(updatedRequest)
+        res.status(200).send(updatedRequest)
     } catch (err) {
         res.status(500).send(err);
     }
@@ -109,29 +114,48 @@ requestRouter.patch('/:id/remove-reward', async (req, res) => {
 })
 
 // Add username to the claimed request
-requestRouter.patch('/:id/claim/:username', async (req, res) => {
+publicRequestsRouter.patch('/:id/claim/:username', async (req, res) => {
     const requestId = req.params.id;
     const username = req.params.username;
 
-    try {
-        const updatedRequest = await PublicRequest.findOneAndUpdate(
-            {_id: requestId},
-            {$set: {taker: username}},
-            {new: true}
-        );
-        res.send(updatedRequest)
-    } catch (err) {
-        res.status(500).send(err);
-    }
+    const updatedRequest = await PublicRequest.findOneAndUpdate(
+        {_id: requestId},
+        {$set: {claimedBy: username, claimedByTime: Date.now()}},
+        {new: true}
+    );
+    res.send(updatedRequest)
 })
 
 // Get All available Public Requests (requests that have not been claimed)
-requestRouter.get('/available', async (req, res) => {
-    const allRequest = await PublicRequest.find({
-        taker: {$eq: ""}
+publicRequestsRouter.get('/available', async (req, res) => {
+    const allAvailableRequests = await PublicRequest.find({
+        claimedBy: {$eq: null}
     });
 
-    res.status(200).send(allRequest);
+    res.status(200).send(allAvailableRequests);
 });
 
-export default requestRouter;
+// Get all the user's claimed public requests
+publicRequestsRouter.get('/claimed/:username', async (req, res) => {
+    const username = req.params.username;
+
+    const userClaimedRequests = await PublicRequest.find({
+        claimedBy: {$eq: username}
+    });
+
+    res.status(200).send(userClaimedRequests);
+})
+
+// Upload an image as proof when resolving a public request
+publicRequestsRouter.post('/:id/uploadimage', formidable(), async (req, res) => {
+    const requestId = req.params.id;
+    const fileType = req.files.myFile.type;
+
+    if (!fileType.includes('image')) {
+        res.send(400).json({ message: 'Invalid file type. Please upload an image.'})
+    }
+
+    // add file name to request and return updated request
+})
+
+export default publicRequestsRouter;

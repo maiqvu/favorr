@@ -7,11 +7,11 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-export default class PublicRequestsPage extends Component {
+export default class AvailablePublicRequests extends Component {
   constructor(props) {
     super(props);
 
-    this.username = 'alex';
+    this.username = 'john';
     this.state = {
       requests: [],
       focusedRequestId: '',
@@ -22,7 +22,7 @@ export default class PublicRequestsPage extends Component {
 
   async componentDidMount() {
     try {
-      let response = await axios.get('/api/publicRequest/available');
+      let response = await axios.get('/api/publicRequests/available');
       this.setState({ requests: response.data });
     } catch (err) {
       console.error(err);
@@ -31,7 +31,7 @@ export default class PublicRequestsPage extends Component {
 
   async deleteRequest(request) {
     try {
-      await axios.delete(`/api/publicRequest/${request._id}`);
+      await axios.delete(`/api/publicRequests/${request._id}`);
     } catch (err) {
       console.error(err);
     }
@@ -41,7 +41,7 @@ export default class PublicRequestsPage extends Component {
     let requests = [...this.state.requests];
 
     // Delete request if there are no more rewards
-    if (!updatedRequest.reward.length) {
+    if (!updatedRequest.rewards.length) {
       this.deleteRequest(updatedRequest);
       requests.splice(index, 1);
       this.setState({ focusedRequestId: '' });
@@ -65,7 +65,7 @@ export default class PublicRequestsPage extends Component {
   async claim(requestId, index) {
     try {
       let response = await axios.patch(
-        `/api/publicRequest/${requestId}/claim/${this.username}`
+        `/api/publicRequests/${requestId}/claim/${this.username}`
       );
       this.updateRequest(response.data, index);
     } catch (err) {
@@ -88,9 +88,10 @@ export default class PublicRequestsPage extends Component {
           </Row>
           <hr className="border border-light" />
           {this.state.requests.map((request, index) =>
-            !request.taker ? (
+            !request.claimedBy ? (
               <Request
                 request={request}
+                date={request.createdAt}
                 index={index}
                 username={this.username}
                 focusedRequestId={this.state.focusedRequestId}

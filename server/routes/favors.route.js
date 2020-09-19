@@ -30,11 +30,11 @@ favorsRouter.post('/:userId', async (req, res) => {
 // Get all favors associated with 1 user
 favorsRouter.get('/:userId', async (req, res) => {
   try {
-    const allFavorsOwedByMe = await Favor.find({ owedBy: req.params.userId });
-    const allFavorsOwedToMe = await Favor.find({ owedTo: req.params.userId });
+    const favorsOwedByMe = await Favor.find({ owedBy: req.params.userId }).populate('owedBy').populate('owedTo');
+    const favorsOwedToMe = await Favor.find({ owedTo: req.params.userId }).populate('owedBy').populate('owedTo');
     res.status(200).json({
-      owedByMe: allFavorsOwedByMe,
-      owedToMe: allFavorsOwedToMe
+      owedByMe: favorsOwedByMe,
+      owedToMe: favorsOwedToMe
     });
   } catch (err) {
     res.status(500).send(err);

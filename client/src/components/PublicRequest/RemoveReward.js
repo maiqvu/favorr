@@ -14,7 +14,7 @@ export default class RemoveReward extends Component {
         >
           <option value="">Remove a reward</option>
           {this.props.request._id === this.props.focusedRequestId
-            ? this.props.request.reward.map((reward) =>
+            ? this.props.request.rewards.map((reward) =>
                 reward.name === this.props.username ? (
                   <option value={reward._id}>{reward.item}</option>
                 ) : null

@@ -1,44 +1,52 @@
 import React, { Component } from 'react';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import Select from 'react-select';
+import { Form, Button } from 'react-bootstrap';
+
 import axios from 'axios';
-
-const rewardOptions = [
-  { value: 'Chocolate', label: 'Chocolate' },
-  { value: 'Strawberry', label: 'Strawberry' },
-  { value: 'Coke', label: 'Coke' },
-  { value: 'Breakfast', label: 'Breakfast' },
-  { value: 'Coffee', label: 'Coffee' },
-  { value: 'Candy', label: 'Candy' }
-]
-
 export default class CreatePublicRequestPage extends Component {
   constructor(props) {
-    super();
+    super(props);
 
-    this.user = 'alex';
     this.state = {
-      task: '',
+      creator: 'alex',
+      requestDetail: '',
       reward: '',
+      //to be used in future validation
+      formIsValid: true,
+      successText: ""
     };
+    this.handleReset = this.handleReset.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+
   }
+  handleReset = () => {
+    this.setState({
+      requestDetail: '',
+      reward: ''
+    });
+  };
 
   handleChange = event => {
-    
+    this.setState({
+      [event.target.name]: event.target.value
+    });
   };
-  handleSubmit = event => {
+
+  handleSubmit = async event => {
+    const { creator, requestDetail, reward } = this.state;
     event.preventDefault();
-    const data = {
-      name: this.user,
-      requestDetail: this.state.task,
-      reward: this.state.reward,
-    }
-    axios
-      .post('/api/publicRequest/publicRequest', data)
-      .then(res => console.log(res));
+
+    await axios
+      .post(`/api/publicRequests`,
+        {
+          creator: creator,
+          claimedBy: null,
+          claimedByTime: null,
+          task: requestDetail,
+          reward: [{ name: creator, item: reward }],
+        })
+      .then(this.setState({ successText: 'Request has been successfully posted.' }))
+      .catch(err => this.setState({ successText: 'Error! Please contact Admin' }));
   };
 
   render() {
@@ -46,28 +54,50 @@ export default class CreatePublicRequestPage extends Component {
       <Form onSubmit={this.handleSubmit}>
         <h3>Create a Public Request</h3>
         <Form.Group controlId="taskDetail">
-          <Form.Label>Task Details:</Form.Label>
-          <Form.Control
+          <Form.Label>Task Details*:</Form.Label>
+          <Form.Control as="textarea"
             required
-            as="textarea"
+            name="requestDetail"
             rows="2"
-            value={this.state.task}
+            value={this.state.requestDetail}
             onChange={this.handleChange}
+            placeholder="Eg: Collect parcels..."
           />
         </Form.Group>
-        <Form.Group controlId="dropdownReward">
-          <Form.Label>Reward(s):</Form.Label>
-          <Select
-            isSearchable
-            isMulti
-            options={rewardOptions}
-            value={this.props.value}
+        <Form.Group controlId="selectReward">
+          <Form.Label>Reward*:</Form.Label>
+          <Form.Control as="select"
+            name="reward"
+            value={this.state.reward}
             onChange={this.handleChange}
-          />
+            custom='true'
+          >
+            <option value="">Add a reward</option>
+            <option value="Chocolate Bar">Chocolate Bar</option>
+            <option value="Orange Juice">Orange Juice</option>
+            <option value="Chips">Chips</option>
+            <option value="Candy">Candy</option>
+            <option value="Breakfast">Breakfast</option>
+          </Form.Control>
         </Form.Group>
-        <Button variant="primary" type="submit">
-          Submit
+        <div className="disclaimer">*required</div>
+        <Form.Group controlId="buttonGroup">
+          <Button
+            variant="secondary"
+            onClick={this.handleReset}
+          >
+            Reset
+          </Button>{' '}
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={this.state.reward === "" && this.state.formIsValid}
+          >
+            Submit
           </Button>
+          {' '}
+          {this.state.successText}
+        </Form.Group>
       </Form>
     );
   }
