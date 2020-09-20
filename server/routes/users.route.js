@@ -4,7 +4,7 @@ import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import User from '../models/user.model';
-import { generateHashedPassword, validateRegistration, validateLogIn } from '../utils/auth';
+import { generateHashedPassword, validateRegistrationInput } from '../utils/auth';
 
 const usersRouter = express.Router();
 
@@ -19,11 +19,10 @@ const createUser = async (email, password) => {
 };
 
 
-usersRouter.post('/register', validateRegistration, async (req, res) => {
-  console.log(req.body);
-  const errorsAfterValidation = validationResult(req);
-  if (!errorsAfterValidation.isEmpty()) {
-    res.status(400).json({ message: errorsAfterValidation.mapped() });
+usersRouter.post('/register', validateRegistrationInput, async (req, res) => {
+  const isValid = validationResult(req);
+  if (!isValid.isEmpty()) {
+    res.status(400).json({message: isValid.array()})
   }
 
   try {

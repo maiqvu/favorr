@@ -6,9 +6,9 @@ export const generateHashedPassword = async (password) => {
   return await bcrypt.hash(password, salt);
 };
 
-export const validateRegistration = [
-  check('name')
-    .exists().withMessage('Name cannot be empty'),
+export const validateRegistrationInput = [
+  check('username')
+    .exists().withMessage('Username cannot be empty.'),
   check('email')
     .exists().withMessage('Email cannot be empty.')
     .isEmail().withMessage('Please enter a valid email format.'),
@@ -17,9 +17,9 @@ export const validateRegistration = [
     .isLength({ min: 5 }).withMessage('Password must have at least 5 characters.'),
 ];
 
-export const validateLogIn = [
-  check('email')
-    .exists().withMessage('Email cannot be empty.'),
+export const validateLoginInput = [
+  check('username')
+    .exists().withMessage('Username cannot be empty.'),
   check('password')
     .exists().withMessage('Password cannot be empty.')
 ];
