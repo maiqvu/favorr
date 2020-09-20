@@ -1,106 +1,138 @@
-import React, { Component } from "react";
-import axios from "axios";
-import {Container, Row, Col, Button} from 'react-bootstrap';
+import React, { Component } from 'react';
+import axios from 'axios';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 
 export default class Register extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
     this.state = {
-      email: "",
-      password: "",
-      password_confirmation: "",
-      registrationErrors: ""
+      username: '',
+      email: '',
+      password: '',
+      password_confirmation: '',
+      errors: {},
+      success: false,
     };
 
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
-  handleChange(event) {
+  onChange(event) {
     this.setState({
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     });
   }
 
-  handleSubmit(event) {
-    const { email, password , password_confirmation} = this.state;
+  onSubmit(event) {
+    event.preventDefault();
+    const { username, email, password, password_confirmation } = this.state;
 
     axios
-      .post(
-        "/api/users/register",
-        {
-          email: email,
-          password: password,
-          // password_confirmation: password_confirmation
-        }
-      )
-      .then(response => {
-        if (response.data.status === "created") {
-          this.props.handleSuccessfulAuth(response.data);
-        }
+      .post('/api/users/register', {
+        username: username,
+        email: email,
+        password: password,
+        password_confirmation: password_confirmation,
       })
-      .catch(error => {
-        console.log("registration error", error);
+      .then((response) => {
+        console.log(response.data);
+        this.setState({ success: true });
+      })
+      .catch((err) => {
+        this.setState({ errors: err.response.data });
+        console.log(this.state.errors);
       });
-    event.preventDefault();
   }
 
   render() {
+    let { errors, success } = this.state;
+    let message;
+    if (success)
+      message = (
+        <div className="text-success text-center">
+          Your Account has been created!
+        </div>
+      );
+    else if (Array.isArray(errors.message)) {
+      message = errors.message.map((item) => (
+        <div className="text-danger text-center" key={item.param}>
+          {item.msg}
+        </div>
+      ));
+    } else
+      message = <div className="text-danger text-center">{errors.message}</div>;
+
     return (
-      <Container>
-        <Row>
-          <Col md="3"></Col>
-          <Col md="6">
-            <form onSubmit={this.handleSubmit}>
+      <Container className="mt-4">
+        <Row className="justify-content-md-center">
+          <Col lg="6" md="8" sm="8">
+            <form onSubmit={this.onSubmit}>
               <p className="h4 text-center mb-4">Register</p>
-              <label htmlFor="email" className="grey-text">
-                Your email
-              </label>
-              <input 
-                type="email"
-                id="email" 
-                name="email" 
-                value={this.state.email}
-                onChange={this.handleChange}
-                required
-                className="form-control" 
-              />
-              <br />
+              <div className="form-group">
+                <label htmlFor="username" className="grey-text">
+                  Your name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder=""
+                  name="username"
+                  value={this.state.name}
+                  onChange={this.onChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="email" className="grey-text">
+                  Your email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={this.state.email}
+                  onChange={this.onChange}
+                  className="form-control"
+                />
+              </div>
+
               <label htmlFor="password" className="grey-text">
                 Your password
               </label>
-              <input 
-                type="password" 
-                id="password" 
+              <input
+                type="password"
+                id="password"
                 name="password"
-                className="form-control" 
+                className="form-control"
                 value={this.state.password}
-                onChange={this.handleChange}
-                required
+                onChange={this.onChange}
               />
               <br />
               <label htmlFor="password_confirmation" className="grey-text">
                 Confirm Password
               </label>
-              <input 
-                type="password" 
-                id="password_confirmation" 
+              <input
+                type="password"
+                id="password_confirmation"
                 name="password_confirmation"
-                className="form-control" 
+                className="form-control"
                 value={this.state.password_confirmation}
-                onChange={this.handleChange}
-                required
+                onChange={this.onChange}
               />
               <div className="text-center mt-4">
-                <Button color="indigo" type="submit" className="white-text">Register</Button>
+                <Button color="indigo" type="submit" className="white-text">
+                  Register
+                </Button>
               </div>
+              {message}
             </form>
           </Col>
-          <Col md="3"></Col>
         </Row>
-        
       </Container>
     );
   }
 }
+
+//this.props.history.push('/dashboard')

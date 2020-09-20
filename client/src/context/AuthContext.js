@@ -20,10 +20,10 @@ export default ({children}) => {
     <React.Fragment>
       {/* If isLoaded is false, render a 'Loading...' message. Otherwise, render the global context provider wrapping around children components. */}
       {
-        !isLoaded 
-        ? 
-        <div>Loading...</div>
-        : 
+        // !isLoaded 
+        // ? 
+        // <div>Loading...</div>
+        // : 
         <AuthContext.Provider value={{user, setUser, isAuthenticated, setIsAuthenticated}}>
           { children }
         </AuthContext.Provider>
