@@ -108,4 +108,25 @@ usersRouter.get(
   }
 );
 
+// Get all users if no condition attached OR find by username if username is passed as query string from request
+usersRouter.get('/' , async (req, res) => {
+  const { username } = req.query;
+  const condition = username ?
+    { username: {$regex: new RegExp(username), $options: "i"} } 
+    :
+    {};
+  await User.find(condition)
+    .then(data => {
+      // 'data' is an array of all matches. If more than 1 match found, ask the user to search a full accurate username. Note: all usernames in the system are unique.
+      if (data.length === 1) {
+        const dataToReturn = { ...data[0].toJSON() };
+        delete dataToReturn.hashedPassword;
+        res.status(200).json(dataToReturn);
+      } else {
+        res.status(500).json({ message: 'Please enter an accurate username.' });
+      }
+    })
+    .catch(err => res.status(500).send(err));
+});
+
 export default usersRouter;
