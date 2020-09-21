@@ -8,16 +8,19 @@ const FavorSchema = new mongoose.Schema({
   owedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    // required: true
+    required: true
   },
   owedTo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    // required: true
+    required: true
   },
   image: {
     type: String
   },
+  repaid: {
+    type: Boolean
+  }
 });
 
 export default mongoose.model('Favor', FavorSchema);
