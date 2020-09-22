@@ -1,36 +1,36 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Button from 'react-bootstrap/Button';
 
-export default class RemoveReward extends Component {
-  render() {
-    return (
-      <div className="input-group">
-        <select
-          className="custom-select"
-          id="inputGroupSelectRewardToRemove"
-          name="removeRewardId"
-          value={this.props.removeRewardId}
-          onChange={this.props.onChange}
+const RemoveReward = (props) => {
+  return (
+    <div className="input-group">
+      <select
+        className="custom-select"
+        id="inputGroupSelectRewardToRemove"
+        name="removeRewardId"
+        value={props.removeRewardId}
+        onChange={props.onChange}
+      >
+        <option value="">Remove a reward</option>
+        {props.request._id === props.focusedRequestId
+          ? props.request.rewards.map((reward) =>
+              reward.username === props.username ? (
+                <option value={reward._id}>{reward.item}</option>
+              ) : null
+            )
+          : null}
+      </select>
+      <div className="input-group-append">
+        <Button
+          variant="outline-primary"
+          onClick={props.removeReward}
+          disabled={!props.removeRewardId}
         >
-          <option value="">Remove a reward</option>
-          {this.props.request._id === this.props.focusedRequestId
-            ? this.props.request.rewards.map((reward) =>
-                reward.name === this.props.username ? (
-                  <option value={reward._id}>{reward.item}</option>
-                ) : null
-              )
-            : null}
-        </select>
-        <div className="input-group-append">
-          <Button
-            variant="outline-primary"
-            onClick={this.props.removeReward}
-            disabled={!this.props.removeRewardId}
-          >
-            Remove
-          </Button>
-        </div>
+          Remove
+        </Button>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+export default RemoveReward;
