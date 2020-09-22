@@ -11,7 +11,7 @@ const publicRequestsRouter = express.Router();
 publicRequestsRouter.post('/', async (req, res) => {
     const { creator, claimedBy, claimedByTime, task, reward } = req.body;
     // Condition to have required field filled out
-    if (!creator || !task || !reward) {
+    if (!creator || !task || !reward.userId || !reward.item) {
         return res.status(400).json({ message: 'Please enter all required fields.' });
     }
 
@@ -21,7 +21,7 @@ publicRequestsRouter.post('/', async (req, res) => {
             claimedBy: claimedBy,
             claimedByTime: claimedByTime,
             task: task,
-            rewards: reward
+            rewards: [reward]
         });
 
         await newPublicRequest.save();
@@ -79,7 +79,8 @@ publicRequestsRouter.delete('/:id', async (req, res) => {
 publicRequestsRouter.post('/:id/add-reward', async (req, res) => {
     const requestId = req.params.id;
     const newReward = {
-        name: req.body.name,
+        userId: req.body.userId,
+        username: req.body.username,
         item: req.body.item
     };
 
