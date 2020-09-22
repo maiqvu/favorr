@@ -12,11 +12,11 @@ const MyClaimedRequests = (props) => {
   const authContext = useContext(AuthContext);
   
   useEffect(() => {
-    axios.get(`/api/publicRequests/claimed/john`)
+    axios.get(`/api/publicRequests/claimed/${authContext.user.username}`)
     // axios.get(`/api/publicRequests/claimed/${authContext.user._id}`)
       .then(res => setClaimedRequests(res.data))
       .catch(err => console.error(err));
-  }, [authContext.user._id]);
+  }, [authContext.user]);
   
   // This function is a duplicate from AvailablePublicRequest
   const expandRequestToggle = (requestId) => {
@@ -26,6 +26,32 @@ const MyClaimedRequests = (props) => {
       setFocusedRequestId(requestId);
     }
   };
+
+  // This function is a duplicate from AvailablePublicRequest (This is not needed, but I want to reuse updateRequest function later.)
+  const deleteRequest = async (request) => {
+    try {
+      await axios.delete(`/api/publicRequests/${request._id}`);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // This function is a duplicate from AvailablePublicRequest
+  const updateRequest = async (updatedRequest, index) => {
+    let tmpRequests = [...claimedRequests];
+
+    // Delete request if there are no more rewards
+    if (!updatedRequest.rewards.length) {
+      deleteRequest(updatedRequest);
+      tmpRequests.splice(index, 1);
+      setFocusedRequestId('');
+    } else {
+      let request = { ...tmpRequests[index] };
+      request = updatedRequest;
+      tmpRequests[index] = request;
+    }
+    setClaimedRequests(tmpRequests)
+  }
   
   return (
     <div>
@@ -50,9 +76,9 @@ const MyClaimedRequests = (props) => {
             key={index}
             request={claimedRequest}
             date={claimedRequest.claimedByTime}
-            username={authContext.user.username}
+            user={authContext.user}
             focusedRequestId={focusedRequestId}
-            // updateRequest={updateRequest}
+            updateRequest={updateRequest}
             expandRequestToggle={() => expandRequestToggle(claimedRequest._id, index)} />
         )}
       </Container>
