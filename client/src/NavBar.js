@@ -26,29 +26,29 @@ const NavBar = (props) => {
       <React.Fragment >
         <ul className="navbar-nav mr-auto nav-links">
             <li className="nav-item">
-                <Link to="/">Public Request</Link>
+                <Link className="nav-link" to="/">Public Request</Link>
             </li>
             <li className="nav-item">
-                <Link className="nav-item nav-link" to="/createPublicRequest">Create Public Request</Link>
+                <Link className="nav-link" to="/createPublicRequest">Create Public Request</Link>
             </li>
             <li className="nav-item">
-                <Link className="nav-item nav-link" to="/myclaimedRequests">
+                <Link className="nav-link" to="/myclaimedRequests">
                     My Claimed Requests
                 </Link>
             </li>
             <li className="nav-item">
-                <Link className="nav-item nav-link" to="/myFavors">
+                <Link className="nav-link" to="/myFavors">
                     My Favors
                 </Link>
             </li>
             <li className="nav-item">
-                <Link className="nav-item nav-link" to="/addFavor">
+                <Link className="nav-link" to="/addFavor">
                     Create Favor
                 </Link>
             </li>
         </ul>
         <ul className="navbar-nav ml-auto nav-links">
-            <li className="nav-item">Welcome {user.username}!</li>
+          <li className="nav-item text-light">Welcome {user.username}!</li>
             <li className="nav-item"><Link to="/logout">Logout</Link></li>
         </ul>
       </React.Fragment>
