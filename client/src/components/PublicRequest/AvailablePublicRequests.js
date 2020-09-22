@@ -1,110 +1,193 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
 import Request from './Request';
+import { AuthContext } from '../../context/AuthContext';
 
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import {
+  Container,
+  Row,
+  Col,
+  InputGroup,
+  FormControl,
+  Button,
+} from 'react-bootstrap';
 
-export default class AvailablePublicRequests extends Component {
-  constructor(props) {
-    super(props);
+const AvailablePublicRequests = (props) => {
+  const [requests, setRequests] = useState([]);
+  const [focusedRequestId, setFocusedRequestId] = useState('');
+  const [keywordToSearch, setKeywordToSearch] = useState('');
+  const [rewardToSearch, setRewardToSearch] = useState('');
+  const [filterByKeyword, setFilterByKeyword] = useState(true);
 
-    this.username = 'john';
-    this.state = {
-      requests: [],
-      focusedRequestId: '',
-    };
+  const authContext = useContext(AuthContext);
 
-    this.updateRequest = this.updateRequest.bind(this);
-  }
+  useEffect(() => {
+    axios
+      .get('/api/publicRequests/available')
+      .then((res) => setRequests(res.data))
+      .catch((err) => console.error(err));
+  }, [authContext.user]);
 
-  async componentDidMount() {
-    try {
-      let response = await axios.get('/api/publicRequests/available');
-      this.setState({ requests: response.data });
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async deleteRequest(request) {
+  const deleteRequest = async (request) => {
     try {
       await axios.delete(`/api/publicRequests/${request._id}`);
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
-  updateRequest(updatedRequest, index) {
-    let requests = [...this.state.requests];
+  const handleKeywordToSearchInput = (e) => {
+    setKeywordToSearch(e.target.value);
+  };
+
+  const handleSelectFilterByKeyword = (flag) => {
+    setKeywordToSearch('');
+    setRewardToSearch('');
+    setFilterByKeyword(flag);
+  };
+
+  const handleRewardToSearchInput = (e) => {
+    setRewardToSearch(e.target.value);
+  };
+
+  // This function is a duplicate from MyClaimedRequests
+  const updateRequest = async (updatedRequest, index) => {
+    let tmpRequests = [...requests];
 
     // Delete request if there are no more rewards
     if (!updatedRequest.rewards.length) {
-      this.deleteRequest(updatedRequest);
-      requests.splice(index, 1);
-      this.setState({ focusedRequestId: '' });
+      deleteRequest(updatedRequest);
+      tmpRequests.splice(index, 1);
+      setFocusedRequestId('');
     } else {
-      let request = { ...requests[index] };
+      let request = { ...tmpRequests[index] };
       request = updatedRequest;
-      requests[index] = request;
+      tmpRequests[index] = request;
     }
+    setRequests(tmpRequests);
+  };
 
-    this.setState({ requests });
-  }
-
-  expandRequestToggle(requestId) {
-    if (this.state.focusedRequestId === requestId) {
-      this.setState({ focusedRequestId: null });
+  // This function is a duplicate from MyClaimedRequests
+  const expandRequestToggle = (requestId) => {
+    if (focusedRequestId === requestId) {
+      setFocusedRequestId('');
     } else {
-      this.setState({ focusedRequestId: requestId });
+      setFocusedRequestId(requestId);
     }
-  }
+  };
 
-  async claim(requestId, index) {
+  const claim = async (requestId, index) => {
     try {
       let response = await axios.patch(
-        `/api/publicRequests/${requestId}/claim/${this.username}`
+        `/api/publicRequests/${requestId}/claim/${authContext.user.username}`
       );
-      this.updateRequest(response.data, index);
+      updateRequest(response.data, index);
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        <h3 className="text-center">Available Public Requests</h3>
-        <Container className="px-lg-5">
-          <Row>
-            <Col className="col-sm-5 text-left font-weight-bold">Task</Col>
-            <Col className="col-sm-3 text-left font-weight-bold">
-              Date Submitted
-            </Col>
-            <Col className="col-sm-3 text-left font-weight-bold">Rewards</Col>
-            <Col className="col-sm-1 text-right"></Col>
-          </Row>
-          <hr className="border border-light" />
-          {this.state.requests.map((request, index) =>
-            !request.claimedBy ? (
-              <Request
+  const requestRewardItems = (rewards) => {
+    let itemList = [];
+
+    for (let reward of rewards) {
+      itemList.push(reward.item);
+    }
+    return itemList;
+  };
+
+  return (
+    <div>
+      <Container className="px-lg-5 mt-4">
+        <h4 className="text-center mb-4">Available Public Requests</h4>
+        <InputGroup className="mb-3">
+          <InputGroup.Prepend>
+            <InputGroup.Text id="inputGroup-sizing-default">
+              Filter by
+            </InputGroup.Text>
+            <div className="btn-group btn-group-toggle" data-toggle="buttons">
+              <Button
+                variant="outline-secondary"
+                className="active"
+                onClick={() => handleSelectFilterByKeyword(true)}
+              >
+                <input
+                  type="radio"
+                  name="options"
+                  id="option1"
+                  defaultChecked
+                />
+                Keyword
+              </Button>
+              <Button
+                variant="outline-secondary"
+                onClick={() => handleSelectFilterByKeyword(false)}
+              >
+                <input type="radio" name="options" id="option2" />
+                Reward
+              </Button>
+            </div>
+          </InputGroup.Prepend>
+          {filterByKeyword ? (
+            <FormControl
+              id="searchByKeyword"
+              aria-label="Default"
+              aria-describedby="inputGroup-sizing-default"
+              placeholder="Type here to filter by keyword"
+              onChange={handleKeywordToSearchInput}
+            />
+          ) : (
+            <select
+              className="custom-select"
+              id="searchByReward"
+              onChange={handleRewardToSearchInput}
+            >
+              <option value="">Select to filter a reward</option>
+              <option value="Brownie">Brownie</option>
+              <option value="Coffee">Coffee</option>
+              <option value="Pizza">Pizza</option>
+              <option value="Candy">Candy</option>
+              <option value="Chocolate Bar">Chocolate Bar</option>
+            </select>
+          )}
+        </InputGroup>
+        <Row>
+          <Col className="col-sm-5 text-left font-weight-bold">Task</Col>
+          <Col className="col-sm-3 text-left font-weight-bold">
+            Date Submitted
+          </Col>
+          <Col className="col-sm-3 text-left font-weight-bold">Rewards</Col>
+          <Col className="col-sm-1 text-right"></Col>
+        </Row>
+        <hr className="border border-light" />
+        {requests.map((request, index) =>
+          !request.claimedBy ? (
+            (request.task
+              .toLowerCase()
+              .includes(keywordToSearch.toLowerCase()) &&
+              filterByKeyword) ||
+            (requestRewardItems(request.rewards).includes(rewardToSearch) &&
+              !filterByKeyword) ||
+            (keywordToSearch === '' && rewardToSearch === '') ? (
+              <Request key={index}
                 request={request}
                 date={request.createdAt}
                 index={index}
-                username={this.username}
-                focusedRequestId={this.state.focusedRequestId}
-                updateRequest={this.updateRequest}
+                user={authContext.user}
+                focusedRequestId={focusedRequestId}
+                updateRequest={updateRequest}
                 expandRequestToggle={() =>
-                  this.expandRequestToggle(request._id, index)
+                  expandRequestToggle(request._id, index)
                 }
-                claim={this.claim}
+                claim={claim}
               />
             ) : null
-          )}
-        </Container>
-      </div>
-    );
-  }
-}
+          ) : null
+        )}
+      </Container>
+    </div>
+  );
+};
+
+export default AvailablePublicRequests;
