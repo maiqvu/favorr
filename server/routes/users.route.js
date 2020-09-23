@@ -102,7 +102,10 @@ usersRouter.get(
     if (req.user.username) {
       res.status(200).json({ 
         isAuthenticated: true,
-        user: { username }
+        user: { 
+          username: req.user.username,
+          _id: req.user._id
+        }
       });
     }
   }
