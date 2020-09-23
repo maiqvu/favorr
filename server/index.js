@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import cookieParser from'cookie-parser';
 
 // Import route handlers
 import usersRouter from './routes/users.route';
@@ -16,6 +17,7 @@ const app = express();
 
 // Middleware
 app.use(cors());
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
