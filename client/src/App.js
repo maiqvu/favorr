@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AvailablePublicRequests from './components/PublicRequest/AvailablePublicRequests';
 import CreatePublicRequest from './components/PublicRequest/CreatePublicRequest';
@@ -12,10 +12,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { Layout } from './components/Layout';
 
-class App extends Component {
-  render() {
+const App = () => {
     return (
-      <React.Fragment>
         <Router>
           <NavBar />
           <Layout>
@@ -29,11 +27,8 @@ class App extends Component {
               <Route path="/register" component={Register} />
             </Switch>
           </Layout>
-
         </Router>
-      </React.Fragment>
     );
-  }
 }
 
 export default App;
