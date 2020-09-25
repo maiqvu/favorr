@@ -1,40 +1,37 @@
 import React, { useState } from 'react';
-
 import { Form, Row, Col, Button } from 'react-bootstrap';
 
 const AddFavor = () => {
-  const [newFavor, setNewFavor] = useState({ description: '' });
-  const [owedByMe, setOwedByMe] = useState();
+  const [ newFavor, setNewFavor ] = useState({
+    description: '',
+    owedBy: '',
+    owedTo: ''
+  });
+  const [ owedByMe, setOwedByMe ] = useState(null);
+  
+  const handleChange = (e) => {
+    setNewFavor({ ...newFavor, [e.target.name]: e.target.value });
+  };
   
   const handleSubmit = (e) => {
     e.preventDefault();
-  };
-  
-  const handleSelectFavor = (e) => {
-    setNewFavor({ [e.target.name]: e.target.value });
-  };
-  
-  const handleOwedByMe = (e) => {
-    if (e.target.value === 'owed by') {
-      setOwedByMe(true);
-    } else {
-      setOwedByMe(false);
-    }
+    console.log(newFavor);
   };
   
   return (
     <Form onSubmit={handleSubmit}>
-      <h3 className="text-left">Create a new favor</h3>
+      <h3 className="text-left">Add a new favor</h3>
       
       <Form.Group as={Row} controlId="selectFavor">
         <Form.Label column sm={2}>Description</Form.Label>
         <Col sm={8}>
           <Form.Control 
-              required
-              as="select"
-              name="description"
-              value={newFavor.description}
-              onChange={handleSelectFavor}>
+            required
+            as="select"
+            name="description"
+            value={newFavor.description}
+            onChange={handleChange}
+          >
             <option value="">Select a favor</option>
             <option value="Brownie">Brownie</option>
             <option value="Coffee">Coffee</option>
@@ -45,24 +42,56 @@ const AddFavor = () => {
         </Col>
       </Form.Group>
       
-      <Form.Group as={Row} controlId="owedBy">
-        <Form.Label column sm={2}>This favor is</Form.Label>
-        <Col sm={2}>
-          <Form.Control 
-              required 
-              as="select"
-              name="owedByMe"
-              value={owedByMe}
-              onChange={handleOwedByMe}>
-            <option value=""></option>
-            <option value="owed by">owed by</option>
-            <option value="owed to">owed to</option>
-          </Form.Control>
-        </Col>
-        <Form.Label column sm={1}>me by</Form.Label>
-        <Col sm={5}>
-          <Form.Control type="text" placeholder="Enter your friend's username" />
-        </Col>
+      <Form.Label>Owed to</Form.Label>
+      <Form.Group controlId="selectOwedTo">
+        <div>
+          <Form.Label>
+            <Form.Check
+              type="radio"
+              inline
+              checked={owedByMe === false}
+              onChange={() => setOwedByMe(false)}
+            />
+            me
+          </Form.Label>
+        </div>
+        <div>
+          <Form.Label>
+            <Form.Check
+              type="radio"
+              inline
+              checked={owedByMe === true}
+              onChange={() => setOwedByMe(true)}
+            />
+            my friend
+          </Form.Label>
+        </div>
+      </Form.Group>
+      
+      <Form.Label>Owed by</Form.Label>
+      <Form.Group controlId="selectOwedBy">
+        <div>
+          <Form.Label>
+            <Form.Check
+              type="radio"
+              inline
+              checked={owedByMe === true}
+              onChange={() => setOwedByMe(true)}
+            />
+            me
+          </Form.Label>
+        </div>
+        <div>
+          <Form.Label>
+            <Form.Check
+              type="radio"
+              inline
+              checked={owedByMe === false}
+              onChange={() => setOwedByMe(false)}
+            />
+            my friend
+          </Form.Label>
+        </div>
       </Form.Group>
       
       {
