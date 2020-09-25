@@ -9,7 +9,7 @@ export default {
       return { message: 'Access denied.' }
     }
   },
-  createFavor: (favor) => {
+  addFavor: (favor) => {
     return fetch('/api/favors', {
       method: 'post',
       body: JSON.stringify(favor),
@@ -21,5 +21,13 @@ export default {
         return { message: 'Access denied.' }
       }
     })
-  }
+  },
+  findUserByUsername: async (username) => {
+    const res = await axios.get(`/api/users?username=${username}`);
+    if (res.status !== 401) {
+      return res.data;
+    } else {
+      return { message: 'Access denied.' }
+    }
+  },
 };
