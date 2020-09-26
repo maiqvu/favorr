@@ -36,8 +36,7 @@ const CreatePublicRequest = (props) => {
           claimedByTime: null,
           task: task,
           reward: { 
-            userId: authContext.user._id,
-            username: authContext.user.username,
+            user: authContext.user.username,
             item: reward
           }
         })

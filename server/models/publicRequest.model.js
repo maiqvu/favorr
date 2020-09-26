@@ -2,11 +2,13 @@ import mongoose from 'mongoose';
 
 const PublicRequestSchema = new mongoose.Schema({
   creator: {
-    type: String,
-    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
   claimedBy: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
   claimedByTime: {
     type: Date
@@ -16,12 +18,9 @@ const PublicRequestSchema = new mongoose.Schema({
     required: true
   },
   rewards: [{
-    userId: {
-      type: String,
-      required: true
-    },
-    username: {
-      type: String,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
       required: true
     },
     item: {

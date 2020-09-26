@@ -14,8 +14,10 @@ const RemoveReward = (props) => {
         <option value="">Remove a reward</option>
         {props.request._id === props.focusedRequestId
           ? props.request.rewards.map((reward) =>
-              reward.username === props.username ? (
-                <option value={reward._id}>{reward.item}</option>
+              reward.user ? (
+                reward.user._id === props.user._id ? (
+                  <option key={reward._id} value={reward._id}>{reward.item}</option>
+                ) : null
               ) : null
             )
           : null}

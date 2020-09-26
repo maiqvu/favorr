@@ -4,6 +4,7 @@ import formidable from 'express-formidable';
 
 // Import mongoose model
 import PublicRequest from '../models/publicRequest.model';
+import User from '../models/user.model';
 
 const publicRequestsRouter = express.Router();
 
@@ -11,13 +12,19 @@ const publicRequestsRouter = express.Router();
 publicRequestsRouter.post('/', async (req, res) => {
     const { creator, claimedBy, claimedByTime, task, reward } = req.body;
     // Condition to have required field filled out
-    if (!creator || !task || !reward.userId || !reward.item) {
+    if (!creator || !task || !reward.user || !reward.item) {
         return res.status(400).json({ message: 'Please enter all required fields.' });
     }
 
     try {
+        const creatorUser = await User.findOne({ username: req.body.creator });
+        const rewardUser = await User.findOne({ username: req.body.reward.user });
+
+        const creatorUserId = creatorUser._id.toString();
+        reward.user = rewardUser._id.toString();
+
         const newPublicRequest = new PublicRequest({
-            creator: creator,
+            creator: creatorUserId,
             claimedBy: claimedBy,
             claimedByTime: claimedByTime,
             task: task,
@@ -78,9 +85,12 @@ publicRequestsRouter.delete('/:id', async (req, res) => {
 // Add a reward to an existing request
 publicRequestsRouter.post('/:id/add-reward', async (req, res) => {
     const requestId = req.params.id;
+
+    const user = await User.findOne({ username: req.body.username });
+    const userId = user._id.toString();
+
     const newReward = {
-        userId: req.body.userId,
-        username: req.body.username,
+        user: userId,
         item: req.body.item
     };
 
@@ -88,8 +98,7 @@ publicRequestsRouter.post('/:id/add-reward', async (req, res) => {
         const updatedRequest = await PublicRequest.findOneAndUpdate(
             { _id: requestId },
             { $push: { rewards: newReward } },
-            { new: true }
-        );
+            { new: true }).populate('creator').populate('rewards.user');
         res.send(updatedRequest);
     } catch (err) {
         console.error(err)
@@ -105,8 +114,7 @@ publicRequestsRouter.patch('/:id/remove-reward', async (req, res) => {
         const updatedRequest = await PublicRequest.findOneAndUpdate(
             { _id: requestId},
             { $pull: { rewards: { _id: rewardIdToRemove }}},
-            { new: true })
-    
+            { new: true }).populate('creator').populate('rewards.user')    
         res.status(200).send(updatedRequest)
     } catch (err) {
         res.status(500).send(err);
@@ -117,13 +125,14 @@ publicRequestsRouter.patch('/:id/remove-reward', async (req, res) => {
 // Add username to the claimed request
 publicRequestsRouter.patch('/:id/claim/:username', async (req, res) => {
     const requestId = req.params.id;
-    const username = req.params.username;
+    const user = await User.findOne({ username: req.params.username });
+    const userId = user._id.toString();
 
     const updatedRequest = await PublicRequest.findOneAndUpdate(
         {_id: requestId},
-        {$set: {claimedBy: username, claimedByTime: Date.now()}},
+        {$set: {claimedBy: userId, claimedByTime: Date.now()}},
         {new: true}
-    );
+    ).populate('creator').populate('rewards.user');
     res.send(updatedRequest)
 })
 
@@ -131,18 +140,19 @@ publicRequestsRouter.patch('/:id/claim/:username', async (req, res) => {
 publicRequestsRouter.get('/available', async (req, res) => {
     const allAvailableRequests = await PublicRequest.find({
         claimedBy: {$eq: null}
-    });
+    }).populate('creator').populate('rewards.user').sort({ createdAt: -1 });
 
     res.status(200).send(allAvailableRequests);
 });
 
 // Get all the user's claimed public requests
 publicRequestsRouter.get('/claimed/:username', async (req, res) => {
-    const username = req.params.username;
+    const user = await User.findOne({ username: req.params.username });
+    const userId = user._id.toString();
 
     const userClaimedRequests = await PublicRequest.find({
-        claimedBy: {$eq: username}
-    });
+        claimedBy: {$eq: userId}
+    }).populate('creator').populate('rewards.user');
 
     res.status(200).send(userClaimedRequests);
 })
