@@ -1,27 +1,40 @@
 import 'dotenv/config';
 import express from 'express';
+// import jwt from 'jsonwebtoken';
 import Favor from '../models/favor.model';
+import User from '../models/user.model';
 
 const favorsRouter = express.Router();
 
 
 // Create a new favor
-favorsRouter.post('/:userId', async (req, res) => {
-  const { description, owedBy, owedTo } = req.body;
+favorsRouter.post('/', async (req, res) => {
+  // const token = req.headers.token;
 
-  if (!description) {
+  if (!req.body.description || !req.body.owedBy || !req.body.owedTo) {
     return res.status(400).json({ message: 'Please enter all required fields.' });
   }
 
   try {
-    const newFavor = new Favor({
-      description: description,
-      owedBy: req.params.userId,
-      owedTo: owedTo
-    });
-
-    await newFavor.save();
-    res.status(201).json(newFavor);
+    // const legit = jwt.verify(token, process.env.JWT_SECRET);
+    // console.log(`JWT verification result: ${JSON.stringify(legit)}`);
+    
+    const owedByUser = await User.findOne({ username: req.body.owedBy });
+    const owedToUser = await User.findOne({ username: req.body.owedTo });
+    const owedBy = owedByUser._id.toString();
+    const owedTo = owedToUser._id.toString();
+    
+    // if (legit) {
+      const newFavor = new Favor({
+        description: req.body.description,
+        owedBy: owedBy,
+        owedTo: owedTo
+      });
+      await newFavor.save();
+      res.status(201).json(newFavor);
+    // } else {
+    //   res.status(401).json({ message: 'Invalid token. Access denied.' });
+    // }
   } catch (err) {
     res.status(500).send(err);
   }
