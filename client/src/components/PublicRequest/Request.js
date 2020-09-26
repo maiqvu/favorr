@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 
 import AddReward from './AddReward';
@@ -43,7 +43,6 @@ const Request = (props) => {
       let response = await axios.post(
         `/api/publicRequests/${requestId}/add-reward`,
         {
-          userId: props.user._id,
           username: props.user.username,
           item: newReward,
         }
@@ -126,7 +125,7 @@ const Request = (props) => {
             <Row className="mb-4">
               <Col className="col-sm-5">
                 <strong>Creator:&ensp;</strong>
-                <span>{props.request.creator}</span>
+                <span>{props.request.creator.username}</span>
               </Col>
               <Col className="col-sm-7">
                 <strong>Task:&ensp;</strong>
@@ -151,6 +150,8 @@ const Request = (props) => {
                 </span>
               </Col>
             </Row>
+          </div>
+          <div>
             {props.user.username && !props.request.claimedBy ? (
               <Row>
                 <Col className="col-sm-5">
@@ -166,7 +167,7 @@ const Request = (props) => {
                   <RemoveReward
                     request={props.request}
                     focusedRequestId={props.focusedRequestId}
-                    username={props.user.username}
+                    user={props.user}
                     removeRewardId={removeRewardId}
                     onChange={handleSelectRemoveRewardId}
                     removeReward={() =>
@@ -179,36 +180,36 @@ const Request = (props) => {
                 </Col>
               </Row>
             ) : null}
-          </div>
-          <div className="text-right">
-            {(props.user.username && (props.user.username !== props.request.creator)
-              && (props.user.username !== props.request.claimedBy) )? (
-              <Button
-                variant="primary"
-                onClick={() =>
-                  props.claim(props.request._id, props.index)
-                }
-              >
-                Claim
-              </Button>
-            ) : null}
-            {props.user.username && (props.user.username === props.request.claimedBy) ? (
-              <div>
-                <Button onClick={toggleUploadOption}>Resolve</Button>
-                &ensp;
-                <Button onClick={toggleGiveUpConfirmation} variant="secondary">Give Up</Button>
-              </div>
-            ) : null}
-            {showUploadOption ? (
-              <UploadProof />
-            ) : null}
-            {showGiveUpConfirmation ? (
-              <div>
-                <br />
-                <h6>Are you sure?</h6>
-                <Button variant="danger">Yes</Button>
-              </div>
-            ) : null}
+            <div className="text-right">
+              {props.user.username && (props.user.username !== props.request.creator.username)
+                && (props.user._id !== props.request.claimedBy) ? (
+                <Button
+                  variant="primary"
+                  onClick={() =>
+                    props.claim(props.request._id, props.index)
+                  }
+                >
+                  Claim
+                </Button>
+              ) : null}
+              {props.user.username && (props.user._id === props.request.claimedBy) ? (
+                <div>
+                  <Button onClick={toggleUploadOption}>Resolve</Button>
+                  &ensp;
+                  <Button onClick={toggleGiveUpConfirmation} variant="secondary">Give Up</Button>
+                </div>
+              ) : null}
+              {showUploadOption ? (
+                <UploadProof />
+              ) : null}
+              {showGiveUpConfirmation ? (
+                <div>
+                  <br />
+                  <h6>Are you sure?</h6>
+                  <Button variant="danger">Yes</Button>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       ) : null}
