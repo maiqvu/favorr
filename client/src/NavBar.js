@@ -8,8 +8,6 @@ import Cookie from 'universal-cookie';
 
 const NavBar = (props) => {
   const { user, isAuthenticated } = useContext(AuthContext);
-  const authContext = useContext(AuthContext);
-  const cookie = new Cookie();
 
   const unauthenticatedNavBar = () => {
     return (

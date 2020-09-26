@@ -99,7 +99,6 @@ usersRouter.get(
   '/isAuthenticated',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    console.log(req.user);
     if (req.user.username) {
       res.status(200).json({ 
         isAuthenticated: true,

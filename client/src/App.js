@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext }  from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AvailablePublicRequests from './components/PublicRequest/AvailablePublicRequests';
 import CreatePublicRequest from './components/PublicRequest/CreatePublicRequest';
@@ -7,24 +7,31 @@ import MyFavors from './components/Favor/MyFavors';
 import AddFavor from './components/Favor/AddFavor';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
+import ProtectedRoute from './components/Auth/ProtectedRoute';
 import NavBar from './NavBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { Layout } from './components/Layout';
+import { AuthContext } from './context/AuthContext';
 
 const App = () => {
+  const {isAuthenticated } = useContext(AuthContext);
     return (
         <Router>
           <NavBar />
           <Layout>
             <Switch>
               <Route exact path="/" component={AvailablePublicRequests} />
-              <Route path="/createPublicRequest" component={CreatePublicRequest} />
-              <Route path="/myClaimedRequests" component={MyClaimedRequests} />
-              <Route path="/myFavors" component={MyFavors} />
-              <Route path="/addFavor" component={AddFavor} />
-              <Route path="/login" component={Login} />
-              <Route path="/register" component={Register} />
+              <ProtectedRoute path="/createPublicRequest" component={CreatePublicRequest} />
+              <ProtectedRoute path="/myClaimedRequests" component={MyClaimedRequests} />
+              <ProtectedRoute path="/myFavors" component={MyFavors} />
+              <ProtectedRoute path="/addFavor" component={AddFavor} />
+              {!isAuthenticated &&
+                <Route path="/login" component={Login} />
+              }
+              {!isAuthenticated &&
+                <Route path="/register" component={Register} />
+              }
             </Switch>
           </Layout>
         </Router>
