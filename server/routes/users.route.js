@@ -69,7 +69,7 @@ usersRouter.post(
     if (req.isAuthenticated()) {
       const { _id, username } = req.user;
       const token = signToken(_id);
-      res.cookie('access_token', token, {httpOnly: true, sameSite: true});
+      res.cookie('access_token', token, {maxAge: 360000, httpOnly: true, sameSite: true});
       res.status(200).json({
         isAuthenticated: true,
         user: { _id, username }
@@ -99,6 +99,7 @@ usersRouter.get(
   '/isAuthenticated',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
+    console.log(req.user);
     if (req.user.username) {
       res.status(200).json({ 
         isAuthenticated: true,
@@ -110,6 +111,16 @@ usersRouter.get(
     }
   }
 );
+
+usersRouter.get(
+  '/logout', (req,res) => {
+    res.clearCookie('access_token'),
+    res.status(200).json({
+      isAuthenticated: false,
+        user: {}
+    })
+  }
+)
 
 // Get all users if no condition attached OR find by username if username is passed as query string from request
 usersRouter.get('/' , async (req, res) => {

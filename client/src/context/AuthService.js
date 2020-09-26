@@ -14,8 +14,18 @@ export default {
       }
     });
   },
+  logout: () =>{
+    return fetch('/api/users/logout')
+      .then(res => {
+        if (res.status !== 401) {
+          return res.json().then(data => data);
+        }
+      });
+  },
   isAuthenticated: () => {
-    return fetch('/api/users/isAuthenticated').then(res => {
+    return fetch('/api/users/isAuthenticated', {
+      method: 'get',
+    }).then(res => {
       if (res.status !== 401) {
         return res.json().then(data => data);
       } else {

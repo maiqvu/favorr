@@ -2,10 +2,14 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { AuthContext } from './context/AuthContext';
+import AuthService from './context/AuthService';
 import Button from 'react-bootstrap/Button';
+import Cookie from 'universal-cookie';
 
 const NavBar = (props) => {
   const { user, isAuthenticated } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
+  const cookie = new Cookie();
 
   const unauthenticatedNavBar = () => {
     return (
@@ -20,6 +24,11 @@ const NavBar = (props) => {
       </React.Fragment>
     );
   };
+
+  const logoutHandler = () => {
+    AuthService.logout();
+    window.location.reload(false);
+  }
 
   const authenticatedNavBar = () => {
     return (
@@ -49,7 +58,7 @@ const NavBar = (props) => {
         </ul>
         <ul className="navbar-nav ml-auto nav-links">
           <li className="nav-item text-light">Welcome {user.username}!</li>
-            <li className="nav-item"><Link to="/logout">Logout</Link></li>
+            <li className="nav-item"><Link to="/" onClick={logoutHandler} >Logout</Link></li>
         </ul>
       </React.Fragment>
     );
