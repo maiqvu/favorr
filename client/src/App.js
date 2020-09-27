@@ -8,6 +8,7 @@ import AddFavor from './components/Favor/AddFavor';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
+import NotFoundPage from './components/Auth/NotFoundPage';
 import NavBar from './NavBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -32,6 +33,7 @@ const App = () => {
               {!isLogged &&
                 <Route path="/register" component={Register} />
               }
+              <Route component={NotFoundPage} />
             </Switch>
           </Layout>
         </Router>

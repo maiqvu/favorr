@@ -25,6 +25,8 @@ const NavBar = (props) => {
 
   const logoutHandler = () => {
     AuthService.logout();
+    localStorage.setItem('user', null);
+    localStorage.setItem('isAuthenticated', null);
     window.location.reload(false);
   }
 
