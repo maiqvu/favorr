@@ -21,6 +21,6 @@ const FavorSchema = new mongoose.Schema({
   repaid: {
     type: Boolean
   }
-});
+}, { timestamps: true });
 
 export default mongoose.model('Favor', FavorSchema);
