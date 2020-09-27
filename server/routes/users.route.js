@@ -10,8 +10,9 @@ const usersRouter = express.Router();
 
 const passportConfig = require('../utils/passport');
 
-const createUser = async (email, password) => {
+const createUser = async (username, email, password) => {
   const data = {
+    username,
     email,
     hashedPassword: await generateHashedPassword(password)
   };
@@ -26,18 +27,18 @@ usersRouter.post('/register', validateRegistrationInput, async (req, res) => {
   }
 
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const { username, email, password } = req.body;
+    const user = await User.findOne({ username });
 
     if (user) {
       res.status(403).json({ message: 'An account already exists for this email address.' });
     } else {
-      await createUser(email, password);
+      await createUser(username, email, password);
 
       // Sign a token
-      const newUser = await User.findOne({ email });
+      const newUser = await User.findOne({ username });
       const token = jwt.sign(
-        { email },
+        { username },
         process.env.JWT_SECRET,
         { expiresIn: 3600 }
       );
@@ -64,7 +65,7 @@ const signToken = (userId) => {
 
 usersRouter.post(
   '/login',
-  passport.authenticate('local', {session: false}),
+  passport.authenticate('local', { session: false }),
   (req, res) => {
     if (req.isAuthenticated()) {
       const { _id, username } = req.user;
