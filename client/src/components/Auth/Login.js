@@ -21,6 +21,8 @@ const Login = (props) => {
       if (isAuthenticated) {
         authContext.setUser(user);
         authContext.setIsAuthenticated(isAuthenticated);
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('isAuthenticated', JSON.stringify(isAuthenticated));
         props.history.push('/');   // Redirect back to Homepage
       }
     });

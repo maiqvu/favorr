@@ -151,66 +151,68 @@ const Request = (props) => {
               </Col>
             </Row>
           </div>
-          <div>
-            {props.user.username && !props.request.claimedBy ? (
-              <Row>
-                <Col className="col-sm-5">
-                  <AddReward
-                    newReward={newReward}
-                    onChange={handleSelectNewReward}
-                    addReward={() =>
-                      addReward(props.request._id, props.index)
+          {props.user ? (
+            <div>
+              {props.user.username && !props.request.claimedBy ? (
+                <Row>
+                  <Col className="col-sm-5">
+                    <AddReward
+                      newReward={newReward}
+                      onChange={handleSelectNewReward}
+                      addReward={() =>
+                        addReward(props.request._id, props.index)
+                      }
+                    />
+                  </Col>
+                  <Col className="col-sm-5">
+                    <RemoveReward
+                      request={props.request}
+                      focusedRequestId={props.focusedRequestId}
+                      user={props.user}
+                      removeRewardId={removeRewardId}
+                      onChange={handleSelectRemoveRewardId}
+                      removeReward={() =>
+                        removeReward(
+                          props.request._id,
+                          props.index
+                        )
+                      }
+                    />
+                  </Col>
+                </Row>
+              ) : null}
+              <div className="text-right">
+                {props.user.username && (props.user.username !== props.request.creator.username)
+                  && (props.user._id !== props.request.claimedBy) ? (
+                  <Button
+                    variant="primary"
+                    onClick={() =>
+                      props.claim(props.request._id, props.index)
                     }
-                  />
-                </Col>
-                <Col className="col-sm-5">
-                  <RemoveReward
-                    request={props.request}
-                    focusedRequestId={props.focusedRequestId}
-                    user={props.user}
-                    removeRewardId={removeRewardId}
-                    onChange={handleSelectRemoveRewardId}
-                    removeReward={() =>
-                      removeReward(
-                        props.request._id,
-                        props.index
-                      )
-                    }
-                  />
-                </Col>
-              </Row>
-            ) : null}
-            <div className="text-right">
-              {props.user.username && (props.user.username !== props.request.creator.username)
-                && (props.user._id !== props.request.claimedBy) ? (
-                <Button
-                  variant="primary"
-                  onClick={() =>
-                    props.claim(props.request._id, props.index)
-                  }
-                >
-                  Claim
-                </Button>
-              ) : null}
-              {props.user.username && (props.user._id === props.request.claimedBy) ? (
-                <div>
-                  <Button onClick={toggleUploadOption}>Resolve</Button>
-                  &ensp;
-                  <Button onClick={toggleGiveUpConfirmation} variant="secondary">Give Up</Button>
-                </div>
-              ) : null}
-              {showUploadOption ? (
-                <UploadProof />
-              ) : null}
-              {showGiveUpConfirmation ? (
-                <div>
-                  <br />
-                  <h6>Are you sure?</h6>
-                  <Button variant="danger">Yes</Button>
-                </div>
-              ) : null}
+                  >
+                    Claim
+                  </Button>
+                ) : null}
+                {props.user.username && (props.user._id === props.request.claimedBy) ? (
+                  <div>
+                    <Button onClick={toggleUploadOption}>Resolve</Button>
+                    &ensp;
+                    <Button onClick={toggleGiveUpConfirmation} variant="secondary">Give Up</Button>
+                  </div>
+                ) : null}
+                {showUploadOption ? (
+                  <UploadProof />
+                ) : null}
+                {showGiveUpConfirmation ? (
+                  <div>
+                    <br />
+                    <h6>Are you sure?</h6>
+                    <Button variant="danger">Yes</Button>
+                  </div>
+                ) : null}
+              </div>
             </div>
-          </div>
+          ) : null }
         </div>
       ) : null}
       <hr />

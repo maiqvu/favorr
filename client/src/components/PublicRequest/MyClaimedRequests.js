@@ -12,7 +12,8 @@ const MyClaimedRequests = (props) => {
   const authContext = useContext(AuthContext);
   
   useEffect(() => {
-    axios.get(`/api/publicRequests/claimed/${authContext.user.username}`)
+    const user = JSON.parse(localStorage.getItem('user'));
+    axios.get(`/api/publicRequests/claimed/${user.username}`)
     // axios.get(`/api/publicRequests/claimed/${authContext.user._id}`)
       .then(res => setClaimedRequests(res.data))
       .catch(err => console.error(err));
