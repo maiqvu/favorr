@@ -1,14 +1,17 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import AuthService from '../../context/AuthService';
 
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 
 
 const Login = (props) => {
   const [user, setUser] = useState({ username: '', password: '' });
   const authContext = useContext(AuthContext);
-  
+  const {isLogged, setLogged } = useContext(AuthContext);
+  const [message, setMessage] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+
   const handleChange = (e) => {
       setUser({ ...user, [e.target.name]: e.target.value });
   };
@@ -21,10 +24,24 @@ const Login = (props) => {
       if (isAuthenticated) {
         authContext.setUser(user);
         authContext.setIsAuthenticated(isAuthenticated);
-        props.history.push('/');   // Redirect back to Homepage
+
+        //Show Login successfully message
+        setMessage();
+        setShowModal(true);
+      } else{
+        setMessage(<div className="text-danger text-center">Invalid username or password</div>);
       }
     });
   };
+
+  const handleClose = () => setShowModal(false);
+  const handleShow = () => setShowModal(true);
+
+  const redirect = () => {
+    setLogged(true);
+    setShowModal(false);
+    props.history.push('/');
+  }
 
   return (
     <Container className="mt-4">
@@ -70,6 +87,7 @@ const Login = (props) => {
                 Log In
               </Button>
             </div>
+            {message}
           </form>
           
           <p className="font-small grey-text d-flex justify-content-end">
@@ -78,6 +96,14 @@ const Login = (props) => {
               Sign up
             </a>
           </p>
+          <Modal size="sm" show={showModal} onHide={handleClose}>
+            <Modal.Body>
+              <p>Login Sucessfully!</p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" onClick={redirect}>Go Back to Homepage</Button>
+            </Modal.Footer>
+          </Modal>
         </Col>
       </Row>
     </Container>

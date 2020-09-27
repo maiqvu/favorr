@@ -15,7 +15,7 @@ import { Layout } from './components/Layout';
 import { AuthContext } from './context/AuthContext';
 
 const App = () => {
-  const {isAuthenticated } = useContext(AuthContext);
+  const {isLogged} = useContext(AuthContext);
     return (
         <Router>
           <NavBar />
@@ -26,10 +26,10 @@ const App = () => {
               <ProtectedRoute path="/myClaimedRequests" component={MyClaimedRequests} />
               <ProtectedRoute path="/myFavors" component={MyFavors} />
               <ProtectedRoute path="/addFavor" component={AddFavor} />
-              {!isAuthenticated &&
+              {!isLogged &&
                 <Route path="/login" component={Login} />
               }
-              {!isAuthenticated &&
+              {!isLogged &&
                 <Route path="/register" component={Register} />
               }
             </Switch>
