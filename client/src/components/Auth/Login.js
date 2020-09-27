@@ -24,18 +24,14 @@ const Login = (props) => {
       if (isAuthenticated) {
         authContext.setUser(user);
         authContext.setIsAuthenticated(isAuthenticated);
-<<<<<<< HEAD
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('isAuthenticated', JSON.stringify(isAuthenticated));
 
         //Show Login successfully message
         setMessage();
         setShowModal(true);
       } else{
         setMessage(<div className="text-danger text-center">Invalid username or password</div>);
-=======
-        localStorage.setItem('user', JSON.stringify(user));
-        localStorage.setItem('isAuthenticated', JSON.stringify(isAuthenticated));
-        props.history.push('/');   // Redirect back to Homepage
->>>>>>> ec696fec4ca19f91f9a9a89cf720f472dc687f9d
       }
     });
   };
@@ -44,8 +40,10 @@ const Login = (props) => {
   const handleShow = () => setShowModal(true);
 
   const redirect = () => {
-    setLogged(true);
     setShowModal(false);
+    //setLogged(true);
+    
+    // Redirect back to Homepage
     props.history.push('/');
   }
 
