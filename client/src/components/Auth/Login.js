@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import AuthService from '../../context/AuthService';
+import {withRouter} from 'react-router-dom';
 
 import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 
@@ -8,7 +9,7 @@ import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 const Login = (props) => {
   const [user, setUser] = useState({ username: '', password: '' });
   const authContext = useContext(AuthContext);
-  const {isLogged, setLogged } = useContext(AuthContext);
+  // const {isLogged, setLogged } = useContext(AuthContext);
   const [message, setMessage] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
@@ -105,7 +106,7 @@ const Login = (props) => {
               <p>Login Sucessfully!</p>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="primary" onClick={redirect}>Go Back to Homepage</Button>
+              <Button variant="primary" onClick={redirect}>Go to Homepage</Button>
             </Modal.Footer>
           </Modal>
         </Col>
@@ -114,4 +115,4 @@ const Login = (props) => {
   );
 };
 
-export default Login;
+export default withRouter(Login);

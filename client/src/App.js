@@ -8,6 +8,7 @@ import AddFavor from './components/Favor/AddFavor';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
+import PublicRoute from './components/Auth/PublicRoute';
 import NotFoundPage from './components/Auth/NotFoundPage';
 import NavBar from './NavBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -16,8 +17,6 @@ import { Layout } from './components/Layout';
 import { AuthContext } from './context/AuthContext';
 
 const App = () => {
-  const {isLogged, isAuthenticated} = useContext(AuthContext);
-
     return (
         <Router>
           <NavBar />
@@ -28,8 +27,8 @@ const App = () => {
               <ProtectedRoute path="/myClaimedRequests" component={MyClaimedRequests} />
               <ProtectedRoute path="/myFavors" component={MyFavors} />
               <ProtectedRoute path="/addFavor" component={AddFavor} />
-              {(!isLogged && !isAuthenticated)? <Route path="/login" component={Login} /> : <Route path="/" component={AvailablePublicRequests} />}
-              {(!isLogged && !isAuthenticated)? <Route path="/register" component={Register} /> : <Route path="/" component={AvailablePublicRequests} />}
+              <PublicRoute path="/login" component={Login} />
+              <PublicRoute path="/register" component={Register} />
               <Route component={NotFoundPage} />
             </Switch>
           </Layout>
