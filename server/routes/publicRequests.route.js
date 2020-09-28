@@ -132,8 +132,8 @@ publicRequestsRouter.patch('/:id/claim/:username', async (req, res) => {
         {_id: requestId},
         {$set: {claimedBy: userId, claimedByTime: Date.now()}},
         {new: true}
-    ).populate('creator').populate('rewards.user');
-    res.send(updatedRequest)
+    ).populate('creator', 'username').populate('rewards.user', 'username');
+    res.status(200).send(updatedRequest);
 })
 
 // Get All available Public Requests (requests that have not been claimed)
@@ -152,7 +152,7 @@ publicRequestsRouter.get('/claimed/:username', async (req, res) => {
 
     const userClaimedRequests = await PublicRequest.find({
         claimedBy: {$eq: userId}
-    }).populate('creator').populate('rewards.user');
+    }).populate('creator', 'username').populate('rewards.user', 'username');
 
     res.status(200).send(userClaimedRequests);
 })
