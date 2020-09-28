@@ -1,7 +1,7 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import FavorService from './FavorService';
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { Form, Row, Col, Button, InputGroup } from 'react-bootstrap';
 
 const AddFavor = () => {
   const [ newFavor, setNewFavor ] = useState({
@@ -11,24 +11,26 @@ const AddFavor = () => {
   });
   const [ owedByMe, setOwedByMe ] = useState(null);
   const [ myFriend, setMyFriend ] = useState('');
-  
   const authContext = useContext(AuthContext);
-  
-  useEffect(function updateMyFriend() {
-    if (owedByMe) setNewFavor({
-      ...newFavor,
-      owedBy: authContext.user.username,
-      owedTo: myFriend
-    })
-    else setNewFavor({
-      ...newFavor,
-      owedBy: myFriend,
-      owedTo: authContext.user.username
-    });
-  }, [owedByMe, myFriend]);
   
   const handleChange = (e) => {
     setNewFavor({ ...newFavor, [e.target.name]: e.target.value });
+  };
+  
+  const updateMyFriend = () => {
+    if (owedByMe) {
+      setNewFavor({
+        ...newFavor,
+        owedBy: authContext.user.username,
+        owedTo: myFriend
+      });
+    } else {
+      setNewFavor({
+        ...newFavor,
+        owedBy: myFriend,
+        owedTo: authContext.user.username
+      });
+    }
   };
   
   const handleSubmit = (e) => {
@@ -112,10 +114,10 @@ const AddFavor = () => {
         </div>
       </Form.Group>
       
-      <Form.Group as={Row} controlId="setMyFriend">
+      <InputGroup as={Row} controlId="setMyFriend">
         <Form.Label column sm={2}>My friend: </Form.Label>
         <Col sm={8}>
-          <Form.Control 
+          <Form.Control
             required
             placeholder="Enter your friend's username"
             name="myFriend"
@@ -123,25 +125,12 @@ const AddFavor = () => {
             onChange={e => setMyFriend(e.target.value)}
           />
         </Col>
-      </Form.Group>
-      
-      {/* <InputGroup className="mb-3">
-        <InputGroup.Prepend>
-          <InputGroup.Text id="basic-addon1">My friend: </InputGroup.Text>
-        </InputGroup.Prepend>
-        <Form.Control
-          placeholder="Enter your friend's username"
-          aria-describedby="basic-addon1"
-          value={myFriend}
-          onChange={(e) => {
-            setMyFriend(e.target.value);
-            // console.log(myFriend);
-          }}
-        />
         <InputGroup.Append>
-          <Button variant="outline-secondary">Enter</Button>
+          <Button onClick={updateMyFriend} variant="outline-primary">
+            Enter
+          </Button>
         </InputGroup.Append>
-      </InputGroup> */}
+      </InputGroup>
       
       {
         !owedByMe && 
