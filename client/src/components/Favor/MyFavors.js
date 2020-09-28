@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import FavorService from './FavorService';
 import { AuthContext } from '../../context/AuthContext';
 
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 
 const MyFavors = (props) => {
   const [ favorsOwedByMe, setFavorsOwedByMe ] = useState([]);
@@ -15,10 +15,17 @@ const MyFavors = (props) => {
       setFavorsOwedByMe(data.owedByMe);
       setFavorsOwedToMe(data.owedToMe);
     })
-  }, [authContext.user._id]);
+  }, []);
   
   return (
     <React.Fragment>
+      <Button
+        variant="primary"
+        onClick={() => props.history.push('/addFavor')}
+      >
+        Add New Favor
+      </Button>
+      
       <h3 className="text-center">Favors owed by me</h3>
       <Container className="px-lg-5">
         <Row>
@@ -35,7 +42,7 @@ const MyFavors = (props) => {
                   { favor.description }
                 </Col>
                 <Col className="col-sm-3 text-left">
-                  { favor.owedBy.username }
+                  { authContext.user.username }
                 </Col>
                 <Col className="col-sm-3 text-left">
                   { favor.owedTo.username }
@@ -46,6 +53,7 @@ const MyFavors = (props) => {
         }
       </Container>
       <br/>
+      
       <h3 className="text-center">Favors owed to me</h3>
       <Container className="px-lg-5">
         <Row>
@@ -65,7 +73,7 @@ const MyFavors = (props) => {
                   { favor.owedBy.username }
                 </Col>
                 <Col className="col-sm-3 text-left">
-                  { favor.owedTo.username }
+                  { authContext.user.username }
                 </Col>
               </Row>
             )
