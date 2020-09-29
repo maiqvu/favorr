@@ -11,11 +11,14 @@ const MyFavors = (props) => {
   const authContext = useContext(AuthContext);
   
   useEffect(() => {
-    FavorService.getFavors(authContext.user._id).then(data => {
-      setFavorsOwedByMe(data.owedByMe);
-      setFavorsOwedToMe(data.owedToMe);
-    })
-  }, []);
+    if (authContext.user) {
+      FavorService.getFavors(authContext.user._id)
+        .then(data => {
+          setFavorsOwedByMe(data.owedByMe);
+          setFavorsOwedToMe(data.owedToMe);
+        })
+    }
+  }, [authContext.user]);
   
   return (
     <React.Fragment>
