@@ -12,10 +12,11 @@ const MyClaimedRequests = (props) => {
   const authContext = useContext(AuthContext);
   
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    axios.get(`/api/publicRequests/claimed/${user.username}`)
-      .then(res => setClaimedRequests(res.data))
-      .catch(err => console.error(err));
+    if (authContext.user) {
+      axios.get(`/api/publicRequests/claimed/${authContext.user.username}`)
+        .then(res => setClaimedRequests(res.data))
+        .catch(err => console.error(err));
+    }
   }, [authContext.user]);
   
   // This function is a duplicate from AvailablePublicRequest

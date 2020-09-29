@@ -41,7 +41,7 @@ const Request = (props) => {
   const addReward = async (requestId, index) => {
     try {
       let response = await axios.post(
-        `/api/publicRequests/${requestId}/add-reward`,
+        `/api/publicRequests/${requestId}/reward`,
         {
           username: props.user.username,
           item: newReward,
@@ -56,9 +56,8 @@ const Request = (props) => {
 
   const removeReward = async (requestId, index) => {
     try {
-      let response = await axios.patch(
-        `/api/publicRequests/${requestId}/remove-reward`,
-        { rewardId: removeRewardId }
+      let response = await axios.delete(
+        `/api/publicRequests/${requestId}/reward/${removeRewardId}`
       );      
       props.updateRequest(response.data, index);
       setRemoveRewardId('');

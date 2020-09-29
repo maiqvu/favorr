@@ -10,15 +10,24 @@ export default ({children}) => {
   
   useEffect(() => {
     AuthService.isAuthenticated().then(data => {
-      setUser(data.user);
-      setIsAuthenticated(data.isAuthenticated);
+      console.log(data);
+      if (data.isAuthenticated) {
+        setUser(data.user);
+        setIsAuthenticated(data.isAuthenticated);
+
+        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('isAuthenticated', JSON.stringify(data.isAuthenticated));
+      } else {
+        localStorage.setItem('user', null);
+        localStorage.setItem('isAuthenticated', null);
+      }
     });
   }, []);
   
   return (
     <React.Fragment>
       {
-        <AuthContext.Provider value={{user, setUser, isAuthenticated, setIsAuthenticated, isLogged, setLogged}}>
+        <AuthContext.Provider value={{user, setUser, isAuthenticated, setIsAuthenticated}}>
           { children }
         </AuthContext.Provider>
       }
