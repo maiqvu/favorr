@@ -19,7 +19,8 @@ const FavorSchema = new mongoose.Schema({
     type: String
   },
   repaid: {
-    type: Boolean
+    type: Boolean,
+    default: false
   }
 }, { timestamps: true });
 
