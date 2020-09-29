@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import FavorService from './FavorService';
 import { AuthContext } from '../../context/AuthContext';
-
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Button, Table } from 'react-bootstrap';
 
 const MyFavors = (props) => {
   const [ favorsOwedByMe, setFavorsOwedByMe ] = useState([]);
@@ -21,69 +20,82 @@ const MyFavors = (props) => {
   }, [authContext.user]);
   
   return (
-    <React.Fragment>
+    <Container fluid>
+      <br/>
+      
       <Button
         variant="primary"
         onClick={() => props.history.push('/addFavor')}
       >
         Add New Favor
       </Button>
+      <br/>
       
       <h3 className="text-center">Favors owed by me</h3>
-      <Container className="px-lg-5">
-        <Row>
-          <Col className="col-sm-5 text-left font-weight-bold">Description</Col>
-          <Col className="col-sm-3 text-left font-weight-bold">Owed by</Col>
-          <Col className="col-sm-3 text-left font-weight-bold">Owed to</Col>
-        </Row>
-        <hr className="border border-light" />
-        {
-          favorsOwedByMe.map(favor => {
-            return (
-              <Row key={favor._id}>
-                <Col className="col-sm-5 text-left">
-                  { favor.description }
-                </Col>
-                <Col className="col-sm-3 text-left">
-                  { authContext.user.username }
-                </Col>
-                <Col className="col-sm-3 text-left">
-                  { favor.owedTo.username }
-                </Col>
-              </Row>
-            )
-          })
-        }
-      </Container>
+      <Table responsive striped hover size="sm" >
+        <thead>
+          <tr>
+            <th className="text-left font-weight-bold">Description</th>
+            <th className="text-left font-weight-bold">Owed by</th>
+            <th className="text-left font-weight-bold">Owed to</th>
+            <th className="text-left font-weight-bold">Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {favorsOwedByMe.map(favor => (
+            <tr key={favor._id}>
+              <td width="20%">{favor.description}</td>
+              <td width="20%">{authContext.user.username}</td>
+              <td width="20%">{favor.owedTo.username}</td>
+              <td width="20%">{favor.repaid ? 'Repaid' : 'Pending'}</td>
+              <td width="20%">
+                {favor.repaid ? null : <Button
+                  size="sm"
+                  variant="outline-primary"
+                >
+                  Mark as repaid
+                </Button>}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+      
+      <hr className="border border-light" />
       <br/>
       
       <h3 className="text-center">Favors owed to me</h3>
-      <Container className="px-lg-5">
-        <Row>
-          <Col className="col-sm-5 text-left font-weight-bold">Description</Col>
-          <Col className="col-sm-3 text-left font-weight-bold">Owed by</Col>
-          <Col className="col-sm-3 text-left font-weight-bold">Owed to</Col>
-        </Row>
-        <hr className="border border-light" />
-        {
-          favorsOwedToMe.map(favor => {
-            return (
-              <Row key={favor._id}>
-                <Col className="col-sm-5 text-left">
-                  { favor.description }
-                </Col>
-                <Col className="col-sm-3 text-left">
-                  { favor.owedBy.username }
-                </Col>
-                <Col className="col-sm-3 text-left">
-                  { authContext.user.username }
-                </Col>
-              </Row>
-            )
-          })
-        }
-      </Container>
-    </React.Fragment>
+      <Table responsive striped hover size="sm" >
+        <thead>
+          <tr>
+            <th className="text-left font-weight-bold">Description</th>
+            <th className="text-left font-weight-bold">Owed by</th>
+            <th className="text-left font-weight-bold">Owed to</th>
+            <th className="text-left font-weight-bold">Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {favorsOwedToMe.map(favor => (
+            <tr key={favor._id}>
+              <td width="20%">{favor.description}</td>
+              <td width="20%">{favor.owedBy.username}</td>
+              <td width="20%">{authContext.user.username}</td>
+              <td width="20%">{favor.repaid ? 'Repaid' : 'Pending'}</td>
+              <td width="20%">
+                {favor.repaid ? null : <Button
+                  size="sm"
+                  variant="outline-primary"
+                >
+                  Mark as repaid
+                </Button>}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </Container>
   )
 }
 
