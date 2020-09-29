@@ -9,7 +9,6 @@ import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 const Login = (props) => {
   const [user, setUser] = useState({ username: '', password: '' });
   const authContext = useContext(AuthContext);
-  // const {isLogged, setLogged } = useContext(AuthContext);
   const [message, setMessage] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
@@ -42,7 +41,6 @@ const Login = (props) => {
 
   const redirect = () => {
     setShowModal(false);
-    //setLogged(true);
     
     // Redirect back to Homepage
     props.history.push('/');
@@ -101,16 +99,16 @@ const Login = (props) => {
               Sign up
             </a>
           </p>
-          <Modal size="sm" show={showModal} onHide={handleClose}>
-            <Modal.Body>
-              <p>Login Sucessfully!</p>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="primary" onClick={redirect}>Go to Homepage</Button>
-            </Modal.Footer>
-          </Modal>
         </Col>
       </Row>
+      <Modal size="sm" show={showModal} id="myModal" backdrop="static">
+        <Modal.Body>
+          <p>Login Sucessfully!</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={redirect}>Go to Homepage</Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
