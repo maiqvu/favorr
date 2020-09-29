@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import FavorService from './FavorService';
 import { Form, Row, Col, Button, InputGroup } from 'react-bootstrap';
@@ -12,6 +13,7 @@ const AddFavor = () => {
   const [ owedByMe, setOwedByMe ] = useState(null);
   const [ myFriend, setMyFriend ] = useState('');
   const authContext = useContext(AuthContext);
+  const history = useHistory();
   
   const handleChange = (e) => {
     setNewFavor({ ...newFavor, [e.target.name]: e.target.value });
@@ -33,16 +35,18 @@ const AddFavor = () => {
     }
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    FavorService.addFavor(newFavor);
+    await FavorService.addFavor(newFavor);
+    history.push(`/myFavors`);
   };
   
   return (
     <Form onSubmit={handleSubmit}>
-      <h3 className="text-left">Add a new favor</h3>
+      <h3 className="text-left font-weight-bold">Create a new favor</h3>
+      <br/>
       
-      <Form.Group as={Row} controlId="selectFavor">
+      <Form.Group as={Row}>
         <Form.Label column sm={2}>Description</Form.Label>
         <Col sm={8}>
           <Form.Control 
@@ -61,60 +65,48 @@ const AddFavor = () => {
           </Form.Control>
         </Col>
       </Form.Group>
-      
-      <Form.Label>Owed to</Form.Label>
-      <Form.Group controlId="selectOwedTo">
-        <div>
-          <Form.Label>
-            <Form.Check
-              type="radio"
-              inline
-              checked={owedByMe === false}
-              onChange={() => setOwedByMe(false)}
-            />
-            me
-          </Form.Label>
-        </div>
-        <div>
-          <Form.Label>
-            <Form.Check
-              type="radio"
-              inline
-              checked={owedByMe === true}
-              onChange={() => setOwedByMe(true)}
-            />
-            my friend
-          </Form.Label>
-        </div>
+
+      <Form.Group as={Row}>
+        <Form.Label as="legend" column sm="2">Owed by</Form.Label>
+        <Col>
+          <Form.Check
+            type="radio"
+            inline
+            label="me"
+            checked={owedByMe === true}
+            onChange={() => setOwedByMe(true)}
+          />
+          <Form.Check
+            type="radio"
+            inline
+            label="my friend"
+            checked={owedByMe === false}
+            onChange={() => setOwedByMe(false)}
+          />
+        </Col>
       </Form.Group>
       
-      <Form.Label>Owed by</Form.Label>
-      <Form.Group controlId="selectOwedBy">
-        <div>
-          <Form.Label>
-            <Form.Check
-              type="radio"
-              inline
-              checked={owedByMe === true}
-              onChange={() => setOwedByMe(true)}
-            />
-            me
-          </Form.Label>
-        </div>
-        <div>
-          <Form.Label>
-            <Form.Check
-              type="radio"
-              inline
-              checked={owedByMe === false}
-              onChange={() => setOwedByMe(false)}
-            />
-            my friend
-          </Form.Label>
-        </div>
+      <Form.Group as={Row}>
+        <Form.Label as="legend" column sm="2">Owed to</Form.Label>
+        <Col>
+          <Form.Check
+            type="radio"
+            inline
+            label="me"
+            checked={owedByMe === false}
+            onChange={() => setOwedByMe(false)}
+          />
+          <Form.Check
+            type="radio"
+            inline
+            label="my friend"
+            checked={owedByMe === true}
+            onChange={() => setOwedByMe(true)}
+          />
+        </Col>
       </Form.Group>
       
-      <InputGroup as={Row} controlId="setMyFriend">
+      <InputGroup as={Row}>
         <Form.Label column sm={2}>My friend: </Form.Label>
         <Col sm={8}>
           <Form.Control
@@ -131,6 +123,7 @@ const AddFavor = () => {
           </Button>
         </InputGroup.Append>
       </InputGroup>
+      <br/>
       
       {
         !owedByMe && 
