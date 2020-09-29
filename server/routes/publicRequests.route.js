@@ -83,7 +83,7 @@ publicRequestsRouter.delete('/:id', async (req, res) => {
 });
 
 // Add a reward to an existing request
-publicRequestsRouter.post('/:id/add-reward', async (req, res) => {
+publicRequestsRouter.post('/:id/reward', async (req, res) => {
     const requestId = req.params.id;
 
     const user = await User.findOne({ username: req.body.username });
@@ -106,15 +106,17 @@ publicRequestsRouter.post('/:id/add-reward', async (req, res) => {
 })
 
 // Remove a reward in an existing request
-publicRequestsRouter.patch('/:id/remove-reward', async (req, res) => {
+publicRequestsRouter.delete('/:id/reward/:rewardid', async (req, res) => {
     const requestId = req.params.id;
-    const rewardIdToRemove = req.body.rewardId;
+    const rewardIdToRemove = req.params.rewardid;
 
     try {
         const updatedRequest = await PublicRequest.findOneAndUpdate(
             { _id: requestId},
             { $pull: { rewards: { _id: rewardIdToRemove }}},
-            { new: true }).populate('creator').populate('rewards.user')    
+            { new: true })
+            .populate('creator', 'username')
+            .populate('rewards.user', 'username');
         res.status(200).send(updatedRequest)
     } catch (err) {
         res.status(500).send(err);
@@ -131,8 +133,9 @@ publicRequestsRouter.patch('/:id/claim/:username', async (req, res) => {
     const updatedRequest = await PublicRequest.findOneAndUpdate(
         {_id: requestId},
         {$set: {claimedBy: userId, claimedByTime: Date.now()}},
-        {new: true}
-    ).populate('creator', 'username').populate('rewards.user', 'username');
+        {new: true}).
+        populate('creator', 'username').
+        populate('rewards.user', 'username');
     res.status(200).send(updatedRequest);
 })
 
@@ -140,7 +143,10 @@ publicRequestsRouter.patch('/:id/claim/:username', async (req, res) => {
 publicRequestsRouter.get('/available', async (req, res) => {
     const allAvailableRequests = await PublicRequest.find({
         claimedBy: {$eq: null}
-    }).populate('creator').populate('rewards.user').sort({ createdAt: -1 });
+    })
+    .populate('creator', 'username')
+    .populate('rewards.user', 'username')
+    .sort({ createdAt: -1 });
 
     res.status(200).send(allAvailableRequests);
 });
@@ -151,8 +157,9 @@ publicRequestsRouter.get('/claimed/:username', async (req, res) => {
     const userId = user._id.toString();
 
     const userClaimedRequests = await PublicRequest.find({
-        claimedBy: {$eq: userId}
-    }).populate('creator', 'username').populate('rewards.user', 'username');
+        claimedBy: {$eq: userId}})
+        .populate('creator', 'username')
+        .populate('rewards.user', 'username');
 
     res.status(200).send(userClaimedRequests);
 })
