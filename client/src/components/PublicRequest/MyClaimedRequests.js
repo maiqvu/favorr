@@ -6,19 +6,20 @@ import { AuthContext } from '../../context/AuthContext';
 import { Container, Row, Col } from 'react-bootstrap';
 
 const MyClaimedRequests = (props) => {
-  const [ claimedRequests, setClaimedRequests ] = useState([]);
-  const [ focusedRequestId, setFocusedRequestId ] = useState('');
-  
+  const [claimedRequests, setClaimedRequests] = useState([]);
+  const [focusedRequestId, setFocusedRequestId] = useState('');
+
   const authContext = useContext(AuthContext);
-  
+
   useEffect(() => {
     if (authContext.user) {
-      axios.get(`/api/publicRequests/claimed/${authContext.user.username}`)
-        .then(res => setClaimedRequests(res.data))
-        .catch(err => console.error(err));
+      axios
+        .get(`/api/publicRequests/claimed/${authContext.user.username}`)
+        .then((res) => setClaimedRequests(res.data))
+        .catch((err) => console.error(err));
     }
   }, [authContext.user]);
-  
+
   // This function is a duplicate from AvailablePublicRequest
   const expandRequestToggle = (requestId) => {
     if (focusedRequestId === requestId) {
@@ -35,7 +36,7 @@ const MyClaimedRequests = (props) => {
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
   // This function is a duplicate from AvailablePublicRequest
   const updateRequest = async (updatedRequest, index) => {
@@ -51,39 +52,33 @@ const MyClaimedRequests = (props) => {
       request = updatedRequest;
       tmpRequests[index] = request;
     }
-    setClaimedRequests(tmpRequests)
-  }
-  
+    setClaimedRequests(tmpRequests);
+  };
+
   return (
-    <div>
-      <h3 className="text-center">My Claimed Requests</h3>
-      
-      <Container className="px-lg-5">
-        <Row>
-          <Col className="col-sm-5 text-left font-weight-bold">
-            Task
-          </Col>
-          <Col className="col-sm-3 text-left font-weight-bold">
-            Date Claimed
-          </Col>
-          <Col className="col-sm-3 text-left font-weight-bold">
-            Rewards
-          </Col>
-        </Row>
-        <hr className="border border-light" />
-        
-        {claimedRequests.map((claimedRequest, index) =>
-          <Request
-            key={index}
-            request={claimedRequest}
-            date={claimedRequest.claimedByTime}
-            user={authContext.user}
-            focusedRequestId={focusedRequestId}
-            updateRequest={updateRequest}
-            expandRequestToggle={() => expandRequestToggle(claimedRequest._id, index)} />
-        )}
-      </Container>
-    </div>
+    <Container className="px-lg-5 mt-4">
+      <h4 className="text-center mb-4">My Claimed Requests</h4>
+      <Row>
+        <Col className="col-sm-5 text-left font-weight-bold">Task</Col>
+        <Col className="col-sm-3 text-left font-weight-bold">Date Claimed</Col>
+        <Col className="col-sm-3 text-left font-weight-bold">Rewards</Col>
+      </Row>
+      <hr className="border border-light" />
+
+      {claimedRequests.map((claimedRequest, index) => (
+        <Request
+          key={index}
+          request={claimedRequest}
+          date={claimedRequest.claimedByTime}
+          user={authContext.user}
+          focusedRequestId={focusedRequestId}
+          updateRequest={updateRequest}
+          expandRequestToggle={() =>
+            expandRequestToggle(claimedRequest._id, index)
+          }
+        />
+      ))}
+    </Container>
   );
 };
 

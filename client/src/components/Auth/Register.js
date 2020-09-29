@@ -72,7 +72,7 @@ export default class Register extends Component {
               <p className="h4 text-center mb-4">Register</p>
               <div className="form-group">
                 <label htmlFor="username" className="grey-text">
-                  Your name
+                  Username
                 </label>
                 <input
                   type="text"

@@ -18,22 +18,27 @@ const Login = (props) => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await AuthService.login(user).then(data => {
-      console.log('After successful login: ', data);
-      const { isAuthenticated, user } = data;
-      if (isAuthenticated) {
-        authContext.setUser(user);
-        authContext.setIsAuthenticated(isAuthenticated);
-        localStorage.setItem('user', JSON.stringify(user));
-        localStorage.setItem('isAuthenticated', JSON.stringify(isAuthenticated));
-
-        //Show Login successfully message
-        setMessage();
-        setShowModal(true);
-      } else{
-        setMessage(<div className="text-danger text-center">Invalid username or password</div>);
-      }
-    });
+    try {
+      await AuthService.login(user).then(data => {
+        console.log('After successful login: ', data);
+        const { isAuthenticated, user } = data;
+        if (isAuthenticated) {
+          authContext.setUser(user);
+          authContext.setIsAuthenticated(isAuthenticated);
+          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('isAuthenticated', JSON.stringify(isAuthenticated));
+  
+          //Show Login successfully message
+          setMessage();
+          setShowModal(true);
+        } else{
+          setMessage(<div className="text-danger text-center">Invalid username or password</div>);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      setMessage(<div className="text-danger text-center">Unable to log in. Please try again later.</div>);
+    }
   };
 
   const handleClose = () => setShowModal(false);
