@@ -141,14 +141,47 @@ publicRequestsRouter.patch('/:id/claim/:username', async (req, res) => {
 
 // Get All available Public Requests (requests that have not been claimed)
 publicRequestsRouter.get('/available', async (req, res) => {
-    const allAvailableRequests = await PublicRequest.find({
-        claimedBy: {$eq: null}
-    })
-    .populate('creator', 'username')
-    .populate('rewards.user', 'username')
-    .sort({ createdAt: -1 });
+    try {
+        let limit = parseInt(req.query.limit);
+        let skip = parseInt(req.query.skip);
 
-    res.status(200).send(allAvailableRequests);
+        // const availableRequestCount = await PublicRequest.countDocuments({
+        //     claimedBy: {$eq: null}
+        // });
+        
+        // if (skip >= availableRequestCount) {
+        //     skip = skip - limit;
+        // }
+        // console.log(`${skip}\t${limit}`);
+        // if (limit + skip >= availableRequestCount) {
+        //     limit = availableRequestCount - limit;
+        // }
+
+        const allAvailableRequests = await PublicRequest.find({
+            claimedBy: {$eq: null}
+        })
+        .sort({ createdAt: -1 })
+        .skip(skip) // Always apply 'skip' before 'limit'
+        .limit(limit) // This is your 'page size'
+        .populate('creator', 'username')
+        .populate('rewards.user', 'username');
+    
+        res.status(200).send(allAvailableRequests);
+    } catch(e){
+        return res.status(500).json(e)
+    }
+});
+
+// Get count of available Public Requests (requests that have not been claimed)
+publicRequestsRouter.get('/available/count', async (req, res) => {
+    try {
+        const availableRequestCount = await PublicRequest.countDocuments({
+            claimedBy: {$eq: null}
+        });
+        res.status(200).json({count: availableRequestCount})
+    } catch(e){
+        return res.status(500).json(e)
+    }
 });
 
 // Get all the user's claimed public requests

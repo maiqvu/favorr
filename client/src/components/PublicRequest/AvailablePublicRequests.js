@@ -20,14 +20,42 @@ const AvailablePublicRequests = (props) => {
   const [rewardToSearch, setRewardToSearch] = useState('');
   const [filterByKeyword, setFilterByKeyword] = useState(true);
 
+  const [limit, setLimit] = useState(5);
+  const [skip, setSkip] = useState(0);
+  const [requestCount, setRequestCount] = useState(0);
+
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
     axios
-      .get('/api/publicRequests/available')
+      .get(`/api/publicRequests/available?limit=${limit}&skip=${skip}`)
       .then((res) => setRequests(res.data))
       .catch((err) => console.error(err));
+    
+    axios
+      .get(`/api/publicRequests/available/count`)
+      .then((res) => setRequestCount(res.data.count))
+      .catch((err) => console.error(err));
   }, [authContext.user]);
+
+  useEffect(() => {
+    axios
+      .get(`/api/publicRequests/available?limit=${limit}&skip=${skip}`)
+      .then((res) => setRequests(res.data))
+      .catch((err) => console.error(err));
+  }, [skip, limit])
+
+  const nextPage = () => {
+    const newSkip = skip + limit;
+    if (newSkip < requestCount)
+      setSkip(skip + limit)
+  }
+
+  const previousPage = () => {
+      const newSkip = skip - limit;
+      if (newSkip >= 0)
+        setSkip(newSkip)
+  }
 
   const deleteRequest = async (request) => {
     try {
@@ -98,95 +126,92 @@ const AvailablePublicRequests = (props) => {
   };
 
   return (
-    <div>
-      <Container className="px-lg-5 mt-4">
-        <h4 className="text-center mb-4">Available Public Requests</h4>
-        <InputGroup className="mb-3">
-          <InputGroup.Prepend>
-            <InputGroup.Text id="inputGroup-sizing-default">
-              Filter by
-            </InputGroup.Text>
-            <div className="btn-group btn-group-toggle" data-toggle="buttons">
-              <Button
-                variant="outline-secondary"
-                className="active"
-                onClick={() => handleSelectFilterByKeyword(true)}
-              >
-                <input
-                  type="radio"
-                  name="options"
-                  id="option1"
-                  defaultChecked
-                />
-                Keyword
-              </Button>
-              <Button
-                variant="outline-secondary"
-                onClick={() => handleSelectFilterByKeyword(false)}
-              >
-                <input type="radio" name="options" id="option2" />
-                Reward
-              </Button>
-            </div>
-          </InputGroup.Prepend>
-          {filterByKeyword ? (
-            <FormControl
-              id="searchByKeyword"
-              aria-label="Default"
-              aria-describedby="inputGroup-sizing-default"
-              placeholder="Type here to filter by keyword"
-              onChange={handleKeywordToSearchInput}
-            />
-          ) : (
-            <select
-              className="custom-select"
-              id="searchByReward"
-              onChange={handleRewardToSearchInput}
+    <Container className="px-lg-5 mt-4">
+      <h4 className="text-center mb-4">Available Public Requests</h4>
+      <InputGroup className="mb-3">
+        <InputGroup.Prepend>
+          <InputGroup.Text id="inputGroup-sizing-default">
+            Filter by
+          </InputGroup.Text>
+          <div className="btn-group btn-group-toggle" data-toggle="buttons">
+            <Button
+              variant="outline-secondary"
+              className="active"
+              onClick={() => handleSelectFilterByKeyword(true)}
             >
-              <option value="">Select to filter a reward</option>
-              <option value="Brownie">Brownie</option>
-              <option value="Coffee">Coffee</option>
-              <option value="Pizza">Pizza</option>
-              <option value="Candy">Candy</option>
-              <option value="Chocolate Bar">Chocolate Bar</option>
-            </select>
-          )}
-        </InputGroup>
-        <Row>
-          <Col className="col-sm-5 text-left font-weight-bold">Task</Col>
-          <Col className="col-sm-3 text-left font-weight-bold">
-            Date Submitted
-          </Col>
-          <Col className="col-sm-3 text-left font-weight-bold">Rewards</Col>
-          <Col className="col-sm-1 text-right"></Col>
-        </Row>
-        <hr className="border border-light" />
-        {requests.map((request, index) =>
-          !request.claimedBy ? (
-            (request.task
-              .toLowerCase()
-              .includes(keywordToSearch.toLowerCase()) &&
-              filterByKeyword) ||
-            (requestRewardItems(request.rewards).includes(rewardToSearch) &&
-              !filterByKeyword) ||
-            (keywordToSearch === '' && rewardToSearch === '') ? (
-              <Request key={index}
-                request={request}
-                date={request.createdAt}
-                index={index}
-                user={authContext.user}
-                focusedRequestId={focusedRequestId}
-                updateRequest={updateRequest}
-                expandRequestToggle={() =>
-                  expandRequestToggle(request._id, index)
-                }
-                claim={claim}
-              />
-            ) : null
-          ) : null
+              <input type="radio" name="options" id="option1" defaultChecked />
+              Keyword
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => handleSelectFilterByKeyword(false)}
+            >
+              <input type="radio" name="options" id="option2" />
+              Reward
+            </Button>
+          </div>
+        </InputGroup.Prepend>
+        {filterByKeyword ? (
+          <FormControl
+            id="searchByKeyword"
+            aria-label="Default"
+            aria-describedby="inputGroup-sizing-default"
+            placeholder="Type here to filter by keyword"
+            onChange={handleKeywordToSearchInput}
+          />
+        ) : (
+          <select
+            className="custom-select"
+            id="searchByReward"
+            onChange={handleRewardToSearchInput}
+          >
+            <option value="">Select to filter a reward</option>
+            <option value="Brownie">Brownie</option>
+            <option value="Coffee">Coffee</option>
+            <option value="Pizza">Pizza</option>
+            <option value="Candy">Candy</option>
+            <option value="Chocolate Bar">Chocolate Bar</option>
+          </select>
         )}
-      </Container>
-    </div>
+      </InputGroup>
+      <Row>
+        <Col className="col-sm-5 text-left font-weight-bold">Task</Col>
+        <Col className="col-sm-3 text-left font-weight-bold">
+          Date Submitted
+        </Col>
+        <Col className="col-sm-3 text-left font-weight-bold">Rewards</Col>
+        <Col className="col-sm-1 text-right"></Col>
+      </Row>
+      <hr className="border border-light" />
+      {requests.map((request, index) =>
+        !request.claimedBy ? (
+          (request.task.toLowerCase().includes(keywordToSearch.toLowerCase()) &&
+            filterByKeyword) ||
+          (requestRewardItems(request.rewards).includes(rewardToSearch) &&
+            !filterByKeyword) ||
+          (keywordToSearch === '' && rewardToSearch === '') ? (
+            <Request
+              key={index}
+              request={request}
+              date={request.createdAt}
+              index={index}
+              user={authContext.user}
+              focusedRequestId={focusedRequestId}
+              updateRequest={updateRequest}
+              expandRequestToggle={() =>
+                expandRequestToggle(request._id, index)
+              }
+              claim={claim}
+            />
+          ) : null
+        ) : null
+      )}
+      <div className="float-right"> 
+          <Button variant="outline-primary" onClick={previousPage}>&laquo;</Button>
+          &nbsp;
+          <Button variant="outline-primary" onClick={nextPage}>&raquo;</Button> 
+      </div>
+    </Container>
   );
 };
 
