@@ -19,6 +19,17 @@ const MyFavors = (props) => {
     }
   }, [authContext.user]);
   
+  const handleMarkAsRepaid = async (favorId, favorStatus) => {
+    const updatedValue = { repaid: !favorStatus };
+    const response = await FavorService.updateFavor(favorId, updatedValue);
+    
+    if (response.status === 200) {
+      console.log(response.data);
+    } else {
+      console.error(response);
+    }
+  };
+  
   return (
     <Container fluid>
       <br/>
@@ -53,6 +64,7 @@ const MyFavors = (props) => {
                 {favor.repaid ? null : <Button
                   size="sm"
                   variant="outline-primary"
+                  onClick={() => handleMarkAsRepaid(favor._id, favor.repaid)}
                 >
                   Mark as repaid
                 </Button>}
@@ -87,6 +99,7 @@ const MyFavors = (props) => {
                 {favor.repaid ? null : <Button
                   size="sm"
                   variant="outline-primary"
+                  onClick={() => handleMarkAsRepaid(favor._id, favor.repaid)}
                 >
                   Mark as repaid
                 </Button>}

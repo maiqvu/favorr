@@ -22,6 +22,11 @@ export default {
       }
     })
   },
+  updateFavor: (favorId, updatedValue) => {
+    return axios.patch(`/api/favors/${favorId}`, updatedValue)
+      .then(res => res)
+      .catch(err => err)
+  },
   findUserByUsername: async (username) => {
     const res = await axios.get(`/api/users?username=${username}`);
     if (res.status !== 401) {
