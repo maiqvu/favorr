@@ -14,7 +14,6 @@ import {
 
 const AvailableRequests = (props) => {
   const [requests, setRequests] = useState([]);
-  const [focusedRequestId, setFocusedRequestId] = useState('');
   const [keywordToSearch, setKeywordToSearch] = useState('');
   const [rewardToSearch, setRewardToSearch] = useState('');
   const [filterByKeyword, setFilterByKeyword] = useState(true);
@@ -87,7 +86,7 @@ const AvailableRequests = (props) => {
     if (!updatedRequest.rewards.length) {
       await RequestService.deleteRequest(updatedRequest._id);
       tmpRequests.splice(index, 1);
-      setFocusedRequestId('');
+      // setFocusedRequestId('');
     } else {
       let request = { ...tmpRequests[index] };
       request = updatedRequest;
@@ -96,16 +95,8 @@ const AvailableRequests = (props) => {
     setRequests(tmpRequests);
   };
 
-  const expandRequestToggle = (requestId) => {
-    if (focusedRequestId === requestId) {
-      setFocusedRequestId('');
-    } else {
-      setFocusedRequestId(requestId);
-    }
-  };
-
+  // assign the user to the request and move the request to claimed request page
   const claim = async (requestId, index) => {
-    // currently logged in user
     const username = authContext.user.username;
 
     const updatedRequest = await RequestService.claimRequest(requestId, username);
@@ -193,25 +184,23 @@ const AvailableRequests = (props) => {
               date={request.createdAt}
               index={index}
               user={authContext.user}
-              focusedRequestId={focusedRequestId}
               updateRequest={updateRequest}
-              expandRequestToggle={() =>
-                expandRequestToggle(request._id, index)
-              }
               claim={claim}
             />
           ) : null
         ) : null
       )}
-      <div className="float-right">
-        <Button variant="outline-primary" onClick={previousPage}>
-          &laquo;
-        </Button>
-        &nbsp;
-        <Button variant="outline-primary" onClick={nextPage}>
-          &raquo;
-        </Button>
-      </div>
+      {requestCount > limit ? (
+        <div className="float-right">
+          <Button variant="outline-primary" onClick={previousPage}>
+            &laquo;
+          </Button>
+          &nbsp;
+          <Button variant="outline-primary" onClick={nextPage}>
+            &raquo;
+          </Button>
+        </div>
+      ) : null}
     </Container>
   );
 };

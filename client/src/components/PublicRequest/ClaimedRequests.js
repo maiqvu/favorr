@@ -7,11 +7,11 @@ import { Container, Row, Col } from 'react-bootstrap';
 
 const ClaimedRequests = (props) => {
   const [claimedRequests, setClaimedRequests] = useState([]);
-  const [focusedRequestId, setFocusedRequestId] = useState('');
 
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
+    // get all claimed requests of the user
     const getClaimedRequests = async (username) => {
       const requests = await RequestService.getClaimedRequests(username);
       setClaimedRequests(requests);
@@ -21,14 +21,6 @@ const ClaimedRequests = (props) => {
       getClaimedRequests(authContext.user.username);
     }
   }, [authContext.user]);
-
-  const expandRequestToggle = (requestId) => {
-    if (focusedRequestId === requestId) {
-      setFocusedRequestId(null);
-    } else {
-      setFocusedRequestId(requestId);
-    }
-  };
 
   const updateRequest = (updatedRequest, index) => {
     let tmpRequests = [...claimedRequests];
@@ -49,20 +41,17 @@ const ClaimedRequests = (props) => {
         <Col className="col-sm-3 text-left font-weight-bold">Rewards</Col>
       </Row>
       <hr className="border border-light" />
-
-      {claimedRequests.map((claimedRequest, index) => (
-        <Request
-          key={index}
-          request={claimedRequest}
-          date={claimedRequest.claimedByTime}
-          user={authContext.user}
-          focusedRequestId={focusedRequestId}
-          updateRequest={updateRequest}
-          expandRequestToggle={() =>
-            expandRequestToggle(claimedRequest._id, index)
-          }
-        />
-      ))}
+      {claimedRequests.length ? (
+        claimedRequests.map((claimedRequest, index) => (
+          <Request
+            key={index}
+            request={claimedRequest}
+            date={claimedRequest.claimedByTime}
+            user={authContext.user}
+            updateRequest={updateRequest}
+          />
+        ))
+      ) : <div className="text-center">You have not claimed any requests!</div>}
     </Container>
   );
 };

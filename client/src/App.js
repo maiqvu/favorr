@@ -1,4 +1,4 @@
-import React, { useContext }  from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AvailableRequests from './components/PublicRequest/AvailableRequests';
 import CreatePublicRequest from './components/PublicRequest/CreatePublicRequest';
@@ -14,7 +14,6 @@ import NavBar from './NavBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { Layout } from './components/Layout';
-import { AuthContext } from './context/AuthContext';
 
 const App = () => {
     return (
