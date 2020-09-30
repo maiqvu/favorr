@@ -10,7 +10,7 @@ export default class Register extends Component {
       username: '',
       email: '',
       password: '',
-      password_confirmation: '',
+      passwordConfirmation: '',
       errors: {},
       success: false,
     };
@@ -27,17 +27,25 @@ export default class Register extends Component {
 
   onSubmit(event) {
     event.preventDefault();
-    const { username, email, password, password_confirmation } = this.state;
+
+    // reset errors and success state for creating a new account
+    this.setState({ errors: '' });
+    this.setState({ success: false });
+    const { username, email, password, passwordConfirmation } = this.state;
 
     axios
       .post('/api/users/register', {
         username: username,
         email: email,
         password: password,
-        password_confirmation: password_confirmation,
+        passwordConfirmation: passwordConfirmation,
       })
       .then((response) => {
         console.log(response.data);
+        this.setState({ username: ''});
+        this.setState({ email: ''});
+        this.setState({ password: ''});
+        this.setState({ passwordConfirmation: ''});
         this.setState({ success: true });
       })
       .catch((err) => {
@@ -79,7 +87,7 @@ export default class Register extends Component {
                   className="form-control"
                   placeholder=""
                   name="username"
-                  value={this.state.name}
+                  value={this.state.username}
                   onChange={this.onChange}
                   required
                 />
@@ -110,15 +118,15 @@ export default class Register extends Component {
                 onChange={this.onChange}
               />
               <br />
-              <label htmlFor="password_confirmation" className="grey-text">
+              <label htmlFor="passwordConfirmation" className="grey-text">
                 Confirm Password
               </label>
               <input
                 type="password"
-                id="password_confirmation"
-                name="password_confirmation"
+                id="passwordConfirmation"
+                name="passwordConfirmation"
                 className="form-control"
-                value={this.state.password_confirmation}
+                value={this.state.passwordConfirmation}
                 onChange={this.onChange}
               />
               <div className="text-center mt-4">
@@ -128,6 +136,12 @@ export default class Register extends Component {
               </div>
               {message}
             </form>
+            <p className="font-small grey-text d-flex justify-content-end">
+              Already a member?
+              <a href="/login" className="blue-text ml-1">
+                Sign in
+              </a>
+            </p>
           </Col>
         </Row>
       </Container>

@@ -27,11 +27,13 @@ usersRouter.post('/register', validateRegistrationInput, async (req, res) => {
   }
 
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, passwordConfirmation } = req.body;
     const user = await User.findOne({ username });
 
     if (user) {
       res.status(403).json({ message: 'An account already exists for this email address.' });
+    } else if (password !== passwordConfirmation) {
+      res.status(400).json({ message: 'Password confirmation is incorrect.' });
     } else {
       await createUser(username, email, password);
 
