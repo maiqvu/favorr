@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
-
+import RequestService from './RequestService';
 import Request from './Request';
 import { AuthContext } from '../../context/AuthContext';
 
@@ -13,7 +12,7 @@ import {
   Button,
 } from 'react-bootstrap';
 
-const AvailablePublicRequests = (props) => {
+const AvailableRequests = (props) => {
   const [requests, setRequests] = useState([]);
   const [focusedRequestId, setFocusedRequestId] = useState('');
   const [keywordToSearch, setKeywordToSearch] = useState('');
@@ -27,42 +26,44 @@ const AvailablePublicRequests = (props) => {
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
-    axios
-      .get(`/api/publicRequests/available?limit=${limit}&skip=${skip}`)
-      .then((res) => setRequests(res.data))
-      .catch((err) => console.error(err));
-    
-    axios
-      .get(`/api/publicRequests/available/count`)
-      .then((res) => setRequestCount(res.data.count))
-      .catch((err) => console.error(err));
+    // get all available requests
+    const getAvailableRequests = async (limit, skip) => {
+      const availableRequests = await RequestService.getAvailableRequests(
+        limit,
+        skip
+      );
+      setRequests(availableRequests);
+    };
+
+    // get total count of all available requests
+    const getAvailableRequestCount = async () => {
+      const count = await RequestService.getAvailableRequestCount();
+      setRequestCount(count);
+    };
+    getAvailableRequests(limit, skip);
+    getAvailableRequestCount();
   }, [authContext.user]);
 
   useEffect(() => {
-    axios
-      .get(`/api/publicRequests/available?limit=${limit}&skip=${skip}`)
-      .then((res) => setRequests(res.data))
-      .catch((err) => console.error(err));
-  }, [skip, limit])
+    // get available requests when page changes
+    const getAvailableRequests = async (limit, skip) => {
+      const availableRequests = await RequestService.getAvailableRequests(
+        limit,
+        skip
+      );
+      setRequests(availableRequests);
+    };
+    getAvailableRequests(limit, skip);
+  }, [skip, limit]);
 
   const nextPage = () => {
     const newSkip = skip + limit;
-    if (newSkip < requestCount)
-      setSkip(skip + limit)
-  }
+    if (newSkip < requestCount) setSkip(skip + limit);
+  };
 
   const previousPage = () => {
-      const newSkip = skip - limit;
-      if (newSkip >= 0)
-        setSkip(newSkip)
-  }
-
-  const deleteRequest = async (request) => {
-    try {
-      await axios.delete(`/api/publicRequests/${request._id}`);
-    } catch (err) {
-      console.error(err);
-    }
+    const newSkip = skip - limit;
+    if (newSkip >= 0) setSkip(newSkip);
   };
 
   const handleKeywordToSearchInput = (e) => {
@@ -79,13 +80,12 @@ const AvailablePublicRequests = (props) => {
     setRewardToSearch(e.target.value);
   };
 
-  // This function is a duplicate from MyClaimedRequests
   const updateRequest = async (updatedRequest, index) => {
     let tmpRequests = [...requests];
 
     // Delete request if there are no more rewards
     if (!updatedRequest.rewards.length) {
-      deleteRequest(updatedRequest);
+      await RequestService.deleteRequest(updatedRequest._id);
       tmpRequests.splice(index, 1);
       setFocusedRequestId('');
     } else {
@@ -96,7 +96,6 @@ const AvailablePublicRequests = (props) => {
     setRequests(tmpRequests);
   };
 
-  // This function is a duplicate from MyClaimedRequests
   const expandRequestToggle = (requestId) => {
     if (focusedRequestId === requestId) {
       setFocusedRequestId('');
@@ -106,16 +105,14 @@ const AvailablePublicRequests = (props) => {
   };
 
   const claim = async (requestId, index) => {
-    try {
-      let response = await axios.patch(
-        `/api/publicRequests/${requestId}/claim/${authContext.user.username}`
-      );
-      updateRequest(response.data, index);
-    } catch (err) {
-      console.error(err);
-    }
+    // currently logged in user
+    const username = authContext.user.username;
+
+    const updatedRequest = await RequestService.claimRequest(requestId, username);
+    updateRequest(updatedRequest, index);
   };
 
+  // get all rewards from the request into an a list to use filter feature
   const requestRewardItems = (rewards) => {
     let itemList = [];
 
@@ -206,13 +203,17 @@ const AvailablePublicRequests = (props) => {
           ) : null
         ) : null
       )}
-      <div className="float-right"> 
-          <Button variant="outline-primary" onClick={previousPage}>&laquo;</Button>
-          &nbsp;
-          <Button variant="outline-primary" onClick={nextPage}>&raquo;</Button> 
+      <div className="float-right">
+        <Button variant="outline-primary" onClick={previousPage}>
+          &laquo;
+        </Button>
+        &nbsp;
+        <Button variant="outline-primary" onClick={nextPage}>
+          &raquo;
+        </Button>
       </div>
     </Container>
   );
 };
 
-export default AvailablePublicRequests;
+export default AvailableRequests;

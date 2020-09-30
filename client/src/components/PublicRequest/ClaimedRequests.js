@@ -1,26 +1,27 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import RequestService from './RequestService';
 import Request from './Request';
 import { AuthContext } from '../../context/AuthContext';
 
 import { Container, Row, Col } from 'react-bootstrap';
 
-const MyClaimedRequests = (props) => {
+const ClaimedRequests = (props) => {
   const [claimedRequests, setClaimedRequests] = useState([]);
   const [focusedRequestId, setFocusedRequestId] = useState('');
 
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
+    const getClaimedRequests = async (username) => {
+      const requests = await RequestService.getClaimedRequests(username);
+      setClaimedRequests(requests);
+    };
+
     if (authContext.user) {
-      axios
-        .get(`/api/publicRequests/claimed/${authContext.user.username}`)
-        .then((res) => setClaimedRequests(res.data))
-        .catch((err) => console.error(err));
+      getClaimedRequests(authContext.user.username);
     }
   }, [authContext.user]);
 
-  // This function is a duplicate from AvailablePublicRequest
   const expandRequestToggle = (requestId) => {
     if (focusedRequestId === requestId) {
       setFocusedRequestId(null);
@@ -29,29 +30,13 @@ const MyClaimedRequests = (props) => {
     }
   };
 
-  // This function is a duplicate from AvailablePublicRequest (This is not needed, but I want to reuse updateRequest function later.)
-  const deleteRequest = async (request) => {
-    try {
-      await axios.delete(`/api/publicRequests/${request._id}`);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // This function is a duplicate from AvailablePublicRequest
-  const updateRequest = async (updatedRequest, index) => {
+  const updateRequest = (updatedRequest, index) => {
     let tmpRequests = [...claimedRequests];
 
-    // Delete request if there are no more rewards
-    if (!updatedRequest.rewards.length) {
-      deleteRequest(updatedRequest);
-      tmpRequests.splice(index, 1);
-      setFocusedRequestId('');
-    } else {
-      let request = { ...tmpRequests[index] };
-      request = updatedRequest;
-      tmpRequests[index] = request;
-    }
+    let request = { ...tmpRequests[index] };
+    request = updatedRequest;
+    tmpRequests[index] = request;
+
     setClaimedRequests(tmpRequests);
   };
 
@@ -82,4 +67,4 @@ const MyClaimedRequests = (props) => {
   );
 };
 
-export default MyClaimedRequests;
+export default ClaimedRequests;

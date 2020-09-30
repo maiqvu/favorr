@@ -1,8 +1,8 @@
 import React, { useContext }  from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import AvailablePublicRequests from './components/PublicRequest/AvailablePublicRequests';
+import AvailableRequests from './components/PublicRequest/AvailableRequests';
 import CreatePublicRequest from './components/PublicRequest/CreatePublicRequest';
-import MyClaimedRequests from './components/PublicRequest/MyClaimedRequests';
+import ClaimedRequests from './components/PublicRequest/ClaimedRequests';
 import MyFavors from './components/Favor/MyFavors';
 import AddFavor from './components/Favor/AddFavor';
 import Login from './components/Auth/Login';
@@ -22,9 +22,9 @@ const App = () => {
           <NavBar />
           <Layout>
             <Switch>
-              <Route exact path="/" component={AvailablePublicRequests} />
+              <Route exact path="/" component={AvailableRequests} />
               <ProtectedRoute path="/createPublicRequest" component={CreatePublicRequest} />
-              <ProtectedRoute path="/myClaimedRequests" component={MyClaimedRequests} />
+              <ProtectedRoute path="/myClaimedRequests" component={ClaimedRequests} />
               <ProtectedRoute path="/myFavors" component={MyFavors} />
               <ProtectedRoute path="/addFavor" component={AddFavor} />
               <PublicRoute path="/login" component={Login} />

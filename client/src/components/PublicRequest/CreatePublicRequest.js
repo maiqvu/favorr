@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
-import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
+import RequestService from './RequestService';
 
 const CreatePublicRequest = (props) => {
   const [ task, setTask ] = useState('');
@@ -28,23 +28,17 @@ const CreatePublicRequest = (props) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    try {
-      await axios.post(`/api/publicRequests`,
-        {
-          creator: authContext.user.username,
-          claimedBy: null,
-          claimedByTime: null,
-          task: task,
-          reward: { 
-            user: authContext.user.username,
-            item: reward
-          }
-        })
+    const request = await RequestService.createRequest(
+      authContext.user.username,
+      task,
+      reward
+    )
+
+    if (request) {
       setSuccessText('Success! Request has been posted.');
       setTask('');
       setReward('');
-    } catch (err) {
-      console.log(err);
+    } else {
       setSuccessText('Error! Please contact Admin');
     }
   };

@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import RequestService from './RequestService';
 
 import AddReward from './AddReward';
 import RemoveReward from './RemoveReward';
@@ -11,10 +11,10 @@ import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 const Request = (props) => {
-  const [ newReward, setNewReward ] = useState('');
-  const [ removeRewardId, setRemoveRewardId ] = useState('');
-  const [ showUploadOption, setShowUploadOption ] = useState(false);
-  const [ showGiveUpConfirmation, setShowGiveUpConfirmation ] = useState(false);
+  const [newReward, setNewReward] = useState('');
+  const [removeRewardId, setRemoveRewardId] = useState('');
+  const [showUploadOption, setShowUploadOption] = useState(false);
+  const [showGiveUpConfirmation, setShowGiveUpConfirmation] = useState(false);
 
   const handleSelectNewReward = (e) => {
     setNewReward(e.target.value);
@@ -29,43 +29,38 @@ const Request = (props) => {
       setShowGiveUpConfirmation(!showGiveUpConfirmation);
     }
     setShowUploadOption(!showUploadOption);
-  }
+  };
 
   const toggleGiveUpConfirmation = () => {
     if (showUploadOption === true) {
       setShowUploadOption(!showUploadOption);
     }
     setShowGiveUpConfirmation(!showGiveUpConfirmation);
-  }
+  };
 
+  // add a reward with reference to the logged in user and update the request
   const addReward = async (requestId, index) => {
-    try {
-      let response = await axios.post(
-        `/api/publicRequests/${requestId}/reward`,
-        {
-          username: props.user.username,
-          item: newReward,
-        }
-      );
-      props.updateRequest(response.data, index);
-      setNewReward('');
-    } catch (err) {
-      console.error(err);
-    }
-  }
+    const updatedRequest = await RequestService.addReward(
+      requestId,
+      props.user.username,
+      newReward
+    );
+    props.updateRequest(updatedRequest, index);
+    setNewReward('');
+  };
 
+  // remove a reward that is created by the logged in user and update the request
   const removeReward = async (requestId, index) => {
-    try {
-      let response = await axios.delete(
-        `/api/publicRequests/${requestId}/reward/${removeRewardId}`
-      );      
-      props.updateRequest(response.data, index);
-      setRemoveRewardId('');
-    } catch (err) {
-      console.error(err);
-    }
-  }
+    const updatedRequest = await RequestService.removeReward(
+      requestId,
+      removeRewardId
+    );
 
+    props.updateRequest(updatedRequest, index);
+    setRemoveRewardId('');
+  };
+
+  // full reward list for displaying in expanded view
   const constructFullRewardItemList = (rewards) => {
     let fullRewardItemList = [];
 
@@ -74,8 +69,9 @@ const Request = (props) => {
     }
 
     return fullRewardItemList.join(', ');
-  }
+  };
 
+  // limited reward list for displaying in row
   const constructLimitedRewardItemList = (rewards) => {
     let displayList;
     let rewardItemList = [];
@@ -91,18 +87,14 @@ const Request = (props) => {
     }
 
     return displayList;
-  }
+  };
 
   return (
     <React.Fragment>
       <Row>
-        <Col className="col-sm-5 text-left">
-          {props.request.task}
-        </Col>
+        <Col className="col-sm-5 text-left">{props.request.task}</Col>
         <Col className="col-sm-3 text-left">
-          {new Date(Date.parse(props.date))
-            .toString()
-            .slice(0, 15)}
+          {new Date(Date.parse(props.date)).toString().slice(0, 15)}
         </Col>
         <Col className="col-sm-3 text-left">
           {constructLimitedRewardItemList(props.request.rewards)}
@@ -135,17 +127,13 @@ const Request = (props) => {
               <Col className="col-sm-5">
                 <strong>Time Submitted:&ensp;</strong>
                 <span>
-                  {new Date(
-                    Date.parse(props.request.createdAt)
-                  ).toString()}
+                  {new Date(Date.parse(props.request.createdAt)).toString()}
                 </span>
               </Col>
               <Col className="col-sm-7">
                 <strong>Rewards:&ensp;</strong>
                 <span>
-                  {constructFullRewardItemList(
-                    props.request.rewards
-                  )}
+                  {constructFullRewardItemList(props.request.rewards)}
                 </span>
               </Col>
             </Row>
@@ -171,37 +159,37 @@ const Request = (props) => {
                       removeRewardId={removeRewardId}
                       onChange={handleSelectRemoveRewardId}
                       removeReward={() =>
-                        removeReward(
-                          props.request._id,
-                          props.index
-                        )
+                        removeReward(props.request._id, props.index)
                       }
                     />
                   </Col>
                 </Row>
               ) : null}
               <div className="text-right">
-                {props.user.username && (props.user.username !== props.request.creator.username)
-                  && (props.user._id !== props.request.claimedBy) ? (
+                {props.user.username &&
+                props.user.username !== props.request.creator.username &&
+                props.user._id !== props.request.claimedBy ? (
                   <Button
                     variant="primary"
-                    onClick={() =>
-                      props.claim(props.request._id, props.index)
-                    }
+                    onClick={() => props.claim(props.request._id, props.index)}
                   >
                     Claim
                   </Button>
                 ) : null}
-                {props.user.username && (props.user._id === props.request.claimedBy) ? (
+                {props.user.username &&
+                props.user._id === props.request.claimedBy ? (
                   <div>
                     <Button onClick={toggleUploadOption}>Resolve</Button>
                     &ensp;
-                    <Button onClick={toggleGiveUpConfirmation} variant="secondary">Give Up</Button>
+                    <Button
+                      onClick={toggleGiveUpConfirmation}
+                      variant="secondary"
+                    >
+                      Give Up
+                    </Button>
                   </div>
                 ) : null}
-                {showUploadOption ? (
-                  <UploadProof />
-                ) : null}
+                {showUploadOption ? <UploadProof /> : null}
                 {showGiveUpConfirmation ? (
                   <div>
                     <br />
@@ -211,7 +199,7 @@ const Request = (props) => {
                 ) : null}
               </div>
             </div>
-          ) : null }
+          ) : null}
         </div>
       ) : null}
       <hr />
