@@ -1,6 +1,8 @@
+import { environment as env } from '../environments/environment';
+
 export default {
   login: (user) => {
-    return fetch('/api/users/login', {
+    return fetch(`/${env.favorrApiName}/${env.usersPath}/login`, {
       method: 'post',
       body: JSON.stringify(user),
       headers: {
@@ -15,7 +17,7 @@ export default {
     });
   },
   logout: () =>{
-    return fetch('/api/users/logout')
+    return fetch(`/${env.favorrApiName}/${env.usersPath}/logout`)
       .then(res => {
         if (res.status !== 401) {
           return res.json().then(data => data);
@@ -23,7 +25,7 @@ export default {
       });
   },
   isAuthenticated: () => {
-    return fetch('/api/users/isAuthenticated', {
+    return fetch(`/${env.favorrApiName}/${env.usersPath}/isAuthenticated`, {
       method: 'get',
     }).then(res => {
       if (res.status !== 401) {

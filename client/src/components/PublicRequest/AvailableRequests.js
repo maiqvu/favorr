@@ -52,10 +52,10 @@ const AvailableRequests = (props) => {
         skip
       );
       setRequests(availableRequests);
+      // set current page number after getting next available requests
+      setCurrentPage(skip / 5 + 1);
     };
     getAvailableRequests(limit, skip);
-
-    setCurrentPage(skip / 5 + 1);
   }, [skip, limit]);
 
   const nextPage = () => {
@@ -82,6 +82,7 @@ const AvailableRequests = (props) => {
     setRewardToSearch(e.target.value);
   };
 
+  // for updating the request whenever a reward is added or removed
   const updateRequest = async (updatedRequest, index) => {
     let tmpRequests = [...requests];
 
@@ -89,7 +90,6 @@ const AvailableRequests = (props) => {
     if (!updatedRequest.rewards.length) {
       await RequestService.deleteRequest(updatedRequest._id);
       tmpRequests.splice(index, 1);
-      // setFocusedRequestId('');
     } else {
       let request = { ...tmpRequests[index] };
       request = updatedRequest;

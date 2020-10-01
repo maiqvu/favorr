@@ -1,10 +1,13 @@
 import axios from 'axios';
 
+import { environment as env } from '../../environments/environment';
+
 export default {
     // get requests that have yet to be claimed
     getAvailableRequests: async (limit, skip) => {
         try {
-            const response = await axios.get(`/api/publicRequests/available?limit=${limit}&skip=${skip}`);
+            const response = await axios
+                .get(`/${env.favorrApiName}/${env.requestsPath}/available?limit=${limit}&skip=${skip}`);
             return response.data;
         } catch (err) {
             console.log(err);
@@ -14,7 +17,8 @@ export default {
     // get total available request count to determine first and last page
     getAvailableRequestCount: async () => {   
         try {
-            const response = await axios.get(`/api/publicRequests/available/count`);
+            const response = await axios
+                .get(`/${env.favorrApiName}/${env.requestsPath}/available/count`);
             // return value of count within response object
             return response.data.count;
         } catch (err) {
@@ -24,7 +28,7 @@ export default {
     },
     deleteRequest: async (requestId) => {
         try {
-            await axios.delete(`/api/publicRequests/${requestId}`);
+            await axios.delete(`/${env.favorrApiName}/${env.requestsPath}/${requestId}`);
             return 0;
         } catch (err) {
             console.error(err);
@@ -33,7 +37,8 @@ export default {
     },
     claimRequest: async (requestId, username) => {
         try {
-            let response = await axios.patch(`/api/publicRequests/${requestId}/claim/${username}`);
+            let response = await axios
+                .patch(`/${env.favorrApiName}/${env.requestsPath}/${requestId}/claim/${username}`);
             return response.data;
         } catch (err) {
             console.error(err);
@@ -42,7 +47,8 @@ export default {
     },
     getClaimedRequests: async (username) => {
         try {
-            const response = await axios.get(`/api/publicRequests/claimed/${username}`)
+            const response = await axios
+                .get(`/${env.favorrApiName}/${env.requestsPath}/claimed/${username}`)
             return response.data;
         } catch (err) {
             console.error(err);
@@ -52,7 +58,7 @@ export default {
     addReward: async (requestId, username, newReward) => {
         try {
             const response = await axios.post(
-                `/api/publicRequests/${requestId}/reward`,
+                `/${env.favorrApiName}/${env.requestsPath}/${requestId}/reward`,
                 {
                     username: username,
                     item: newReward,
@@ -67,7 +73,7 @@ export default {
     removeReward: async (requestId, removeRewardId) => {
         try {
             const response = await axios.delete(
-                `/api/publicRequests/${requestId}/reward/${removeRewardId}`
+                `/${env.favorrApiName}/${env.requestsPath}/${requestId}/reward/${removeRewardId}`
             );
             return response.data;
         } catch (err) {
@@ -77,7 +83,7 @@ export default {
     },
     createRequest: async (username, task, reward) => {
         try {
-            const response = await axios.post(`/api/publicRequests`,
+            const response = await axios.post(`/${env.favorrApiName}/${env.requestsPath}`,
                 {
                     creator: username,
                     claimedBy: null,

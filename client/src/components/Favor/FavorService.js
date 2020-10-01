@@ -1,8 +1,10 @@
 import axios from 'axios';
 
+import { environment as env } from '../../environments/environment';
+
 export default {
   getFavors: async (userId) => {
-    const res = await axios.get(`/api/favors/${userId}`);
+    const res = await axios.get(`/${env.favorrApiName}/${env.favorsPath}/${userId}`);
     if (res.status !== 401) {
       return res.data;
     } else {
@@ -10,7 +12,7 @@ export default {
     }
   },
   addFavor: (favor) => {
-    return fetch('/api/favors', {
+    return fetch(`/${env.favorrApiName}/${env.favorsPath}`, {
       method: 'post',
       body: JSON.stringify(favor),
       headers: { 'Content-Type' : 'application/json' }
@@ -23,12 +25,12 @@ export default {
     })
   },
   updateFavor: (favorId, updatedValue) => {
-    return axios.patch(`/api/favors/${favorId}`, updatedValue)
+    return axios.patch(`/${env.favorrApiName}/${env.favorsPath}/${favorId}`, updatedValue)
       .then(res => res)
       .catch(err => err)
   },
   findUserByUsername: async (username) => {
-    const res = await axios.get(`/api/users?username=${username}`);
+    const res = await axios.get(`/${env.favorrApiName}/${env.usersPath}?username=${username}`);
     if (res.status !== 401) {
       return res.data;
     } else {
