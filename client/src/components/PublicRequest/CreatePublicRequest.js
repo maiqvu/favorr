@@ -3,11 +3,9 @@ import { Form, Button, Container } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
 import RequestService from './RequestService';
 
-const CreatePublicRequest = (props) => {
+const CreatePublicRequest = () => {
   const [ task, setTask ] = useState('');
   const [ reward, setReward ] = useState('');
-  // to be used in future validation
-  const [ formIsValid, setFormIsValid ] = useState(true);
   const [ successText, setSuccessText ] = useState('');
 
   const authContext = useContext(AuthContext);
@@ -85,7 +83,7 @@ const CreatePublicRequest = (props) => {
           <Button
             variant="primary"
             type="submit"
-            disabled={!reward && formIsValid}
+            disabled={!reward}
           >
             Submit
           </Button>
