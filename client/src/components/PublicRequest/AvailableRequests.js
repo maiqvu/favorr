@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import RequestService from './RequestService';
 import Request from './Request';
 import { AuthContext } from '../../context/AuthContext';
-
+import Pagination from './Pagination';
 import {
   Container,
   Row,
@@ -20,12 +20,13 @@ const AvailableRequests = (props) => {
 
   const [limit, setLimit] = useState(5);
   const [skip, setSkip] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1)
   const [requestCount, setRequestCount] = useState(0);
 
   const authContext = useContext(AuthContext);
 
+  // get available requests
   useEffect(() => {
-    // get all available requests
     const getAvailableRequests = async (limit, skip) => {
       const availableRequests = await RequestService.getAvailableRequests(
         limit,
@@ -43,8 +44,8 @@ const AvailableRequests = (props) => {
     getAvailableRequestCount();
   }, [authContext.user]);
 
+  // get available requests when page changes
   useEffect(() => {
-    // get available requests when page changes
     const getAvailableRequests = async (limit, skip) => {
       const availableRequests = await RequestService.getAvailableRequests(
         limit,
@@ -53,6 +54,8 @@ const AvailableRequests = (props) => {
       setRequests(availableRequests);
     };
     getAvailableRequests(limit, skip);
+
+    setCurrentPage(skip / 5 + 1);
   }, [skip, limit]);
 
   const nextPage = () => {
@@ -190,17 +193,12 @@ const AvailableRequests = (props) => {
           ) : null
         ) : null
       )}
-      {requestCount > limit ? (
-        <div className="float-right">
-          <Button variant="outline-primary" onClick={previousPage}>
-            &laquo;
-          </Button>
-          &nbsp;
-          <Button variant="outline-primary" onClick={nextPage}>
-            &raquo;
-          </Button>
-        </div>
-      ) : null}
+      <Pagination 
+        count={requestCount}
+        limitPerPage={limit}
+        previousPage={previousPage}
+        nextPage={nextPage}
+        currentPage={currentPage} />
     </Container>
   );
 };
