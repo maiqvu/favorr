@@ -1,10 +1,10 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import AuthService from '../../context/AuthService';
-import {withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 
+import AuthService from '../../context/AuthService';
 
 const Login = (props) => {
   const [user, setUser] = useState({ username: '', password: '' });
@@ -13,43 +13,51 @@ const Login = (props) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleChange = (e) => {
-      setUser({ ...user, [e.target.name]: e.target.value });
+    setUser({ ...user, [e.target.name]: e.target.value });
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await AuthService.login(user).then(data => {
+      await AuthService.login(user).then((data) => {
         console.log('After successful login: ', data);
         const { isAuthenticated, user } = data;
         if (isAuthenticated) {
           authContext.setUser(user);
           authContext.setIsAuthenticated(isAuthenticated);
           localStorage.setItem('user', JSON.stringify(user));
-          localStorage.setItem('isAuthenticated', JSON.stringify(isAuthenticated));
-  
+          localStorage.setItem(
+            'isAuthenticated',
+            JSON.stringify(isAuthenticated)
+          );
+
           //Show Login successfully message
           setMessage();
           setShowModal(true);
-        } else{
-          setMessage(<div className="text-danger text-center">Invalid username or password</div>);
+        } else {
+          setMessage(
+            <div className="text-danger text-center">
+              Invalid username or password
+            </div>
+          );
         }
       });
     } catch (err) {
       console.log(err);
-      setMessage(<div className="text-danger text-center">Unable to log in. Please try again later.</div>);
+      setMessage(
+        <div className="text-danger text-center">
+          Unable to log in. Please try again later.
+        </div>
+      );
     }
   };
 
-  const handleClose = () => setShowModal(false);
-  const handleShow = () => setShowModal(true);
-
   const redirect = () => {
     setShowModal(false);
-    
+
     // Redirect back to Homepage
     props.history.push('/');
-  }
+  };
 
   return (
     <Container className="mt-4">
@@ -97,7 +105,7 @@ const Login = (props) => {
             </div>
             {message}
           </form>
-          
+
           <p className="font-small grey-text d-flex justify-content-end">
             Not a member?
             <a href="/register" className="blue-text ml-1">
@@ -111,7 +119,9 @@ const Login = (props) => {
           <p>Login Sucessfully!</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={redirect}>Go to Homepage</Button>
+          <Button variant="primary" onClick={redirect}>
+            Go to Homepage
+          </Button>
         </Modal.Footer>
       </Modal>
     </Container>

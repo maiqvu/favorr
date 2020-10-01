@@ -6,7 +6,6 @@ export const AuthContext = createContext();
 export default ({children}) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLogged, setLogged] = useState(false);
   
   useEffect(() => {
     AuthService.isAuthenticated().then(data => {
