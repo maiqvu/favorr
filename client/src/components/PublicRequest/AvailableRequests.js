@@ -12,7 +12,7 @@ import {
   Button,
 } from 'react-bootstrap';
 
-const AvailableRequests = (props) => {
+const AvailableRequests = () => {
   const [requests, setRequests] = useState([]);
   const [keywordToSearch, setKeywordToSearch] = useState('');
   const [rewardToSearch, setRewardToSearch] = useState('');
@@ -56,17 +56,11 @@ const AvailableRequests = (props) => {
       setCurrentPage(skip / 5 + 1);
     };
     getAvailableRequests(limit, skip);
-  }, [skip, limit]);
+  }, [skip, limit, requestCount]);
 
-  const nextPage = () => {
-    const newSkip = skip + limit;
-    if (newSkip < requestCount) setSkip(skip + limit);
-  };
-
-  const previousPage = () => {
-    const newSkip = skip - limit;
-    if (newSkip >= 0) setSkip(newSkip);
-  };
+  const handlePageSelection = (skip) => {
+    setSkip(skip)
+  }
 
   const handleKeywordToSearchInput = (e) => {
     setKeywordToSearch(e.target.value);
@@ -102,8 +96,17 @@ const AvailableRequests = (props) => {
   const claim = async (requestId, index) => {
     const username = authContext.user.username;
 
+    // claimRequest method returns updated request if successful and null if unsuccessful
     const updatedRequest = await RequestService.claimRequest(requestId, username);
-    updateRequest(updatedRequest, index);
+
+    // update only if updatedRequest is successful
+    if (updatedRequest) {
+      updateRequest(updatedRequest, index);
+      // return to first page whenever a request is claimed
+      setSkip(0);
+      // decrease the requests count by one if a request is claimed
+      setRequestCount(requestCount - 1);
+    }
   };
 
   // get all rewards from the request into an a list to use filter feature
@@ -195,9 +198,9 @@ const AvailableRequests = (props) => {
       )}
       <Pagination 
         count={requestCount}
-        limitPerPage={limit}
-        previousPage={previousPage}
-        nextPage={nextPage}
+        limit={limit}
+        skip={skip}
+        onPageSelection={handlePageSelection}
         currentPage={currentPage} />
     </Container>
   );
