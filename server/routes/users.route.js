@@ -21,10 +21,7 @@ const createUser = async (username, email, password) => {
 
 
 usersRouter.post('/register', validateRegistrationInput, async (req, res) => {
-  const isValid = validationResult(req);
-  if (!isValid.isEmpty()) {
-    res.status(400).json({message: isValid.array()})
-  }
+  const messages = validationResult(req);
 
   try {
     const { username, email, password, passwordConfirmation } = req.body;
@@ -34,6 +31,8 @@ usersRouter.post('/register', validateRegistrationInput, async (req, res) => {
       res.status(403).json({ message: 'An account already exists for this email address.' });
     } else if (password !== passwordConfirmation) {
       res.status(400).json({ message: 'Password confirmation is incorrect.' });
+    } else if (!messages.isEmpty()) {
+      res.status(400).json({message: messages.errors[0].msg})
     } else {
       await createUser(username, email, password);
 
