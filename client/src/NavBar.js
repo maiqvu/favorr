@@ -38,6 +38,9 @@ const NavBar = (props) => {
                 <Link className="nav-link" to="/">Public Request</Link>
             </li>
             <li className="nav-item">
+                <Link className="nav-link" to="/leaderboard">Leaderboard</Link>
+            </li>
+            <li className="nav-item">
                 <Link className="nav-link" to="/createPublicRequest">Create Public Request</Link>
             </li>
             <li className="nav-item">

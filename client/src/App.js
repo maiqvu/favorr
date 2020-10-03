@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AvailableRequests from './components/PublicRequest/AvailableRequests';
+import Leaderboard from './components/Leaderboard/Leaderboard';
 import CreatePublicRequest from './components/PublicRequest/CreatePublicRequest';
 import ClaimedRequests from './components/PublicRequest/ClaimedRequests';
 import MyFavors from './components/Favor/MyFavors';
@@ -22,6 +23,7 @@ const App = () => {
           <Layout>
             <Switch>
               <Route exact path="/" component={AvailableRequests} />
+              <Route path="/leaderboard" component={Leaderboard} />
               <ProtectedRoute path="/createPublicRequest" component={CreatePublicRequest} />
               <ProtectedRoute path="/myClaimedRequests" component={ClaimedRequests} />
               <ProtectedRoute path="/myFavors" component={MyFavors} />
