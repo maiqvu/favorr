@@ -4,7 +4,7 @@ import express from 'express';
 import PublicRequest from '../models/publicRequest.model';
 import User from '../models/user.model';
 import Favor from '../models/favor.model';
-import FavorService from '../../client/src/components/Favor/FavorService';
+import Leaderboard from '../models/leaderboard.model';
 import mongoose from 'mongoose';
 
 
@@ -12,7 +12,8 @@ const limit = 5;
 
 //aggregate ownedTo descending order, limit to top 10 people
 
-const result = await Favor.aggregate([
+exports.index = async function () {
+    const result = await Favor.aggregate([
     {
         '$match': { 'repaid': false }
     }, {
@@ -26,3 +27,15 @@ const result = await Favor.aggregate([
         '$limit': limit
     }
 ]);
+
+try {
+    const firstLeaderboard = new Leaderboard({
+        user: result._id,
+        item: result.haveMostFavor
+    })
+    await firstLeaderboard.save();
+} catch (err) {
+    res.status(500).send(err);
+}
+
+};

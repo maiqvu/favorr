@@ -1,17 +1,17 @@
 import mongoose from 'mongoose';
 
 const LeaderBoardSchema = new mongoose.Schema({
-  stats: [{
-    user: {
+  
+    user: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true
-    },
-    item: {
+    }],
+    item: [{
       type: String,
       required: true
-    }
-  }]
+    }]
+  
 });
   
 
