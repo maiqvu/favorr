@@ -13,11 +13,24 @@ const storage = multer.diskStorage({
     callback(null, 'uploads/')
   },
   filename: function (req, file, callback) {
-    callback(null, file.originalname);
+    callback(null, Date.now() + file.originalname);
   }
 });
 
-const upload = multer({storage: storage});
+const fileFilter = (req, file, callback) => {
+  // Only accept filetypes jpeg or png
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    callback(null, true);
+  } else {
+    callback(new Error('Invalid file type.'), false);   // Ignore the file and throw an error
+  }
+}
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1024 * 1024 * 5 },
+  fileFilter: fileFilter
+});
 
 
 // Create a new favor
