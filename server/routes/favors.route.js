@@ -3,6 +3,7 @@ import express from 'express';
 // import jwt from 'jsonwebtoken';
 import Favor from '../models/favor.model';
 import User from '../models/user.model';
+import Leaderboard from '../controller/leaderboard.controller';
 
 const favorsRouter = express.Router();
 
@@ -23,7 +24,7 @@ favorsRouter.post('/', async (req, res) => {
     const owedToUser = await User.findOne({ username: req.body.owedTo });
     const owedBy = owedByUser._id.toString();
     const owedTo = owedToUser._id.toString();
-    
+    Leaderboard.index();
     // if (legit) {
       const newFavor = new Favor({
         description: req.body.description,

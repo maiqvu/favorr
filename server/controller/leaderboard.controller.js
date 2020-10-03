@@ -1,5 +1,3 @@
-// Import packages
-import express from 'express';
 // Import mongoose model
 import PublicRequest from '../models/publicRequest.model';
 import User from '../models/user.model';
@@ -11,8 +9,7 @@ import mongoose from 'mongoose';
 const limit = 5;
 
 //aggregate ownedTo descending order, limit to top 10 people
-
-exports.index = async function () {
+const index = async function () {
     const result = await Favor.aggregate([
     {
         '$match': { 'repaid': false }
@@ -39,3 +36,4 @@ try {
 }
 
 };
+export default index;
