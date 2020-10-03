@@ -6,11 +6,24 @@ import User from '../models/user.model';
 
 const favorsRouter = express.Router();
 
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, 'uploads/')
+  },
+  filename: function (req, file, callback) {
+    callback(null, file.originalname);
+  }
+});
+
+const upload = multer({storage: storage});
+
 
 // Create a new favor
 favorsRouter.post('/', async (req, res) => {
   // const token = req.headers.token;
-
+  
   if (!req.body.description || !req.body.owedBy || !req.body.owedTo) {
     return res.status(400).json({ message: 'Please enter all required fields.' });
   }
@@ -65,13 +78,14 @@ favorsRouter.get('/:id', async (req, res) => {
 });
 
 // Update one favor
-favorsRouter.patch('/:id', async (req, res) => {
+favorsRouter.patch('/:id', upload.single('image'), async (req, res) => {
   try {
     const updatedFavor = await Favor.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }   // Return the modified document instead of the original.
     );
+    console.log(req.file);
     res.status(200).json(updatedFavor);
   } catch (err) {
     res.status(500).send(err);

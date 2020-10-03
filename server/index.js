@@ -21,6 +21,8 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use('/uploads', express.static('uploads'));   // Save images into 'uploads' folder
+
 
 // Connect to database
 mongoose
