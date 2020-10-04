@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { Button } from 'react-bootstrap';
+import { Button, Collapse } from 'react-bootstrap';
 
 const Favor = (props) => {
+  const [ open, setOpen ] = useState(false);
   const authContext = useContext(AuthContext);
   
   return (
@@ -18,9 +19,27 @@ const Favor = (props) => {
         ? props.favor.owedTo.username
         : authContext.user.username}
       </td>
-      <td width="20%">{props.favor.repaid ? 'Repaid' : 'Pending'}</td>
-      <td width="20%">
-        {props.favor.repaid ? null : <Button
+      <td width="15%">{props.favor.repaid ? 'Repaid' : 'Pending'}</td>
+      <td width="25%" className="text-right">
+        {props.favor.repaid ?
+        <>
+          <Button
+            size="sm"
+            variant="outline-primary"
+            onClick={() => setOpen(!open)}
+            aria-controls="favor-repaid-proof"
+            aria-expanded={open}
+          >
+            See proof
+          </Button>
+          <Collapse in={open}>
+            <div id="favor-repaid-proof">
+              <p>{props.favor.image}</p>
+              <img src={`http://localhost:8080/${props.favor.image}`} alt="favor-repaid-proof"/>
+            </div>
+          </Collapse>
+        </> : 
+        <Button
           size="sm"
           variant="outline-primary"
           onClick={() => props.handleMarkAsRepaid(props.favor._id, props.favor.repaid)}
