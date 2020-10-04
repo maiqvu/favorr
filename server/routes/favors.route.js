@@ -7,11 +7,37 @@ import Leaderboard from '../controller/leaderboard.controller';
 
 const favorsRouter = express.Router();
 
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, 'uploads/')
+  },
+  filename: function (req, file, callback) {
+    callback(null, Date.now() + file.originalname);
+  }
+});
+
+const fileFilter = (req, file, callback) => {
+  // Only accept filetypes jpeg or png
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    callback(null, true);
+  } else {
+    callback(new Error('Invalid file type.'), false);   // Ignore the file and throw an error
+  }
+}
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1024 * 1024 * 5 },
+  fileFilter: fileFilter
+});
+
 
 // Create a new favor
 favorsRouter.post('/', async (req, res) => {
   // const token = req.headers.token;
-
+  
   if (!req.body.description || !req.body.owedBy || !req.body.owedTo) {
     return res.status(400).json({ message: 'Please enter all required fields.' });
   }
@@ -66,13 +92,14 @@ favorsRouter.get('/:id', async (req, res) => {
 });
 
 // Update one favor
-favorsRouter.patch('/:id', async (req, res) => {
+favorsRouter.patch('/:id', upload.single('image'), async (req, res) => {
   try {
     const updatedFavor = await Favor.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }   // Return the modified document instead of the original.
     );
+    console.log(req.file);
     res.status(200).json(updatedFavor);
   } catch (err) {
     res.status(500).send(err);
