@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import RequestService from './RequestService';
 
 import AddReward from './AddReward';
@@ -15,7 +15,12 @@ const Request = (props) => {
   const [removeRewardId, setRemoveRewardId] = useState('');
   const [showUploadOption, setShowUploadOption] = useState(false);
   const [showGiveUpConfirmation, setShowGiveUpConfirmation] = useState(false);
-  const [focusedRequestId, setFocusedRequestId] = useState('');
+  const [focused, setFocused] = useState(false);
+
+  useEffect(() => {
+    // reset expand toggle when the request has changed
+    setFocused(false);
+  }, [props.request])
 
   const handleSelectNewReward = (e) => {
     setNewReward(e.target.value);
@@ -26,11 +31,7 @@ const Request = (props) => {
   };
 
   const expandRequestToggle = () => {
-    if (focusedRequestId === props.request._id) {
-      setFocusedRequestId('');
-    } else {
-      setFocusedRequestId(props.request._id);
-    }
+    setFocused(!focused);
   };
 
   const toggleUploadOption = () => {
@@ -118,7 +119,7 @@ const Request = (props) => {
           </Dropdown>
         </Col>
       </Row>
-      {props.request._id === focusedRequestId ? (
+      {focused ? (
         <div className="p-3 mb-2 bg-light text-dark">
           <div className="p-2">
             <h5 className="text-left">REQUEST DETAILS:</h5>
@@ -163,7 +164,6 @@ const Request = (props) => {
                   <Col className="col-sm-5">
                     <RemoveReward
                       request={props.request}
-                      focusedRequestId={focusedRequestId}
                       user={props.user}
                       removeRewardId={removeRewardId}
                       onChange={handleSelectRemoveRewardId}
