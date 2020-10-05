@@ -50,7 +50,7 @@ favorsRouter.post('/', async (req, res) => {
     const owedToUser = await User.findOne({ username: req.body.owedTo });
     const owedBy = owedByUser._id.toString();
     const owedTo = owedToUser._id.toString();
-    
+    Leaderboard.index();
     // if (legit) {
       const newFavor = new Favor({
         description: req.body.description,
