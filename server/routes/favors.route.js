@@ -7,32 +7,6 @@ import { upload } from '../utils/multer';
 
 const favorsRouter = express.Router();
 
-// const multer = require('multer');
-
-// const storage = multer.diskStorage({
-//   destination: function (req, file, callback) {
-//     callback(null, 'uploads/')
-//   },
-//   filename: function (req, file, callback) {
-//     callback(null, Date.now() + file.originalname);
-//   }
-// });
-
-// const fileFilter = (req, file, callback) => {
-//   // Only accept filetypes jpeg or png
-//   if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-//     callback(null, true);
-//   } else {
-//     callback(new Error('Invalid file type.'), false);   // Ignore the file and throw an error
-//   }
-// }
-
-// const upload = multer({
-//   storage: storage,
-//   limits: { fileSize: 1024 * 1024 * 5 },
-//   fileFilter: fileFilter
-// });
-
 
 // Create a new favor
 favorsRouter.post('/', async (req, res) => {
@@ -50,7 +24,7 @@ favorsRouter.post('/', async (req, res) => {
     const owedToUser = await User.findOne({ username: req.body.owedTo });
     const owedBy = owedByUser._id.toString();
     const owedTo = owedToUser._id.toString();
-    Leaderboard.index();
+
     // if (legit) {
       const newFavor = new Favor({
         description: req.body.description,
