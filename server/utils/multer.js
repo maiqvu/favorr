@@ -1,5 +1,4 @@
 import multer from 'multer';
-import path from 'path';
 
 const storage = multer.diskStorage({
   // Destination folder to save the image
@@ -8,7 +7,7 @@ const storage = multer.diskStorage({
   },
   // Generate unique filename for each image
   filename: function (req, file, callback) {
-    callback(null, Date.now() + path.extname(file.originalname));
+    callback(null, Date.now() + file.originalname);
   }
 });
 
@@ -23,6 +22,6 @@ const fileFilter = (req, file, callback) => {
 
 export const upload = multer({
   storage: storage,
-  limits: {fileSize: 1024 * 1024 * 5},
+  limits: {fileSize: 2000000},   // 2 MB
   fileFilter: fileFilter
-});
+}).single('image');

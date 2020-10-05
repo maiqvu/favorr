@@ -66,7 +66,7 @@ favorsRouter.get('/:id', async (req, res) => {
 });
 
 // Update one favor with new repaid status and proof image
-favorsRouter.patch('/:id', upload.single('image'), async (req, res) => {
+favorsRouter.patch('/:id', upload, async (req, res) => {
   try {
     const repaid = req.body.repaid;
     const image = req.file.path;
