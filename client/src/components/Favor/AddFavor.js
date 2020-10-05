@@ -12,6 +12,7 @@ const AddFavor = () => {
   });
   const [ owedByMe, setOwedByMe ] = useState(null);
   const [ myFriend, setMyFriend ] = useState('');
+  const [ image, setImage ] = useState('');
   const [ showModal, setShowModal ] = useState(false);
   const [ err, setErr ] = useState('');
   
@@ -54,11 +55,12 @@ const AddFavor = () => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await FavorService.addFavor(newFavor);
-    setTimeout(() => {
-      console.log('2 seconds after favor saved in backend');
-      history.push(`/myFavors`);
-    }, 2000);
+    console.log(image);
+    // await FavorService.addFavor(newFavor, image);
+    // setTimeout(() => {
+    //   console.log('2 seconds after favor saved in backend');
+    //   history.push(`/myFavors`);
+    // }, 2000);
   };
   
   return (
@@ -168,12 +170,15 @@ const AddFavor = () => {
         </Modal.Footer>
       </Modal>
       
-      {
-        !owedByMe && 
-        <Form.Group>
-          <Form.File label="Please upload a photo proof." />
-        </Form.Group>
-      }
+      {!owedByMe && <Form.Group>
+        <label htmlFor="image">Please upload a photo proof.</label><br/>
+        <input
+          type="file"
+          id="image"
+          accept=".jpg,.png"
+          onChange={e => setImage(e.target.files[0])}
+        />
+      </Form.Group>}
       
       <Button type="submit" className="btn btn-primary">
         Submit
