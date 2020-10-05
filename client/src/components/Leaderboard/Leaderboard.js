@@ -21,8 +21,7 @@ const Leaderboard = () => {
           <tr>
             <th className="text-left font-weight-bold">Description</th>
             <th className="text-left font-weight-bold">Owed by</th>
-            <th></th>
-          </tr>
+            </tr>
         </thead>
         <tbody>
 
