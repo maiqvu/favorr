@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 
 const Pagination = (props) => {
-  const totalPageCount = Math.ceil(props.count / props.limit);
+  const [totalPageCount, setTotalPageCount] = useState(props.count);
 
+  useEffect(() => {
+    setTotalPageCount(
+      Math.ceil(props.count / props.limit)
+    );
+    console.log(props.count);
+  }, [props.count])
+  
   const nextPage = () => {
       const newSkip = props.skip + props.limit
     if (newSkip < props.count) {

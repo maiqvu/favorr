@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import RequestService from './RequestService';
 import Request from './Request';
 import { AuthContext } from '../../context/AuthContext';
@@ -24,6 +24,7 @@ const AvailableRequests = () => {
   const [requestCount, setRequestCount] = useState(0);
 
   const authContext = useContext(AuthContext);
+  const isFirstRun = useRef(true);
 
   // get available requests
   useEffect(() => {
@@ -46,6 +47,11 @@ const AvailableRequests = () => {
 
   // get available requests when page changes
   useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+
     const getAvailableRequests = async (limit, skip) => {
       const availableRequests = await RequestService.getAvailableRequests(
         limit,
@@ -56,7 +62,7 @@ const AvailableRequests = () => {
       setCurrentPage(skip / 5 + 1);
     };
     getAvailableRequests(limit, skip);
-  }, [skip, limit, requestCount]);
+  }, [skip, limit]);
 
   const handlePageSelection = (skip) => {
     setSkip(skip)
@@ -76,6 +82,16 @@ const AvailableRequests = () => {
     setRewardToSearch(e.target.value);
   };
 
+  const updateListOnRequestRemoval = () => {
+    // function to handle current page and total page count whenever
+    // a request is claimed or removed
+
+    // return to first page
+    setSkip(0);
+    // decrease the requests count by one
+    setRequestCount(requestCount - 1);
+  }
+
   // for updating the request whenever a reward is added or removed
   const updateRequest = async (updatedRequest, index) => {
     let tmpRequests = [...requests];
@@ -84,6 +100,7 @@ const AvailableRequests = () => {
     if (!updatedRequest.rewards.length) {
       await RequestService.deleteRequest(updatedRequest._id);
       tmpRequests.splice(index, 1);
+      updateListOnRequestRemoval();
     } else {
       let request = { ...tmpRequests[index] };
       request = updatedRequest;
@@ -102,10 +119,7 @@ const AvailableRequests = () => {
     // update only if updatedRequest is successful
     if (updatedRequest) {
       updateRequest(updatedRequest, index);
-      // return to first page whenever a request is claimed
-      setSkip(0);
-      // decrease the requests count by one if a request is claimed
-      setRequestCount(requestCount - 1);
+      updateListOnRequestRemoval();
     }
   };
 
