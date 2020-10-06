@@ -12,15 +12,13 @@ const RemoveReward = (props) => {
         onChange={props.onChange}
       >
         <option value="">Remove a reward</option>
-        {props.request._id === props.focusedRequestId
-          ? props.request.rewards.map((reward) =>
-              reward.user ? (
-                reward.user._id === props.user._id ? (
-                  <option key={reward._id} value={reward._id}>{reward.item}</option>
-                ) : null
-              ) : null
-            )
-          : null}
+        {props.request.rewards.map((reward) =>
+          reward.user ? (
+            reward.user._id === props.user._id ? (
+              <option key={reward._id} value={reward._id}>{reward.item}</option>
+            ) : null
+          ) : null
+        )}
       </select>
       <div className="input-group-append">
         <Button
