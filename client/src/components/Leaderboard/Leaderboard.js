@@ -1,15 +1,21 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Table, Container } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
-
+import axios from 'axios';
 
 const Leaderboard = () => {
-  // const [ task, setTask ] = useState('');
-  // const [ reward, setReward ] = useState('');
-  // const [ successText, setSuccessText ] = useState('');
+  const [data, setData] = useState([
+    {
+      name: '',
+      count: ''
+    }
+  ]);
 
-  // const authContext = useContext(AuthContext);
-
+  const fetchData = async () => {
+    const response = await axios.get('http://localhost:3000/api/leaderboard/');
+    setData(response.data);
+  };
+  useEffect(() => { fetchData() }, 200);
 
 
   return (
@@ -19,15 +25,23 @@ const Leaderboard = () => {
       <Table responsive striped hover responsive="sm" >
         <thead>
           <tr>
-            <th className="text-left font-weight-bold">Description</th>
-            <th className="text-left font-weight-bold">Owed by</th>
-            </tr>
+            <th className="text-center font-weight-bold">User name</th>
+            <th className="text-center font-weight-bold">Most favor owned to</th>
+          </tr>
         </thead>
         <tbody>
-
+          <tr>
+            <th className="text-center">placeholder</th>
+            <th className="text-center">0</th>
+            
+          </tr>
+          
         </tbody>
+        
+        {JSON.stringify(data)}
       </Table>
     </Container>
+
   );
 }
 
