@@ -46,8 +46,8 @@ const pipepline = [
 
 // Get list of top 5 people with most unrepaid favors
 // Read from favors collection
-leaderboardRouter.get('/leaderboard', async (req, res) => {
-    const topTenFavor = await Favor.aggregate(pipepline).pipeline();
+leaderboardRouter.get('/', async (req, res) => {
+    const topTenFavor = await Favor.aggregate(pipepline);
 
     try {
         res.status(200).send(topTenFavor);
