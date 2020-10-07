@@ -20,7 +20,7 @@ const Request = (props) => {
   useEffect(() => {
     // reset expand toggle when the request has changed
     setFocused(false);
-  }, [props.request])
+  }, [props.request._id])
 
   const handleSelectNewReward = (e) => {
     setNewReward(e.target.value);
