@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Table, Container } from 'react-bootstrap';
-import { AuthContext } from '../../context/AuthContext';
 import axios from 'axios';
+import { environment as env } from '../../environments/environment';
 
 const Leaderboard = () => {
   const [data, setData] = useState([
@@ -12,10 +12,16 @@ const Leaderboard = () => {
   ]);
 
   const fetchData = async () => {
-    const response = await axios.get('http://localhost:3000/api/leaderboard/');
+    const response = await axios.get(`/${env.favorrApiName}/${env.leaderboardPath}/`);
     setData(response.data);
   };
-  useEffect(() => { fetchData() }, 200);
+  //delay function to be developed to work with useEffect infinite loop
+  //currently use [], leaderboard will update when page refresh
+  useEffect(() => {
+    fetchData();
+  },
+  []
+  );
 
 
   return (
@@ -29,16 +35,15 @@ const Leaderboard = () => {
             <th className="text-center font-weight-bold">Most favor owned to</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <th className="text-center">placeholder</th>
-            <th className="text-center">0</th>
-            
-          </tr>
-          
+        <tbody className="text-center">
+          {data.map((person) => (
+            <tr key={person.id}>
+              {Object.values(person).map((val) => (
+                <td>{val}</td>
+              ))}
+            </tr>
+          ))}
         </tbody>
-        
-        {JSON.stringify(data)}
       </Table>
     </Container>
 
