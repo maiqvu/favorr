@@ -6,6 +6,9 @@ import formidable from 'express-formidable';
 import PublicRequest from '../models/publicRequest.model';
 import User from '../models/user.model';
 
+// Import service modules
+import RequestService from '../services/requests.service';
+
 const publicRequestsRouter = express.Router();
 
 // Create a Public request
@@ -17,63 +20,55 @@ publicRequestsRouter.post('/', async (req, res) => {
     }
 
     try {
-        const creatorUser = await User.findOne({ username: req.body.creator });
-        const rewardUser = await User.findOne({ username: req.body.reward.user });
-
-        const creatorUserId = creatorUser._id.toString();
-        reward.user = rewardUser._id.toString();
-
-        const newPublicRequest = new PublicRequest({
-            creator: creatorUserId,
-            claimedBy: claimedBy,
-            claimedByTime: claimedByTime,
-            task: task,
-            rewards: [reward]
-        });
-
-        await newPublicRequest.save();
-        res.send(newPublicRequest);
+        const newPublicRequest = await RequestService.createRequest(
+            creator,
+            claimedBy,
+            claimedByTime,
+            task,
+            reward
+        );
+        res.status(200).send(newPublicRequest);
     } catch (err) {
         res.status(500).send(err);
     }
 });
 
 // Get All Public Requests
-publicRequestsRouter.get('/publicRequest', async (req, res) => {
-    const allRequest = await PublicRequest.find({});
+// publicRequestsRouter.get('/publicRequest', async (req, res) => {
+//     const allRequest = await PublicRequest.find({});
 
-    try {
-        res.status(200).send(allRequest);
-    } catch (err) {
-        res.status(500).send(err);
-    }
-});
+//     try {
+//         res.status(200).send(allRequest);
+//     } catch (err) {
+//         res.status(500).send(err);
+//     }
+// });
 
 //get one Request
-publicRequestsRouter.get('/publicRequest/:id', async (req, res) => {
-    const oneRequest = await PublicRequest.findById(req.params.id);
-    try {
-        res.status(200).send(oneRequest);
-    } catch (err) {
-        res.status(500).send(err);
-    }
-});
+// publicRequestsRouter.get('/publicRequest/:id', async (req, res) => {
+//     const oneRequest = await PublicRequest.findById(req.params.id);
+//     try {
+//         res.status(200).send(oneRequest);
+//     } catch (err) {
+//         res.status(500).send(err);
+//     }
+// });
 
 
 // Update a Public request
-publicRequestsRouter.patch('/publicRequest/:id', async (req, res) => {
-    try {
-        await PublicRequest.findByIdAndUpdate(
-            { _id: req.params.id },
-            req.body,
-            { omitUndefined: true } //delete any properties whose value is undefined when casting an update
-        );
-        await PublicRequest.save();
-        res.status(200).send("Update sucess!");
-    } catch (err) {
-        res.status(500).send(err);
-    }
-});
+// publicRequestsRouter.patch('/publicRequest/:id', async (req, res) => {
+//     try {
+//         await PublicRequest.findByIdAndUpdate(
+//             { _id: req.params.id },
+//             req.body,
+//             { omitUndefined: true } //delete any properties whose value is undefined when casting an update
+//         );
+//         await PublicRequest.save();
+//         res.status(200).send("Update sucess!");
+//     } catch (err) {
+//         res.status(500).send(err);
+//     }
+// });
 
 // Delete a Public Request
 publicRequestsRouter.delete('/:id', async (req, res) => {
@@ -85,43 +80,34 @@ publicRequestsRouter.delete('/:id', async (req, res) => {
 // Add a reward to an existing request
 publicRequestsRouter.post('/:id/reward', async (req, res) => {
     const requestId = req.params.id;
-
-    const user = await User.findOne({ username: req.body.username });
-    const userId = user._id.toString();
-
-    const newReward = {
-        user: userId,
-        item: req.body.item
-    };
+    const { username, item } = req.body;
 
     try {
-        const updatedRequest = await PublicRequest.findOneAndUpdate(
-            { _id: requestId },
-            { $push: { rewards: newReward } },
-            { new: true }).populate('creator').populate('rewards.user');
-        res.send(updatedRequest);
+        const updatedRequest = await RequestService.addReward(
+            requestId,
+            username,
+            item
+        );
+        res.status(200).send(updatedRequest);
     } catch (err) {
-        console.error(err)
+        res.status(500).send(err);
     }
 })
 
 // Remove a reward in an existing request
 publicRequestsRouter.delete('/:id/reward/:rewardid', async (req, res) => {
     const requestId = req.params.id;
-    const rewardIdToRemove = req.params.rewardid;
+    const rewardId = req.params.rewardid;
 
     try {
-        const updatedRequest = await PublicRequest.findOneAndUpdate(
-            { _id: requestId},
-            { $pull: { rewards: { _id: rewardIdToRemove }}},
-            { new: true })
-            .populate('creator', 'username')
-            .populate('rewards.user', 'username');
+        const updatedRequest = await RequestService.deleteReward(
+            requestId,
+            rewardId
+        )
         res.status(200).send(updatedRequest)
     } catch (err) {
         res.status(500).send(err);
     }
-    
 })
 
 // Add username to the claimed request
@@ -139,36 +125,19 @@ publicRequestsRouter.patch('/:id/claim/:username', async (req, res) => {
     res.status(200).send(updatedRequest);
 })
 
-// Get All available Public Requests (requests that have not been claimed)
+// Get available Public Requests (requests that have not been claimed)
 publicRequestsRouter.get('/available', async (req, res) => {
+    const limit = parseInt(req.query.limit);
+    const skip = parseInt(req.query.skip);
+
     try {
-        let limit = parseInt(req.query.limit);
-        let skip = parseInt(req.query.skip);
-
-        // const availableRequestCount = await PublicRequest.countDocuments({
-        //     claimedBy: {$eq: null}
-        // });
-        
-        // if (skip >= availableRequestCount) {
-        //     skip = skip - limit;
-        // }
-        // console.log(`${skip}\t${limit}`);
-        // if (limit + skip >= availableRequestCount) {
-        //     limit = availableRequestCount - limit;
-        // }
-
-        const allAvailableRequests = await PublicRequest.find({
-            claimedBy: {$eq: null}
-        })
-        .sort({ createdAt: -1 })
-        .skip(skip) // Always apply 'skip' before 'limit'
-        .limit(limit) // This is your 'page size'
-        .populate('creator', 'username')
-        .populate('rewards.user', 'username');
-    
-        res.status(200).send(allAvailableRequests);
-    } catch(e){
-        return res.status(500).json(e)
+        const availableRequests = await RequestService.getAvailableRequests(
+            limit,
+            skip
+        );
+        res.status(200).send(availableRequests);
+    } catch (err) {
+        res.status(500).send(err)
     }
 });
 
