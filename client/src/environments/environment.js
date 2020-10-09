@@ -3,5 +3,6 @@ export const environment = {
     requestsPath: 'publicRequests',
     favorsPath: 'favors',
     usersPath: 'users',
-    leaderboardPath: 'leaderboard'
+    leaderboardPath: 'leaderboard',
+    uploadPath: 'upload'
 }
