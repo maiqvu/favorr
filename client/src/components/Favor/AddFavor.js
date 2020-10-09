@@ -56,7 +56,7 @@ const AddFavor = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(image);
-    // await FavorService.addFavor(newFavor, image);
+    await FavorService.addFavor(newFavor, image);
     // setTimeout(() => {
     //   console.log('2 seconds after favor saved in backend');
     //   history.push(`/myFavors`);

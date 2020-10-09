@@ -19,17 +19,31 @@ export default {
           else return { message: 'Failed to add new favor.' }
         });
     } else {   // Add favor owed to the logged in user
-      const imgConfig = await axios.get(`/${env.favorrApiName}/upload`);
-      console.log(imgConfig);
+      try {
+        // Create favor
+        const res = await axios.post(`/${env.favorrApiName}/${env.favorsPath}`, favor);
+        const newFavorId = res.data._id;
+        // Construct form fields to hold image data
+        const data = new FormData();
+        data.append('file', image, image.name);
+        // Upload image
+        const uploadRes = await axios.post(`/${env.favorrApiName}/upload/${newFavorId}`, data);
+        console.log(uploadRes);
+      } catch (err) {
+        console.error(err);
+      }
+
+      // const imgConfig = await axios.get(`/${env.favorrApiName}/upload`);
+      // console.log(imgConfig);
       
-      await axios
-        .put(`${imgConfig.data.url}`, image, {headers: {'Content-Type': image.type}})
-        .then(res => console.log(res))
+      // await axios
+      //   .put(`${imgConfig.data.url}`, image, {headers: {'Content-Type': image.type}})
+      //   .then(res => console.log(res))
       
-      const payload = { ...favor, image: imgConfig.data.key }
-      return axios
-        .post(`${env.favorrApiName}/${env.favorsPath}`, payload)
-        .then(res => console.log(res))
+      // const payload = { ...favor, image: imgConfig.data.key }
+      // return axios
+      //   .post(`${env.favorrApiName}/${env.favorsPath}`, payload)
+      //   .then(res => console.log(res))
     }
   },
   updateFavor: (favorId, updatedValue) => {
