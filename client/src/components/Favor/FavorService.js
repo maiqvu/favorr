@@ -20,17 +20,23 @@ export default {
         });
     } else {   // Add favor owed to the logged in user
       try {
-        // Create favor
-        const res = await axios.post(`/${env.favorrApiName}/${env.favorsPath}`, favor);
-        const newFavorId = res.data._id;
-        // Construct form fields to hold image data
-        const data = new FormData();
-        data.append('file', image, image.name);
-        // Upload image
-        const uploadRes = await axios.post(`/${env.favorrApiName}/upload/${newFavorId}`, data);
-        console.log(uploadRes);
+        // create favor only if the file type is an image
+        if (image.type.includes('image')) {
+          // Create favor
+          const res = await axios.post(`/${env.favorrApiName}/${env.favorsPath}`, favor);
+          const newFavorId = res.data._id;
+          // Construct form fields to hold image data
+          const data = new FormData();
+          data.append('file', image, image.name);
+          // Upload image
+          const uploadRes = await axios.post(`/${env.favorrApiName}/${env.uploadPath}/${newFavorId}`, data);
+          console.log(uploadRes);
+        } else {
+          return { message: 'Invalid file type.'}
+        }
       } catch (err) {
         console.error(err);
+        return { message: 'Unable to add new favor. Please try again later.'}
       }
 
       // const imgConfig = await axios.get(`/${env.favorrApiName}/upload`);
