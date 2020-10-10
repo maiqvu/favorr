@@ -127,7 +127,8 @@ usersRouter.get(
 usersRouter.get('/' , async (req, res) => {
   const { username } = req.query;
   const condition = username ?
-    { username: {$regex: new RegExp(username), $options: "i"} } 
+    // { username: {$regex: new RegExp(username), $options: "i"} } 
+    { username: username }
     :
     {};
   await User.find(condition).select('username')
