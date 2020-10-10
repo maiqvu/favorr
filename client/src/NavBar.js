@@ -13,6 +13,7 @@ const NavBar = (props) => {
       <React.Fragment>
         <ul className="navbar-nav mr-auto nav-links">
             <li className="nav-item"><Link to="/">Public Request</Link></li>
+            <li className="nav-item"><Link to="/leaderboard">Leaderboard</Link></li>
         </ul>
         <ul className="navbar-nav ml-auto nav-links">
             <li className="nav-item"><Link to="/register">Register</Link></li>

@@ -130,12 +130,12 @@ usersRouter.get('/' , async (req, res) => {
     { username: {$regex: new RegExp(username), $options: "i"} } 
     :
     {};
-  await User.find(condition)
+  await User.find(condition).select('username')
     .then(data => {
       // 'data' is an array of all matches. If more than 1 match found, ask the user to search a full accurate username. Note: all usernames in the system are unique.
       if (data.length === 1) {
         const dataToReturn = { ...data[0].toJSON() };
-        delete dataToReturn.hashedPassword;
+        delete dataToReturn._id;
         res.status(200).json(dataToReturn);
       } else {
         res.status(500).json({ message: 'Please enter an accurate username.' });

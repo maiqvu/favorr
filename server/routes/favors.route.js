@@ -3,34 +3,9 @@ import express from 'express';
 // import jwt from 'jsonwebtoken';
 import Favor from '../models/favor.model';
 import User from '../models/user.model';
+import { upload } from '../utils/multer';
 
 const favorsRouter = express.Router();
-
-const multer = require('multer');
-
-const storage = multer.diskStorage({
-  destination: function (req, file, callback) {
-    callback(null, 'uploads/')
-  },
-  filename: function (req, file, callback) {
-    callback(null, Date.now() + file.originalname);
-  }
-});
-
-const fileFilter = (req, file, callback) => {
-  // Only accept filetypes jpeg or png
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-    callback(null, true);
-  } else {
-    callback(new Error('Invalid file type.'), false);   // Ignore the file and throw an error
-  }
-}
-
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 1024 * 1024 * 5 },
-  fileFilter: fileFilter
-});
 
 
 // Create a new favor
@@ -49,7 +24,7 @@ favorsRouter.post('/', async (req, res) => {
     const owedToUser = await User.findOne({ username: req.body.owedTo });
     const owedBy = owedByUser._id.toString();
     const owedTo = owedToUser._id.toString();
-    
+
     // if (legit) {
       const newFavor = new Favor({
         description: req.body.description,
@@ -152,15 +127,17 @@ favorsRouter.get('/:id', async (req, res) => {
   }
 });
 
-// Update one favor
-favorsRouter.patch('/:id', upload.single('image'), async (req, res) => {
+// Update one favor with new repaid status and proof image
+favorsRouter.patch('/:id', upload, async (req, res) => {
   try {
+    const repaid = req.body.repaid;
+    const image = req.file.path;
+    
     const updatedFavor = await Favor.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      { repaid, image },
       { new: true }   // Return the modified document instead of the original.
     );
-    console.log(req.file);
     res.status(200).json(updatedFavor);
   } catch (err) {
     res.status(500).send(err);

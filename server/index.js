@@ -10,7 +10,8 @@ import cookieParser from'cookie-parser';
 import usersRouter from './routes/users.route';
 import publicRequestsRouter from './routes/publicRequests.route';
 import favorsRouter from './routes/favors.route';
-
+import leaderboardRouter from './routes/leaderboard.route';
+import uploadRouter from './routes/upload.route';
 
 // Initialize an Express app
 const app = express();
@@ -39,6 +40,8 @@ mongoose
 app.use('/api/users', usersRouter);
 app.use('/api/publicRequests', publicRequestsRouter);
 app.use('/api/favors', favorsRouter);
+app.use('/api/leaderboard', leaderboardRouter);
+app.use('/api/upload', uploadRouter);
 
 
 // Start the Express server

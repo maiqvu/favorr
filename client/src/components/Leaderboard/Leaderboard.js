@@ -1,15 +1,27 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Table, Container } from 'react-bootstrap';
-import { AuthContext } from '../../context/AuthContext';
-
+import axios from 'axios';
+import { environment as env } from '../../environments/environment';
 
 const Leaderboard = () => {
-  // const [ task, setTask ] = useState('');
-  // const [ reward, setReward ] = useState('');
-  // const [ successText, setSuccessText ] = useState('');
+  const [data, setData] = useState([
+    {
+      name: '',
+      count: ''
+    }
+  ]);
 
-  // const authContext = useContext(AuthContext);
-
+  const fetchData = async () => {
+    const response = await axios.get(`/${env.favorrApiName}/${env.leaderboardPath}/`);
+    setData(response.data);
+  };
+  //delay function to be developed to work with useEffect infinite loop
+  //currently use [], leaderboard will update when page refresh
+  useEffect(() => {
+    fetchData();
+  },
+  []
+  );
 
 
   return (
@@ -19,16 +31,22 @@ const Leaderboard = () => {
       <Table responsive striped hover responsive="sm" >
         <thead>
           <tr>
-            <th className="text-left font-weight-bold">Description</th>
-            <th className="text-left font-weight-bold">Owed by</th>
-            <th></th>
+            <th className="text-center font-weight-bold">User name</th>
+            <th className="text-center font-weight-bold">Most favor owned to</th>
           </tr>
         </thead>
-        <tbody>
-
+        <tbody className="text-center">
+          {data.map((person) => (
+            <tr key={person.id}>
+              {Object.values(person).map((val) => (
+                <td>{val}</td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </Table>
     </Container>
+
   );
 }
 
