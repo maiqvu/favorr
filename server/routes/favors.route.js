@@ -66,19 +66,81 @@ favorsRouter.post('/', async (req, res) => {
   }
 });
 
+let cycleList;
+let hasCycle;
+
 // Get all favors associated with 1 user
 favorsRouter.get('/:userId', async (req, res) => {
   try {
     const favorsOwedByMe = await Favor.find({ owedBy: req.params.userId }).populate('owedTo', 'username');
     const favorsOwedToMe = await Favor.find({ owedTo: req.params.userId }).populate('owedBy', 'username');
+
     res.status(200).json({
       owedByMe: favorsOwedByMe,
-      owedToMe: favorsOwedToMe
+      owedToMe: favorsOwedToMe,
     });
+
   } catch (err) {
     res.status(500).send(err);
   }
 });
+
+// Get cyle
+favorsRouter.get('/:userId/cycle', async (req, res) => {
+  try {
+    await findCycle(req.params.userId);
+
+    res.status(200).json({
+      cycleList: cycleList
+    });
+
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+const findCycle = async (userId) =>{
+  cycleList = [];
+    hasCycle = false;
+    const root = await Favor.findOne({ owedBy: userId, repaid: false }).populate('owedBy', 'username');
+    if (root != null){
+      await DFS(root.owedBy);
+      console.log(cycleList);
+    }
+}
+
+const DFS = async (User) => {
+
+  let notFoundUser = true;
+  for(let i = 0; i < cycleList.length; i++){
+    //console.log(cycleList);
+    if (cycleList[i]._id.toString() == User._id.toString()){
+      notFoundUser = false;
+      if (i == 0){
+        hasCycle = true;
+      }
+      break;
+    }
+  }
+
+  if (notFoundUser){
+    cycleList.push(User);
+    //console.log(cycleList);
+    try {
+      const nextUser = await Favor.find({ owedBy: User._id, repaid: false }).populate('owedTo', 'username');
+      console.log(nextUser);
+
+      nextUser.forEach(function(item, index) {
+        //console.log("ID: ", item.owedTo);
+        DFS(item.owedTo)
+        if (hasCycle)
+          return;
+      });
+    } catch (err){
+      console.log(err);
+    }
+  }
+}
 
 // Get one favor
 favorsRouter.get('/:id', async (req, res) => {

@@ -4,7 +4,6 @@ import { Container } from 'react-bootstrap';
 import { AuthContext } from './context/AuthContext';
 import AuthService from './context/AuthService';
 import Button from 'react-bootstrap/Button';
-import Cookie from 'universal-cookie';
 
 const NavBar = (props) => {
   const { user, isAuthenticated } = useContext(AuthContext);

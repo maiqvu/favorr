@@ -37,4 +37,12 @@ export default {
       return { message: 'Access denied.' }
     }
   },
+  findCycle: async (userId) => {
+    const res = await axios.get(`/${env.favorrApiName}/${env.favorsPath}/${userId}/cycle`);
+    if (res.status !== 401) {
+      return res.data;
+    } else {
+      return { message: 'Access denied.' }
+    }
+  },
 };

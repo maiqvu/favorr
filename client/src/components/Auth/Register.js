@@ -117,7 +117,7 @@ const Register = () => {
                 onChange={handlePasswordConfirmationInput}
                 required
               />
-              {passwordConfirmation && (password != passwordConfirmation) ? (
+              {passwordConfirmation && (password !== passwordConfirmation) ? (
                 <div className="text-danger text-left">
                   Confirm password does not match!
                 </div>

@@ -3,11 +3,13 @@ import { useHistory } from 'react-router-dom';
 import Favor from './Favor';
 import FavorService from './FavorService';
 import { AuthContext } from '../../context/AuthContext';
-import { Container, Button, Table } from 'react-bootstrap';
+import { Container, Button, Table, Toast, ToastBody } from 'react-bootstrap';
 
 const MyFavors = () => {
   const [ favorsOwedByMe, setFavorsOwedByMe ] = useState([]);
   const [ favorsOwedToMe, setFavorsOwedToMe ] = useState([]);
+  const [ showToast, setShowToast] = useState(false);
+  const [ cycleList, setcycleList] = useState([]);
   
   const authContext = useContext(AuthContext);
   const history = useHistory();
@@ -18,7 +20,15 @@ const MyFavors = () => {
         .then(data => {
           setFavorsOwedByMe(data.owedByMe);
           setFavorsOwedToMe(data.owedToMe);
-        })
+        });
+
+      FavorService.findCycle(authContext.user._id)
+        .then(data => {
+          if (data.cycleList.length !== 0){
+            setShowToast(true);
+            setcycleList(data.cycleList);
+          }
+        });
     }
   }, [authContext.user]);
   
@@ -92,6 +102,22 @@ const MyFavors = () => {
           ))}
         </tbody>
       </Table>
+      <div aria-live="polite" aria-atomic="true" style={{position: 'relative', minHeight: '100px'}}>
+        <Toast style={{position: 'absolute', top:-50, right: 0}}
+          show={showToast} 
+          onClose={() => setShowToast(false)}
+          >
+          <Toast.Header>
+            <strong className="mr-auto" style={{color: '#e43737'}}>Party found!</strong>
+            <small>just now</small>
+          </Toast.Header>
+          <Toast.Body>
+            <p>{cycleList.map(item => (
+                <b>{item.username}, </b>
+              ))} can clear debts at once!</p>
+          </Toast.Body>
+        </Toast>
+      </div>
     </Container>
   )
 }

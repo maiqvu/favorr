@@ -5,10 +5,7 @@ import AddReward from './AddReward';
 import RemoveReward from './RemoveReward';
 import UploadProof from './UploadProof';
 
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Dropdown from 'react-bootstrap/Dropdown';
+import {Row, Col, Button, Dropdown, Collapse} from 'react-bootstrap';
 
 const Request = (props) => {
   const [newReward, setNewReward] = useState('');
@@ -16,6 +13,7 @@ const Request = (props) => {
   const [showUploadOption, setShowUploadOption] = useState(false);
   const [showGiveUpConfirmation, setShowGiveUpConfirmation] = useState(false);
   const [focusedRequestId, setFocusedRequestId] = useState('');
+  const [open, setOpen] = useState(false);
 
   const handleSelectNewReward = (e) => {
     setNewReward(e.target.value);
@@ -31,6 +29,8 @@ const Request = (props) => {
     } else {
       setFocusedRequestId(props.request._id);
     }
+
+    setOpen(!open);
   };
 
   const toggleUploadOption = () => {
@@ -109,17 +109,20 @@ const Request = (props) => {
           {constructLimitedRewardItemList(props.request.rewards)}
         </Col>
         <Col className="col-sm-1 text-right">
-          <Dropdown>
-            <Dropdown.Toggle
-              variant="transparant"
-              id="dropdown-basic"
-              onClick={expandRequestToggle}
-            />
-          </Dropdown>
+          <button 
+            variant="transparant"
+            id="dropdown-basic"
+            onClick={expandRequestToggle}
+            aria-haspopup="true" 
+            aria-expanded="false" 
+            type="button" 
+            class="dropdown-toggle btn btn-transparant">
+          </button>
         </Col>
       </Row>
-      {props.request._id === focusedRequestId ? (
-        <div className="p-3 mb-2 bg-light text-dark">
+      {/* {props.request._id === focusedRequestId ? ( */}
+      <Collapse in={open} className="p-3 mb-2 ">
+        <div className="bg-light text-dark">
           <div className="p-2">
             <h5 className="text-left">REQUEST DETAILS:</h5>
             <Row className="mb-4">
@@ -210,7 +213,8 @@ const Request = (props) => {
             </div>
           ) : null}
         </div>
-      ) : null}
+       </Collapse>
+      {/* ) : null} */}
       <hr />
     </React.Fragment>
   );
