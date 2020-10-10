@@ -1,20 +1,14 @@
 import 'dotenv/config';
 import express from 'express';
-import AWS from 'aws-sdk';
 import path from 'path';
-import multer from 'multer';
-import Proof from '../models/proof.model';
-import { v4 as uuidv4} from 'uuid';
+// import multer from 'multer';
+
+import UploadService from '../services/upload.service';
 
 const uploadRouter = express.Router();
 
-var storage = multer.memoryStorage();
-var upload = multer({ storage: storage });
-
-const s3 = new AWS.S3({
-  accessKeyId: process.env.ACCESS_KEY_ID,
-  secretAccessKey: process.env.SECRET_ACCESS_KEY
-});
+// var storage = multer.memoryStorage();
+// var upload = multer({ storage: storage });
 
 // uploadRouter.get('/', (req, res) => {
 //   console.log('image: ', req.file);
@@ -39,42 +33,23 @@ const s3 = new AWS.S3({
 //   );
 // });
 
-uploadRouter.post('/:favorid', upload.single('file'), (req, res) => {
+uploadRouter.post('/:favorid', UploadService.upload.single('file'), async (req, res) => {
   const file = req.file;
-  console.log(file);
-  const s3FileUrl = process.env.AWS_UPLOADED_FILE_URL_LINK;
+  const favorId = req.params.favorid;
 
   if (!file.mimetype.includes('image')) {
     res.status(500).json({ error: true, message: 'Uploaded file is not an image!'})
   }
 
-  let params = {
-    Bucket: process.env.BUCKET_NAME,
-    Key: uuidv4() + '.jpg', //file.originalname,
-    Body: file.buffer,
-    ContentType: file.mimetype,
-    ACL: 'public-read'
-  };
-
-  s3.upload(params, (err, data) => {
-    if (err) {
-      res.status(500).json({ error: true, message: err})
-    } else {
-      res.send({ data });
-      let newFileUploaded = {
-        favorId: req.params.favorid,
-        fileLink: s3FileUrl + params.Key, //file.originalname,
-        s3Key: params.Key
-      };
-      let proof = new Proof(newFileUploaded);
-      proof.save((error, newFile) => {
-        if (error) {
-          throw error;
-        }
-      })
-    }
-  })
-})
-
+  try {
+    const stored = await UploadService.s3Upload(
+      file,
+      favorId
+    );
+    res.status(200).send(stored);
+  } catch (err) {
+    res.status(500).json({ error: true, message: err})
+  }
+});
 
 export default uploadRouter;

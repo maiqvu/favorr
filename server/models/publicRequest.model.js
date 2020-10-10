@@ -27,7 +27,10 @@ const PublicRequestSchema = new mongoose.Schema({
       type: String,
       required: true
     }
-  }]
+  }],
+  resolved : {
+    type: Boolean
+  }
 },
   { timestamps: true });
 

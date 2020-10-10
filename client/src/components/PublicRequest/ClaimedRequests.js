@@ -51,7 +51,7 @@ const ClaimedRequests = (props) => {
             updateRequest={updateRequest}
           />
         ))
-      ) : <div className="text-center">You have not claimed any requests!</div>}
+      ) : null}
     </Container>
   );
 };

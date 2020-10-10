@@ -98,5 +98,19 @@ export default {
             console.log(err);
             return null;
         }
+    },
+    resolveRequest: async (requestId, image) => {
+        if (image.type.includes('image')) {
+            try {
+                // Construct form fields to hold image data
+                const data = new FormData();
+                data.append('file', image, image.name);
+                const response = await axios.patch(`/${env.favorrApiName}/${env.requestsPath}/${requestId}/resolve`, data);
+                return response.data;
+            } catch (err) {
+                console.log(err);
+                return null;
+            }
+        }
     }
 }

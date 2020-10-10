@@ -16,7 +16,8 @@ export default {
             claimedBy: claimedBy,
             claimedByTime: claimedByTime,
             task: task,
-            rewards: [reward]
+            rewards: [reward],
+            resolved: false
         });
         // Save to request database
         await newPublicRequest.save();
@@ -72,9 +73,9 @@ export default {
         const updatedRequest = await PublicRequest.findOneAndUpdate(
             {_id: requestId},
             {$set: {claimedBy: userId, claimedByTime: Date.now()}},
-            {new: true}).
-            populate('creator', 'username').
-            populate('rewards.user', 'username');
+            {new: true})
+            .populate('creator', 'username')
+            .populate('rewards.user', 'username');
         return updatedRequest;
     },
     getAvailableRequestCount: async () => {
@@ -92,5 +93,15 @@ export default {
             .populate('creator', 'username')
             .populate('rewards.user', 'username');
         return userClaimedRequests;
+    },
+    resolveRequest: async (requestId) => {
+        const updatedRequest = await PublicRequest.findOneAndUpdate(
+            {_id: requestId},
+            {$set: { resolved: true }},
+            {new: true})
+            .populate('claimedBy', 'username')
+            .populate('rewards.user', 'username');
+
+        return updatedRequest;
     }
 }

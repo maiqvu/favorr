@@ -2,6 +2,8 @@
 import express from 'express';
 // Import service modules
 import RequestsService from '../services/requests.service';
+import FavorsService from '../services/favors.service';
+import UploadService from '../services/upload.service';
 // Create publicRequestsRouter
 const publicRequestsRouter = express.Router();
 
@@ -119,6 +121,38 @@ publicRequestsRouter.get('/claimed/:username', async (req, res) => {
     }    
 })
 
+// Resolve a request by creating favors
+publicRequestsRouter.patch('/:requestid/resolve', UploadService.upload.single('file'), async (req, res) => {
+    const requestId = req.params.requestid;
+    const file = req.file;
+    try {
+        // update request to resolved
+        const resolvedRequest = await RequestsService.resolveRequest(requestId);
+        let owedTo = resolvedRequest.claimedBy.username
+        resolvedRequest.rewards.forEach( async (reward) => {
+            let description = reward.item;
+            let owedBy = reward.user.username;
+            // create a favor according to the request details
+            const favor = await FavorsService.createFavor(
+                description,
+                owedBy,
+                owedTo
+            );
+            console.log(favor);
+            let favorId = favor._id;
+            const stored = await UploadService.s3Upload(
+                file,
+                favorId
+            );
+        });
+        res.status(200).send(resolvedRequest);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+})
+
+export default publicRequestsRouter;
+
 // Get All Public Requests
 // publicRequestsRouter.get('/publicRequest', async (req, res) => {
 //     const allRequest = await PublicRequest.find({});
@@ -155,5 +189,3 @@ publicRequestsRouter.get('/claimed/:username', async (req, res) => {
 //         res.status(500).send(err);
 //     }
 // });
-
-export default publicRequestsRouter;

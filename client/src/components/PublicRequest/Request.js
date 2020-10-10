@@ -14,6 +14,7 @@ const Request = (props) => {
   const [showGiveUpConfirmation, setShowGiveUpConfirmation] = useState(false);
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [image, setImage] = useState('');
 
   useEffect(() => {
     // reset expand toggle when the request has changed
@@ -27,6 +28,14 @@ const Request = (props) => {
   const handleSelectRemoveRewardId = (e) => {
     setRemoveRewardId(e.target.value);
   };
+
+  const handleResolve = async (e) => {
+    e.preventDefault();
+    console.log(image);
+    await RequestService.resolveRequest(
+      props.request._id,
+      image);
+  }
 
   const expandRequestToggle = () => {
     setOpen(!open);
@@ -201,7 +210,18 @@ const Request = (props) => {
                       </Button>
                     </div>
                   ) : null}
-                  {showUploadOption ? <UploadProof /> : null}
+                  {showUploadOption ? (
+                    <div>
+                      <label htmlFor="image">Please upload a photo proof.</label><br/>
+                      <input
+                        type="file"
+                        id="image"
+                        accept=".jpg,.png"
+                        onChange={e => setImage(e.target.files[0])}
+                      />
+                      <Button variant="primary" onClick={handleResolve}>Upload</Button>
+                    </div>
+                  ) : null}
                   {showGiveUpConfirmation ? (
                     <div>
                       <br />
