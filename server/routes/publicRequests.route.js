@@ -1,14 +1,8 @@
 // Import packages
 import express from 'express';
-import formidable from 'express-formidable';
-
-// Import mongoose model
-import PublicRequest from '../models/publicRequest.model';
-import User from '../models/user.model';
-
 // Import service modules
-import RequestService from '../services/requests.service';
-
+import RequestsService from '../services/requests.service';
+// Create publicRequestsRouter
 const publicRequestsRouter = express.Router();
 
 // Create a Public request
@@ -18,9 +12,8 @@ publicRequestsRouter.post('/', async (req, res) => {
     if (!creator || !task || !reward.user || !reward.item) {
         return res.status(400).json({ message: 'Please enter all required fields.' });
     }
-
     try {
-        const newPublicRequest = await RequestService.createRequest(
+        const newPublicRequest = await RequestsService.createRequest(
             creator,
             claimedBy,
             claimedByTime,
@@ -32,6 +25,99 @@ publicRequestsRouter.post('/', async (req, res) => {
         res.status(500).send(err);
     }
 });
+
+// Delete a Public Request
+publicRequestsRouter.delete('/:id', async (req, res) => {
+    const requestId = req.params.id;
+    const content = await RequestsService.deleteRequest(requestId);
+    if (content) {
+        res.status(200).send()
+    } else {
+        res.status(404).send("No Public Request Found")
+    }
+});
+
+// Add a reward to an existing request
+publicRequestsRouter.post('/:id/reward', async (req, res) => {
+    const requestId = req.params.id;
+    const { username, item } = req.body;
+    try {
+        const updatedRequest = await RequestsService.addReward(
+            requestId,
+            username,
+            item
+        );
+        res.status(200).send(updatedRequest);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+})
+
+// Remove a reward in an existing request
+publicRequestsRouter.delete('/:id/reward/:rewardid', async (req, res) => {
+    const requestId = req.params.id;
+    const rewardId = req.params.rewardid;
+    try {
+        const updatedRequest = await RequestsService.deleteReward(
+            requestId,
+            rewardId
+        )
+        res.status(200).send(updatedRequest)
+    } catch (err) {
+        res.status(500).send(err);
+    }
+})
+
+// Claim a request
+publicRequestsRouter.patch('/:id/claim/:username', async (req, res) => {
+    const requestId = req.params.id;
+    const username = req.params.username;
+    try {
+        const updatedRequest = await RequestsService.claimRequest(
+            requestId,
+            username
+        );
+        res.status(200).send(updatedRequest);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+})
+
+// Get available Public Requests (requests that have not been claimed)
+publicRequestsRouter.get('/available', async (req, res) => {
+    const limit = parseInt(req.query.limit);
+    const skip = parseInt(req.query.skip);
+    try {
+        const availableRequests = await RequestsService.getAvailableRequests(
+            limit,
+            skip
+        );
+        res.status(200).send(availableRequests);
+    } catch (err) {
+        res.status(500).send(err)
+    }
+});
+
+// Get count of available Public Requests (requests that have not been claimed)
+publicRequestsRouter.get('/available/count', async (req, res) => {
+    try {
+        const availableRequestCount = await RequestsService.getAvailableRequestCount();
+        res.status(200).json({count: availableRequestCount})
+    } catch(err){
+        res.status(500).json(err)
+    }
+});
+
+// Get all the user's claimed public requests
+publicRequestsRouter.get('/claimed/:username', async (req, res) => {
+    const username = req.params.username;
+    try {
+        const userClaimedRequests = await RequestsService.getUserClaimedRequests(username);
+        res.status(200).send(userClaimedRequests);
+    } catch (err) {
+        res.status(500).send(err);
+    }    
+})
 
 // Get All Public Requests
 // publicRequestsRouter.get('/publicRequest', async (req, res) => {
@@ -69,113 +155,5 @@ publicRequestsRouter.post('/', async (req, res) => {
 //         res.status(500).send(err);
 //     }
 // });
-
-// Delete a Public Request
-publicRequestsRouter.delete('/:id', async (req, res) => {
-    const content = await PublicRequest.findByIdAndDelete(req.params.id);
-    if (!content) res.status(404).send("No Public Request Found")
-    res.status(200).send()
-});
-
-// Add a reward to an existing request
-publicRequestsRouter.post('/:id/reward', async (req, res) => {
-    const requestId = req.params.id;
-    const { username, item } = req.body;
-
-    try {
-        const updatedRequest = await RequestService.addReward(
-            requestId,
-            username,
-            item
-        );
-        res.status(200).send(updatedRequest);
-    } catch (err) {
-        res.status(500).send(err);
-    }
-})
-
-// Remove a reward in an existing request
-publicRequestsRouter.delete('/:id/reward/:rewardid', async (req, res) => {
-    const requestId = req.params.id;
-    const rewardId = req.params.rewardid;
-
-    try {
-        const updatedRequest = await RequestService.deleteReward(
-            requestId,
-            rewardId
-        )
-        res.status(200).send(updatedRequest)
-    } catch (err) {
-        res.status(500).send(err);
-    }
-})
-
-// Add username to the claimed request
-publicRequestsRouter.patch('/:id/claim/:username', async (req, res) => {
-    const requestId = req.params.id;
-    const user = await User.findOne({ username: req.params.username });
-    const userId = user._id.toString();
-
-    const updatedRequest = await PublicRequest.findOneAndUpdate(
-        {_id: requestId},
-        {$set: {claimedBy: userId, claimedByTime: Date.now()}},
-        {new: true}).
-        populate('creator', 'username').
-        populate('rewards.user', 'username');
-    res.status(200).send(updatedRequest);
-})
-
-// Get available Public Requests (requests that have not been claimed)
-publicRequestsRouter.get('/available', async (req, res) => {
-    const limit = parseInt(req.query.limit);
-    const skip = parseInt(req.query.skip);
-
-    try {
-        const availableRequests = await RequestService.getAvailableRequests(
-            limit,
-            skip
-        );
-        res.status(200).send(availableRequests);
-    } catch (err) {
-        res.status(500).send(err)
-    }
-});
-
-// Get count of available Public Requests (requests that have not been claimed)
-publicRequestsRouter.get('/available/count', async (req, res) => {
-    try {
-        const availableRequestCount = await PublicRequest.countDocuments({
-            claimedBy: {$eq: null}
-        });
-        res.status(200).json({count: availableRequestCount})
-    } catch(e){
-        return res.status(500).json(e)
-    }
-});
-
-// Get all the user's claimed public requests
-publicRequestsRouter.get('/claimed/:username', async (req, res) => {
-    const user = await User.findOne({ username: req.params.username });
-    const userId = user._id.toString();
-
-    const userClaimedRequests = await PublicRequest.find({
-        claimedBy: {$eq: userId}})
-        .populate('creator', 'username')
-        .populate('rewards.user', 'username');
-
-    res.status(200).send(userClaimedRequests);
-})
-
-// Upload an image as proof when resolving a public request
-publicRequestsRouter.post('/:id/uploadimage', formidable(), async (req, res) => {
-    const requestId = req.params.id;
-    const fileType = req.files.myFile.type;
-
-    if (!fileType.includes('image')) {
-        res.send(400).json({ message: 'Invalid file type. Please upload an image.'})
-    }
-
-    // add file name to request and return updated request
-})
 
 export default publicRequestsRouter;

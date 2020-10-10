@@ -2,37 +2,29 @@ import 'dotenv/config';
 import express from 'express';
 // import jwt from 'jsonwebtoken';
 import Favor from '../models/favor.model';
-import User from '../models/user.model';
 import { upload } from '../utils/multer';
+import FavorsService from '../services/favors.service';
 
 const favorsRouter = express.Router();
-
 
 // Create a new favor
 favorsRouter.post('/', async (req, res) => {
   // const token = req.headers.token;
-  
-  if (!req.body.description || !req.body.owedBy || !req.body.owedTo) {
+  const description = req.body.description;
+  const owedBy = req.body.owedBy;
+  const owedTo = req.body.owedTo;
+  // Check if all required fields are provided
+  if (!description || !owedBy || !owedTo) {
     return res.status(400).json({ message: 'Please enter all required fields.' });
   }
 
   try {
-    // const legit = jwt.verify(token, process.env.JWT_SECRET);
-    // console.log(`JWT verification result: ${JSON.stringify(legit)}`);
-    
-    const owedByUser = await User.findOne({ username: req.body.owedBy });
-    const owedToUser = await User.findOne({ username: req.body.owedTo });
-    const owedBy = owedByUser._id.toString();
-    const owedTo = owedToUser._id.toString();
-
-    // if (legit) {
-      const newFavor = new Favor({
-        description: req.body.description,
-        owedBy: owedBy,
-        owedTo: owedTo
-      });
-      await newFavor.save();
-      res.status(201).json(newFavor);
+    const newFavor = await FavorsService.createFavor(
+      description,
+      owedBy,
+      owedTo
+    )
+    res.status(201).json(newFavor);
     // } else {
     //   res.status(401).json({ message: 'Invalid token. Access denied.' });
     // }
@@ -41,86 +33,38 @@ favorsRouter.post('/', async (req, res) => {
   }
 });
 
-let cycleList;
-let hasCycle;
-
 // Get all favors associated with 1 user
 favorsRouter.get('/:userId', async (req, res) => {
+  const userId = req.params.userId;
   try {
-    const favorsOwedByMe = await Favor.find({ owedBy: req.params.userId }).populate('owedTo', 'username');
-    const favorsOwedToMe = await Favor.find({ owedTo: req.params.userId }).populate('owedBy', 'username');
-
+    const { favorsOwedByMe, favorsOwedToMe } = await FavorsService.getUserFavors(userId);
     res.status(200).json({
       owedByMe: favorsOwedByMe,
       owedToMe: favorsOwedToMe,
     });
-
   } catch (err) {
     res.status(500).send(err);
   }
 });
 
-// Get cyle
+// Get cycle
 favorsRouter.get('/:userId/cycle', async (req, res) => {
+  const userId = req.params.userId;
   try {
-    await findCycle(req.params.userId);
-
+    const cycleList = await FavorsService.findCycle(userId);
     res.status(200).json({
       cycleList: cycleList
     });
-
   } catch (err) {
     res.status(500).send(err);
   }
 });
 
-const findCycle = async (userId) =>{
-  cycleList = [];
-    hasCycle = false;
-    const root = await Favor.findOne({ owedBy: userId, repaid: false }).populate('owedBy', 'username');
-    if (root != null){
-      await DFS(root.owedBy);
-      console.log(cycleList);
-    }
-}
-
-const DFS = async (User) => {
-
-  let notFoundUser = true;
-  for(let i = 0; i < cycleList.length; i++){
-    //console.log(cycleList);
-    if (cycleList[i]._id.toString() == User._id.toString()){
-      notFoundUser = false;
-      if (i == 0){
-        hasCycle = true;
-      }
-      break;
-    }
-  }
-
-  if (notFoundUser){
-    cycleList.push(User);
-    //console.log(cycleList);
-    try {
-      const nextUser = await Favor.find({ owedBy: User._id, repaid: false }).populate('owedTo', 'username');
-      console.log(nextUser);
-
-      nextUser.forEach(function(item, index) {
-        //console.log("ID: ", item.owedTo);
-        DFS(item.owedTo)
-        if (hasCycle)
-          return;
-      });
-    } catch (err){
-      console.log(err);
-    }
-  }
-}
-
 // Get one favor
 favorsRouter.get('/:id', async (req, res) => {
+  const favorId = req.params.id;
   try {
-    const oneFavor = await Favor.findById(req.params.id);
+    const oneFavor = await FavorsService.getFavor(favorId);
     res.status(200).json(oneFavor);
   } catch (err) {
     res.status(500).send(err);
@@ -146,13 +90,13 @@ favorsRouter.patch('/:id', upload, async (req, res) => {
 
 // Delete one favor
 favorsRouter.delete('/:id', async (req, res) => {
+  const favorId = req.params.id;
   try {
-    await Favor.findByIdAndDelete(req.params.id);
+    await FavorsService.deleteFavor(favorId);
     res.status(200).json({ message: 'Favor successfully deleted.' });
   } catch (err) {
     res.status(500).send(err);
   }
 });
-
 
 export default favorsRouter;
