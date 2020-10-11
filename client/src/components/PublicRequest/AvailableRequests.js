@@ -3,6 +3,7 @@ import RequestService from './RequestService';
 import Request from './Request';
 import { AuthContext } from '../../context/AuthContext';
 import Pagination from './Pagination';
+import { useHistory } from 'react-router-dom';
 import {
   Container,
   Row,
@@ -25,6 +26,7 @@ const AvailableRequests = () => {
 
   const authContext = useContext(AuthContext);
   const isFirstRun = useRef(true);
+  const history = useHistory();
 
   // get available requests
   useEffect(() => {
@@ -135,6 +137,14 @@ const AvailableRequests = () => {
 
   return (
     <Container className="px-lg-5 mt-4">
+      {authContext.user ? (
+        <Button
+        variant="primary"
+        onClick={() => history.push(`/createPublicRequest`)}
+        >
+          Add New Request
+        </Button>
+      ) : null}
       <h4 className="text-center mb-4">Available Public Requests</h4>
       <InputGroup className="mb-3">
         <InputGroup.Prepend>

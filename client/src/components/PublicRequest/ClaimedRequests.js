@@ -28,7 +28,7 @@ const ClaimedRequests = (props) => {
     let request = { ...tmpRequests[index] };
     request = updatedRequest;
     tmpRequests[index] = request;
-
+    console.log(request);
     setClaimedRequests(tmpRequests);
   };
 

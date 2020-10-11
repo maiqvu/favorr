@@ -3,9 +3,8 @@ import RequestService from './RequestService';
 
 import AddReward from './AddReward';
 import RemoveReward from './RemoveReward';
-import UploadProof from './UploadProof';
 
-import {Row, Col, Button, Dropdown, Collapse} from 'react-bootstrap';
+import {Row, Col, Button, Collapse} from 'react-bootstrap';
 
 const Request = (props) => {
   const [newReward, setNewReward] = useState('');
@@ -15,6 +14,7 @@ const Request = (props) => {
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
   const [image, setImage] = useState('');
+  const [resolved, setResolved] = useState(props.request.resolved);
 
   useEffect(() => {
     // reset expand toggle when the request has changed
@@ -28,14 +28,6 @@ const Request = (props) => {
   const handleSelectRemoveRewardId = (e) => {
     setRemoveRewardId(e.target.value);
   };
-
-  const handleResolve = async (e) => {
-    e.preventDefault();
-    console.log(image);
-    await RequestService.resolveRequest(
-      props.request._id,
-      image);
-  }
 
   const expandRequestToggle = () => {
     setOpen(!open);
@@ -107,6 +99,19 @@ const Request = (props) => {
     return displayList;
   };
 
+  const resolve = async (requestId, index) => {
+    const updatedRequest = await RequestService.resolveRequest(
+      requestId,
+      image
+    );
+    props.updateRequest(updatedRequest, index);
+    // Hide resolve, give up and upload options
+    setShowUploadOption(false);
+    setShowGiveUpConfirmation(false);
+    // Show resolved message
+    setResolved(true);
+  }
+
   return (
     <React.Fragment>
       <Row>
@@ -126,7 +131,7 @@ const Request = (props) => {
             aria-haspopup="true" 
             aria-expanded={open}
             type="button" 
-            class="dropdown-toggle btn btn-transparant">
+            className="dropdown-toggle btn btn-transparant">
           </button>
         </Col>
       </Row>
@@ -197,7 +202,7 @@ const Request = (props) => {
                       Claim
                     </Button>
                   ) : null}
-                  {props.user.username &&
+                  {props.user.username && !resolved &&
                   props.user._id === props.request.claimedBy ? (
                     <div>
                       <Button onClick={toggleUploadOption}>Resolve</Button>
@@ -212,14 +217,22 @@ const Request = (props) => {
                   ) : null}
                   {showUploadOption ? (
                     <div>
-                      <label htmlFor="image">Please upload a photo proof.</label><br/>
-                      <input
-                        type="file"
-                        id="image"
-                        accept=".jpg,.png"
-                        onChange={e => setImage(e.target.files[0])}
-                      />
-                      <Button variant="primary" onClick={handleResolve}>Upload</Button>
+                      <div className='text-left'>
+                        <label htmlFor="image">Please upload a photo proof.</label><br/>
+                      </div>
+                      <Row>
+                        <Col className="md-8 text-left">
+                          <input
+                            type="file"
+                            id="image"
+                            accept=".jpg,.png"
+                            onChange={e => setImage(e.target.files[0])}
+                          />
+                        </Col>
+                        <Col className="md-4 text-right">
+                          <Button variant="primary" onClick={() => resolve(props.request._id, props.index)}>Upload</Button>
+                        </Col>
+                      </Row>
                     </div>
                   ) : null}
                   {showGiveUpConfirmation ? (
@@ -227,6 +240,11 @@ const Request = (props) => {
                       <br />
                       <h6>Are you sure?</h6>
                       <Button variant="danger">Yes</Button>
+                    </div>
+                  ) : null}
+                  {resolved ? (
+                    <div className='bg-light'>
+                      Check <a href='/myFavors'>my Favors</a> for updated list. | Resolved
                     </div>
                   ) : null}
                 </div>

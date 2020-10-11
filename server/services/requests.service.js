@@ -90,6 +90,7 @@ export default {
         // find all requests where the claimedBy field contains the userId
         const userClaimedRequests = await PublicRequest.find({
             claimedBy: {$eq: userId}})
+            .sort({ claimedByTime: -1 })
             .populate('creator', 'username')
             .populate('rewards.user', 'username');
         return userClaimedRequests;
