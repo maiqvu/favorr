@@ -129,9 +129,15 @@ publicRequestsRouter.patch('/:requestid/resolve', UploadService.upload.single('f
         // update request to resolved
         const resolvedRequest = await RequestsService.resolveRequest(requestId);
         let owedTo = resolvedRequest.claimedBy.username
-        resolvedRequest.rewards.forEach( async (reward) => {
+        for (let reward of resolvedRequest.rewards) {
             let description = reward.item;
             let owedBy = reward.user.username;
+            // check if owedBy is same as owedTo, if true then favor is not created.
+            console.log(owedBy);
+            console.log(owedTo);
+            if (owedBy === owedTo){
+                continue;
+            }
             // create a favor according to the request details
             const favor = await FavorsService.createFavor(
                 description,
@@ -140,11 +146,12 @@ publicRequestsRouter.patch('/:requestid/resolve', UploadService.upload.single('f
             );
             console.log(favor);
             let favorId = favor._id;
+            // upload picture proof
             const stored = await UploadService.s3Upload(
                 file,
                 favorId
             );
-        });
+        }
         res.status(200).send(resolvedRequest);
     } catch (err) {
         res.status(500).send(err);

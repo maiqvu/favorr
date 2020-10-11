@@ -16,6 +16,8 @@ favorsRouter.post('/', async (req, res) => {
   // Check if all required fields are provided
   if (!description || !owedBy || !owedTo) {
     return res.status(400).json({ message: 'Please enter all required fields.' });
+  } else if (owedBy === owedTo) {
+    return res.status(400).json({ message: 'Invalid fields. The favor is owed by the same person.' });
   }
 
   try {
