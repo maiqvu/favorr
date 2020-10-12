@@ -31,7 +31,7 @@ const Favor = (props) => {
           <Collapse in={open}>
             <div id="favor-repaid-proof">
               <br/>
-              <img src={`http://localhost:8080/${props.favor.image}`} 
+              <img src={props.favor.image} 
                 alt="favor-repaid-proof"
                 width="400" height="200"
               />

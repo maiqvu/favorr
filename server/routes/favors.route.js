@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 // import jwt from 'jsonwebtoken';
 import Favor from '../models/favor.model';
+import Proof from '../models/proof.model';
 import { upload } from '../utils/multer';
 import FavorsService from '../services/favors.service';
 
@@ -38,8 +39,21 @@ favorsRouter.post('/', async (req, res) => {
 // Get all favors associated with 1 user
 favorsRouter.get('/:userId', async (req, res) => {
   const userId = req.params.userId;
+  
   try {
-    const { favorsOwedByMe, favorsOwedToMe } = await FavorsService.getUserFavors(userId);
+    const favorsOwedByMe = await Favor.find({ owedBy: userId }).populate('owedTo', 'username');
+    const favorsOwedToMe = await Favor.find({ owedTo: userId }).populate('owedBy', 'username');
+    
+    for (const favor of favorsOwedByMe) {
+      const each = await Proof.find({ favorId: favor._id });
+      if (each.length > 0) favor.image = each[0].fileLink;
+    };
+    
+    for (const favor of favorsOwedToMe) {
+      const each = await Proof.find({ favorId: favor._id });
+      if (each.length > 0) favor.image = each[0].fileLink;
+    };
+    
     res.status(200).json({
       owedByMe: favorsOwedByMe,
       owedToMe: favorsOwedToMe,
@@ -63,7 +77,7 @@ favorsRouter.get('/:userId/cycle', async (req, res) => {
 });
 
 // Get one favor
-favorsRouter.get('/:id', async (req, res) => {
+favorsRouter.get('/f/:id', async (req, res) => {
   const favorId = req.params.id;
   try {
     const oneFavor = await FavorsService.getFavor(favorId);

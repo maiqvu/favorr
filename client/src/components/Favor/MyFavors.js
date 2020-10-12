@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import Favor from './Favor';
 import FavorService from './FavorService';
 import { AuthContext } from '../../context/AuthContext';
-import { Container, Button, Table, Toast, ToastBody } from 'react-bootstrap';
+import { Container, Button, Table, Toast } from 'react-bootstrap';
 
 const MyFavors = () => {
   const [ favorsOwedByMe, setFavorsOwedByMe ] = useState([]);
@@ -106,7 +106,7 @@ const MyFavors = () => {
         <Toast style={{position: 'absolute', top:-50, right: 0}}
           show={showToast} 
           onClose={() => setShowToast(false)}
-          >
+        >
           <Toast.Header>
             <strong className="mr-auto" style={{color: '#e43737'}}>Party found!</strong>
             <small>just now</small>

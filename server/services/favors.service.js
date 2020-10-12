@@ -31,13 +31,9 @@ export default {
         const favorsOwedToMe = await Favor
             .find({ owedTo: userId })
             .populate('owedBy', 'username');
-        return { 
-            favorsOwedByMe: favorsOwedByMe, 
-            favorsOwedToMe: favorsOwedToMe
-        };
+        return { favorsOwedByMe, favorsOwedToMe };
     },
     getFavor: async (favorId) => {
-        // get favor by id
         const favor = await Favor.findById(favorId);
         return favor;
     },
