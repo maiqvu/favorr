@@ -61,8 +61,7 @@ const CreatePublicRequest = () => {
           <Form.Control as="select"
             name="reward"
             value={reward}
-            onChange={handleRewardChange}
-            custom='true'
+            onChange={handleRewardChange}            
           >
             <option value="">Select a reward</option>
             <option value="Brownie">Brownie</option>
