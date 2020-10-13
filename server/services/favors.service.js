@@ -25,26 +25,45 @@ export default {
         await newFavor.save();
         return newFavor;
     },
-    getUserFavors: async (userId) => {
-        // const favorsOwedByMe = await Favor
-        //     .find({ owedBy: userId })
-        //     .populate('owedTo', 'username');
-        // const favorsOwedToMe = await Favor
-        //     .find({ owedTo: userId })
-        //     .populate('owedBy', 'username');
-        const favorsOwedByMe = await Favor.find({ owedBy: userId }).populate('owedTo', 'username');
-        const favorsOwedToMe = await Favor.find({ owedTo: userId }).populate('owedBy', 'username');
+    getOwedByUserFavors: async (userId, limit, skip) => {
+        const favorsOwedByMe = await Favor.find({ owedBy: userId })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .populate('owedTo', 'username');
         
         for (const favor of favorsOwedByMe) {
             const each = await Proof.find({ favorId: favor._id });
             if (each.length > 0) favor.image = each[0].fileLink;
         };
         
+        return favorsOwedByMe;
+    },
+    getOwedToUserFavors: async (userId, limit, skip) => {
+        const favorsOwedToMe = await Favor.find({ owedTo: userId })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .populate('owedBy', 'username');
+
         for (const favor of favorsOwedToMe) {
             const each = await Proof.find({ favorId: favor._id });
             if (each.length > 0) favor.image = each[0].fileLink;
         };
-        return { favorsOwedByMe: favorsOwedByMe, favorsOwedToMe: favorsOwedToMe };
+
+        return favorsOwedToMe;
+    },
+    getOwedByUserFavorsCount: async (userId) => {
+        const favorsOwedByMeCount = await Favor.countDocuments({
+            owedBy: {$eq: userId}
+        });
+        return favorsOwedByMeCount;
+    },
+    getOwedToUserFavorsCount: async (userId) => {
+        const favorsOwedToMeCount = await Favor.countDocuments({
+            owedTo: {$eq: userId}
+        });
+        return favorsOwedToMeCount;
     },
     getFavor: async (favorId) => {
         const favor = await Favor.findById(favorId);
