@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import FavorService from './FavorService';
+import { favors } from './FavorOptions';
 import { Form, Row, Col, Button, Modal } from 'react-bootstrap';
 
 const AddFavor = () => {
@@ -79,11 +80,9 @@ const AddFavor = () => {
             onChange={handleSelectFavor}
           >
             <option value="">Select a favor</option>
-            <option value="Brownie">Brownie</option>
-            <option value="Coffee">Coffee</option>
-            <option value="Pizza">Pizza</option>
-            <option value="Candy">Candy</option>
-            <option value="Chocolate Bar">Chocolate Bar</option>
+            {favors.map(favor => 
+              <option value={favor.item}>{favor.item}</option>
+            )}
           </Form.Control>
         </Col>
       </Form.Group>
