@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import RequestService from './RequestService';
 import Request from './Request';
 import { AuthContext } from '../../context/AuthContext';
-import Pagination from './Pagination';
+import Pagination from '../Pagination/Pagination';
 import { useHistory } from 'react-router-dom';
 import {
   Container,
@@ -28,21 +28,8 @@ const AvailableRequests = () => {
   const isFirstRun = useRef(true);
   const history = useHistory();
 
-  // get available requests
+  // triggers when authenicating user
   useEffect(() => {
-    const getAvailableRequests = async (limit, skip) => {
-      const availableRequests = await RequestService.getAvailableRequests(
-        limit,
-        skip
-      );
-      setRequests(availableRequests);
-    };
-
-    // get total count of all available requests
-    const getAvailableRequestCount = async () => {
-      const count = await RequestService.getAvailableRequestCount();
-      setRequestCount(count);
-    };
     getAvailableRequests(limit, skip);
     getAvailableRequestCount();
   }, [authContext.user]);
@@ -53,18 +40,24 @@ const AvailableRequests = () => {
       isFirstRun.current = false;
       return;
     }
-
-    const getAvailableRequests = async (limit, skip) => {
-      const availableRequests = await RequestService.getAvailableRequests(
-        limit,
-        skip
-      );
-      setRequests(availableRequests);
-      // set current page number after getting next available requests
-      setCurrentPage(skip / 5 + 1);
-    };
     getAvailableRequests(limit, skip);
   }, [skip, limit]);
+
+  // get available requests to display
+  const getAvailableRequests = async (limit, skip) => {
+    const availableRequests = await RequestService.getAvailableRequests(
+      limit,
+      skip
+    );
+    setRequests(availableRequests);
+    setCurrentPage(skip / 5 + 1);
+  };
+
+  // get total count of all available requests
+  const getAvailableRequestCount = async () => {
+    const count = await RequestService.getAvailableRequestCount();
+    setRequestCount(count);
+  };
 
   const handlePageSelection = (skip) => {
     setSkip(skip)
