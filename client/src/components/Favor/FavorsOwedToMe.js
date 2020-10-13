@@ -44,7 +44,6 @@ const FavorsOwedToMe = (props) => {
           <tr>
             <th className="text-left font-weight-bold">Description</th>
             <th className="text-left font-weight-bold">Owed by</th>
-            <th className="text-left font-weight-bold">Owed to</th>
             <th className="text-left font-weight-bold">Status</th>
             <th></th>
           </tr>
