@@ -10,6 +10,7 @@ const MyFavors = () => {
   const [ favorsOwedToMe, setFavorsOwedToMe ] = useState([]);
   const [ showToast, setShowToast] = useState(false);
   const [ cycleList, setcycleList] = useState([]);
+  const [ rewardList, setRewardList] = useState([]);
   
   const authContext = useContext(AuthContext);
   const history = useHistory();
@@ -20,6 +21,7 @@ const MyFavors = () => {
         .then(data => {
           setFavorsOwedByMe(data.owedByMe);
           setFavorsOwedToMe(data.owedToMe);
+          
         });
 
       FavorService.findCycle(authContext.user._id)
@@ -27,6 +29,7 @@ const MyFavors = () => {
           if (data.cycleList.length !== 0){
             setShowToast(true);
             setcycleList(data.cycleList);
+            setRewardList(data.rewardList);
           }
         });
     }
@@ -42,6 +45,51 @@ const MyFavors = () => {
       console.error(response);
     }
   };
+
+  const PartyDetectMessage = () =>{
+    let message = '';
+    for (let i = 0; i < cycleList.length; i++){
+      if (i == 0)
+        message += 'You';
+      else if (i == cycleList.length - 1)
+        message += ' and ' + cycleList[i];
+      else
+      message += ', ' + cycleList[i];
+    }
+
+    message += 'can go for';
+
+    for (let i = 0; i < rewardList.length; i++){
+      if (i == rewardList.length - 1)
+        message += ' and ' + rewardList[i];
+      else
+      message += rewardList[i] + ', ' ;
+    }
+
+    message += 'together to clear the debt';
+
+    console.log(message);
+  }
+
+  const userList = (
+    <div>{cycleList.map((item, idx) => {
+      if (idx == 0)
+        return <b key={idx}>You </b>
+      else if (idx == cycleList.length-1)
+        return <b key={idx}> and {item}</b>
+      else 
+        return <b key={idx}>, {item}</b>
+    })} can go for 
+    {rewardList.map((item, idx)=>{
+      if (idx == 0)
+        return <b key={idx}> {item} </b>
+      else if (idx == cycleList.length-1)
+        return <b key={idx}> and {item} </b>
+      else 
+        return <b key={idx}> , {item}</b>
+    })}
+    to clear debts at once!</div>
+  );
   
   return (
     <Container fluid>
@@ -112,9 +160,7 @@ const MyFavors = () => {
             <small>just now</small>
           </Toast.Header>
           <Toast.Body>
-            <p>{cycleList.map(item => (
-                <b>{item.username}, </b>
-              ))} can clear debts at once!</p>
+              {userList}
           </Toast.Body>
         </Toast>
       </div>
