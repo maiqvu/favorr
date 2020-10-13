@@ -5,42 +5,61 @@ import FavorService from './FavorService';
 import { Form, Row, Col, Button, Modal } from 'react-bootstrap';
 
 const AddFavor = () => {
-  const [ newFavor, setNewFavor ] = useState({
+  const [newFavor, setNewFavor] = useState({
     description: '',
     owedBy: '',
     owedTo: ''
   });
-  const [ owedByMe, setOwedByMe ] = useState(null);
-  const [ myFriend, setMyFriend ] = useState('');
-  const [ image, setImage ] = useState('');
-  const [ showModal, setShowModal ] = useState(false);
-  const [ err, setErr ] = useState('');
-  
+  const [owedByMe, setOwedByMe] = useState(true);
+  const [myFriend, setMyFriend] = useState('');
+  const [image, setImage] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [err, setErr] = useState('');
+  const [successText, setSuccessText] = useState('');
+  const [submitValidation, setSubmitValidation] = useState(false);
+
   const authContext = useContext(AuthContext);
   const history = useHistory();
-  
+
+  const handleReset = () => {
+    setNewFavor({
+      description: '',
+      owedBy: '',
+      owedTo: ''
+    });
+
+    setMyFriend('');
+    setImage('');
+    setShowModal(false);
+    setErr('');
+    setSubmitValidation(false);
+  }
+
   const handleSelectFavor = (e) => {
     setNewFavor({ ...newFavor, [e.target.name]: e.target.value });
   };
-  
+
   const handleSearchMyFriend = () => {
     FavorService.findUserByUsername(myFriend).then(res => {
       if (res.username !== authContext.user.username) {
         setErr(null);
         setShowModal(true);
-        
+
         if (owedByMe) {
           setNewFavor({
             ...newFavor,
             owedBy: authContext.user.username,
             owedTo: myFriend
           });
+          setSubmitValidation(true);
         } else {
           setNewFavor({
             ...newFavor,
             owedBy: myFriend,
             owedTo: authContext.user.username
           });
+          //condition to enable submit button
+          if (image != '') setSubmitValidation(true);
         }
       } else {
         setErr(`Invalid search. Please enter your friend's username.`);
@@ -52,26 +71,64 @@ const AddFavor = () => {
       setShowModal(true);
     });
   }
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(image);
-    await FavorService.addFavor(newFavor, image);
-    // setTimeout(() => {
-    //   console.log('2 seconds after favor saved in backend');
-    //   history.push(`/myFavors`);
-    // }, 2000);
+    const requestFavor = await FavorService.addFavor(newFavor, image);
+    setTimeout(() => {
+      // console.log('2 seconds after favor saved in backend');
+      // history.push(`/myFavors`);
+
+      //Clear message
+      setSuccessText('');
+    }, 3000);
+
+    if (requestFavor) {
+      setSuccessText('Success! Request has been posted.');
+      handleReset();
+    } else {
+      setSuccessText('Error! Please contact Admin');
+    }
   };
-  
+
   return (
     <Form onSubmit={handleSubmit}>
       <h3 className="text-center font-weight-bold">Create a new favor</h3>
-      <br/>
-      
+      <div className="text-center font-weight-lighter ">It's important to keep record of favors, whether from your friend David who ask you to help with his project, or when you owned Betty from Marketing an iced latte.</div>
+      <br />
       <Form.Group as={Row}>
-        <Form.Label column sm={2}>Description *</Form.Label>
+        <Form.Label as="legend" column sm="2">The Situation:</Form.Label>
+        <Col>
+          <Form.Check
+            type="checkbox"
+            inline
+            label="I owed You one"
+            checked={owedByMe === true}
+            //selecting different situation will clear other values
+            onChange={() => {
+              setOwedByMe(true);
+              handleReset();
+            }}
+          />
+          <Form.Check
+            type="checkbox"
+            inline
+            label="You owed Me one"
+            checked={owedByMe === false}
+            //selecting different situation will clear other values
+            onChange={() => {
+              setOwedByMe(false);
+              handleReset();
+            }}
+          />
+        </Col>
+      </Form.Group>
+
+      <Form.Group as={Row}>
+        <Form.Label column sm={2}>The Favor:</Form.Label>
         <Col sm={8}>
-          <Form.Control 
+          <Form.Control
             required
             as="select"
             name="description"
@@ -89,65 +146,29 @@ const AddFavor = () => {
       </Form.Group>
 
       <Form.Group as={Row}>
-        <Form.Label as="legend" column sm="2">Owed by *</Form.Label>
-        <Col>
-          <Form.Check
-            type="radio"
-            inline
-            label="me"
-            checked={owedByMe === true}
-            onChange={() => setOwedByMe(true)}
-          />
-          <Form.Check
-            type="radio"
-            inline
-            label="my friend"
-            checked={owedByMe === false}
-            onChange={() => setOwedByMe(false)}
-          />
-        </Col>
-      </Form.Group>
-      
-      <Form.Group as={Row}>
-        <Form.Label as="legend" column sm="2">Owed to *</Form.Label>
-        <Col>
-          <Form.Check
-            type="radio"
-            inline
-            label="me"
-            checked={owedByMe === false}
-            onChange={() => setOwedByMe(false)}
-          />
-          <Form.Check
-            type="radio"
-            inline
-            label="my friend"
-            checked={owedByMe === true}
-            onChange={() => setOwedByMe(true)}
-          />
-        </Col>
-      </Form.Group>
-      
-      <Col sm={10}>
-        <div className="input-group mb-3">
-          <input type="text"
-            className="form-control"
-            placeholder="Search your friend's username"
-            value={myFriend}
-            onChange={e => setMyFriend(e.target.value)}
-          />
-          <div className="input-group-append">
-            <button
-              type="button"
-              className="btn btn-outline-primary"
-              onClick={handleSearchMyFriend}
-            >
-              Search
+        <Form.Label column sm="2">The Friend:</Form.Label>
+        <Col sm={8}>
+
+
+          <div className="input-group mb-3">
+            <input type="text"
+              className="form-control"
+              placeholder="Search your friend's username"
+              value={myFriend}
+              onChange={e => setMyFriend(e.target.value)}
+            />
+            <div className="input-group-append">
+              <button
+                type="button"
+                className="btn btn-outline-primary"
+                onClick={handleSearchMyFriend}
+              >
+                Find Friend
             </button>
+            </div>
           </div>
-        </div>
-      </Col>
-      
+        </Col>
+      </Form.Group>
       <Modal
         centered
         backdrop="static"
@@ -157,7 +178,7 @@ const AddFavor = () => {
       >
         <Modal.Body>
           {!err ? <h4>Found your friend <strong>{myFriend}</strong>!</h4> : <h4>{err}</h4>}
-          
+
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -169,20 +190,31 @@ const AddFavor = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      
-      {!owedByMe && <Form.Group>
-        <label htmlFor="image">Please upload a photo proof.</label><br/>
-        <input
-          type="file"
-          id="image"
-          accept=".jpg,.png"
-          onChange={e => setImage(e.target.files[0])}
-        />
-      </Form.Group>}
-      
-      <Button type="submit" className="btn btn-primary">
+
+      <Form.Group as={Row}>
+        <Form.Label column sm={2}>Upload Photo Proof:</Form.Label>
+        <Col>
+          <input
+            disabled={owedByMe}
+            type="file"
+            id="image"
+            accept=".jpg,.png"
+            onChange={e => {
+              setImage(e.target.files[0]);
+              //condition to enable submit button
+              if (newFavor.owedTo != '') setSubmitValidation(true);
+            }}
+          />
+        </Col>
+      </Form.Group>
+
+      <Button type="submit"
+        variant="primary"
+        disabled={!submitValidation}>
         Submit
       </Button>
+      {' '}
+      {successText}
     </Form>
   );
 };
