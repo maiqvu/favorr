@@ -1,6 +1,7 @@
 // Import mongoose models
 import Favor from '../models/favor.model';
 import User from '../models/user.model';
+import Proof from '../models/proof.model';
 
 let cycleList;
 let hasCycle;
@@ -25,13 +26,25 @@ export default {
         return newFavor;
     },
     getUserFavors: async (userId) => {
-        const favorsOwedByMe = await Favor
-            .find({ owedBy: userId })
-            .populate('owedTo', 'username');
-        const favorsOwedToMe = await Favor
-            .find({ owedTo: userId })
-            .populate('owedBy', 'username');
-        return { favorsOwedByMe, favorsOwedToMe };
+        // const favorsOwedByMe = await Favor
+        //     .find({ owedBy: userId })
+        //     .populate('owedTo', 'username');
+        // const favorsOwedToMe = await Favor
+        //     .find({ owedTo: userId })
+        //     .populate('owedBy', 'username');
+        const favorsOwedByMe = await Favor.find({ owedBy: userId }).populate('owedTo', 'username');
+        const favorsOwedToMe = await Favor.find({ owedTo: userId }).populate('owedBy', 'username');
+        
+        for (const favor of favorsOwedByMe) {
+            const each = await Proof.find({ favorId: favor._id });
+            if (each.length > 0) favor.image = each[0].fileLink;
+        };
+        
+        for (const favor of favorsOwedToMe) {
+            const each = await Proof.find({ favorId: favor._id });
+            if (each.length > 0) favor.image = each[0].fileLink;
+        };
+        return { favorsOwedByMe: favorsOwedByMe, favorsOwedToMe: favorsOwedToMe };
     },
     getFavor: async (favorId) => {
         const favor = await Favor.findById(favorId);
