@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
+import { favors } from '../Favor/FavorOptions';
 
 const AddReward = (props) => {
     return (
@@ -12,11 +13,9 @@ const AddReward = (props) => {
           onChange={props.onChange}
         >
           <option value="">Add a reward</option>
-          <option value="Brownie">Brownie</option>
-          <option value="Coffee">Coffee</option>
-          <option value="Pizza">Pizza</option>
-          <option value="Candy">Candy</option>
-          <option value="Chocolate Bar">Chocolate Bar</option>
+          {favors.map(favor => 
+            <option value={favor.item}>{favor.item}</option>
+          )}
         </select>
         <div className="input-group-append">
           <Button

@@ -35,15 +35,57 @@ favorsRouter.post('/', async (req, res) => {
   }
 });
 
-// Get all favors associated with 1 user
-favorsRouter.get('/:userId', async (req, res) => {
+// Get all favors owed by user
+favorsRouter.get('/:userId/owedByMe', async (req, res) => {
+  const userId = req.params.userId;
+  // pagination parameters
+  const limit = parseInt(req.query.limit);
+  const skip = parseInt(req.query.skip);
+  
+  try {
+    const favorsOwedByMe = await FavorsService.getOwedByUserFavors(userId, limit, skip);
+    
+    res.status(200).json(favorsOwedByMe);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// Get all favors owed to user
+favorsRouter.get('/:userId/owedToMe', async (req, res) => {
+  const userId = req.params.userId;
+  // pagination parameters
+  const limit = parseInt(req.query.limit);
+  const skip = parseInt(req.query.skip);
+  
+  try {
+    const favorsOwedToMe = await FavorsService.getOwedToUserFavors(userId, limit, skip);
+    
+    res.status(200).json(favorsOwedToMe);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// Get favors count owed by user
+favorsRouter.get('/:userId/owedByMe/count', async (req, res) => {
   const userId = req.params.userId;
   try {
-    const { favorsOwedByMe, favorsOwedToMe } = await FavorsService.getUserFavors(userId);
-    res.status(200).json({
-      owedByMe: favorsOwedByMe,
-      owedToMe: favorsOwedToMe,
-    });
+    const favorsOwedByMeCount = await FavorsService.getOwedByUserFavorsCount(userId);
+
+    res.status(200).json(favorsOwedByMeCount)
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// Get favors count owed to user
+favorsRouter.get('/:userId/owedToMe/count', async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const favorsOwedToMeCount = await FavorsService.getOwedToUserFavorsCount(userId);
+
+    res.status(200).json(favorsOwedToMeCount)
   } catch (err) {
     res.status(500).send(err);
   }
@@ -66,7 +108,7 @@ favorsRouter.get('/:userId/cycle', async (req, res) => {
 });
 
 // Get one favor
-favorsRouter.get('/:id', async (req, res) => {
+favorsRouter.get('/f/:id', async (req, res) => {
   const favorId = req.params.id;
   try {
     const oneFavor = await FavorsService.getFavor(favorId);

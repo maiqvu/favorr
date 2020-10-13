@@ -8,15 +8,12 @@ const Favor = (props) => {
   
   return (
     <tr>
-      <td width="20%">{props.favor.description}</td>
+      <td width="30%">{props.favor.description}</td>
       <td width="20%">
-        {props.owedByMe ? authContext.user.username : props.favor.owedBy.username}
-      </td>
-      <td width="20%">
-        {props.owedByMe ? props.favor.owedTo.username : authContext.user.username}
+        {props.owedByMe ? props.favor.owedTo.username : props.favor.owedBy.username}
       </td>
       <td width="15%">{props.favor.repaid ? 'Repaid' : 'Pending'}</td>
-      <td width="25%" className="text-right">
+      <td width="35%" className="text-right">
         {props.favor.repaid ?
         <>
           <Button
@@ -31,7 +28,7 @@ const Favor = (props) => {
           <Collapse in={open}>
             <div id="favor-repaid-proof">
               <br/>
-              <img src={`http://localhost:8080/${props.favor.image}`} 
+              <img src={props.favor.image} 
                 alt="favor-repaid-proof"
                 width="400" height="200"
               />

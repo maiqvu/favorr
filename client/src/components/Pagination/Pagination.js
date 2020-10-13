@@ -28,7 +28,7 @@ const Pagination = (props) => {
   return (
     <div>
       {props.count > props.limit ? (
-        <div className="float-right">
+        <div className="text-right">
           Page {props.currentPage} of {totalPageCount}
           &nbsp;
           <Button variant="outline-primary" onClick={previousPage}>

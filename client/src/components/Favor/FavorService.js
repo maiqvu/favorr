@@ -2,8 +2,32 @@ import axios from 'axios';
 import { environment as env } from '../../environments/environment';
 
 export default {
-  getFavors: async (userId) => {
-    const res = await axios.get(`/${env.favorrApiName}/${env.favorsPath}/${userId}`);
+  getOwedByMeFavors: async (userId, limit, skip) => {
+    const res = await axios.get(`/${env.favorrApiName}/${env.favorsPath}/${userId}/owedByMe?limit=${limit}&skip=${skip}`);
+    if (res.status !== 401) {
+      return res.data;
+    } else {
+      return { message: 'Access denied.' }
+    }
+  },
+  getOwedToMeFavors: async (userId, limit, skip) => {
+    const res = await axios.get(`/${env.favorrApiName}/${env.favorsPath}/${userId}/owedToMe?limit=${limit}&skip=${skip}`);
+    if (res.status !== 401) {
+      return res.data;
+    } else {
+      return { message: 'Access denied.' }
+    }
+  },
+  getOwedByMeFavorsCount: async (userId) => {
+    const res = await axios.get(`/${env.favorrApiName}/${env.favorsPath}/${userId}/owedByMe/count`);
+    if (res.status !== 401) {
+      return res.data;
+    } else {
+      return { message: 'Access denied.' }
+    }
+  },
+  getOwedToMeFavorsCount: async (userId) => {
+    const res = await axios.get(`/${env.favorrApiName}/${env.favorsPath}/${userId}/owedToMe/count`);
     if (res.status !== 401) {
       return res.data;
     } else {
