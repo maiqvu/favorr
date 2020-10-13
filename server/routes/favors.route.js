@@ -54,8 +54,11 @@ favorsRouter.get('/:userId/cycle', async (req, res) => {
   const userId = req.params.userId;
   try {
     const cycleList = await FavorsService.findCycle(userId);
+    const rewardList = await FavorsService.findRewardCycle();
+
     res.status(200).json({
-      cycleList: cycleList
+      cycleList: cycleList,
+      rewardList: rewardList
     });
   } catch (err) {
     res.status(500).send(err);
