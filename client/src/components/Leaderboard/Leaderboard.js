@@ -27,7 +27,7 @@ const Leaderboard = () => {
   return (
     <Container className="px-lg-5 mt-4">
       <h2 className="text-center mb-4">Leaderboard</h2>
-      <h4 className="text-center">People with the most favor</h4>
+      <h4 className="text-center">People who earned the most favor</h4>
       <Table responsive striped hover responsive="sm" >
         <thead>
           <tr>
