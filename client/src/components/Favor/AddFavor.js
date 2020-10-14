@@ -77,19 +77,15 @@ const AddFavor = () => {
     e.preventDefault();
     console.log(image);
     const requestFavor = await FavorService.addFavor(newFavor, image);
-    setTimeout(() => {
-      history.push(`/myFavors`);
-
-      //Clear message
-      setSuccessText('');
-    }, 3000);
-
-    if (requestFavor) {
+    console.log(requestFavor);
+    if (!requestFavor) {
       setSuccessText('Success! Request has been posted.');
       handleReset();
     } else {
       setSuccessText('Error! Please contact Admin');
     }
+
+
   };
 
   return (
@@ -136,7 +132,7 @@ const AddFavor = () => {
             onChange={handleSelectFavor}
           >
             <option value="">Select a favor</option>
-            {favors.map(favor => 
+            {favors.map(favor =>
               <option value={favor.item}>{favor.item}</option>
             )}
           </Form.Control>

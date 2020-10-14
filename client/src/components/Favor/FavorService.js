@@ -39,7 +39,9 @@ export default {
       return axios
         .post(`/${env.favorrApiName}/${env.favorsPath}`, favor)
         .then(res => {
-          if (res.status === 201) return res.data
+          if (res.status === 201) 
+          //return res.data
+          return 0
           else return { message: 'Failed to add new favor.' }
         });
     } else {   // Add favor owed to the logged in user
@@ -55,6 +57,8 @@ export default {
           // Upload image
           const uploadRes = await axios.post(`/${env.favorrApiName}/${env.uploadPath}/${newFavorId}`, data);
           console.log(uploadRes);
+          //return 0 for add favor conditional
+          return 0;
         } else {
           return { message: 'Invalid file type.'}
         }
