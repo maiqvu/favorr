@@ -118,16 +118,30 @@ favorsRouter.get('/f/:id', async (req, res) => {
   }
 });
 
-// Update one favor with new repaid status and proof image
-favorsRouter.patch('/:id', upload, async (req, res) => {
+// Update owed-by favor with new repaid status and proof image
+favorsRouter.patch('/f/owedByMe/:favorId', upload, async (req, res) => {
   try {
     const repaid = req.body.repaid;
     const image = req.file.path;
     
     const updatedFavor = await Favor.findByIdAndUpdate(
-      req.params.id,
+      req.params.favorId,
       { repaid, image },
       { new: true }   // Return the modified document instead of the original.
+    );
+    res.status(200).json(updatedFavor);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// Update owed-to favor with new repaid status
+favorsRouter.patch('/f/owedToMe/:favorId', async (req, res) => {
+  try {
+    const updatedFavor = await Favor.findByIdAndUpdate(
+      req.params.favorId,
+      { repaid: req.body.repaid },
+      { new: true }
     );
     res.status(200).json(updatedFavor);
   } catch (err) {

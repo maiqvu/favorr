@@ -1,10 +1,8 @@
-import React, { useState, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import React, { useState } from 'react';
 import { Button, Collapse } from 'react-bootstrap';
 
 const Favor = (props) => {
   const [ open, setOpen ] = useState(false);
-  const authContext = useContext(AuthContext);
   
   return (
     <tr>

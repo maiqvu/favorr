@@ -76,8 +76,13 @@ export default {
       //   .then(res => console.log(res))
     }
   },
-  updateFavor: (favorId, updatedValue) => {
-    return axios.patch(`/${env.favorrApiName}/${env.favorsPath}/${favorId}`, updatedValue)
+  updateOwedByFavor: (favorId, updatePayload) => {
+    return axios.patch(`/${env.favorrApiName}/${env.favorsPath}/f/owedByMe/${favorId}`, updatePayload)
+      .then(res => console.log(res))
+      .catch(err => console.error(err))
+  },
+  updateOwedToFavor: (favorId, updatePayload) => {
+    return axios.patch(`/${env.favorrApiName}/${env.favorsPath}/f/owedToMe/${favorId}`, updatePayload)
       .then(res => res)
       .catch(err => err)
   },

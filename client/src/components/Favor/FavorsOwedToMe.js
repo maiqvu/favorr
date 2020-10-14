@@ -30,7 +30,7 @@ const FavorsOwedToMe = (props) => {
         setFavorsCount(data);
       });
     }
-  }, [authContext.user, limit, skip]);
+  }, [authContext.user, limit, skip, props.refresh]);
 
   const handlePageSelection = (skip) => {
     setSkip(skip);

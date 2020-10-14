@@ -78,8 +78,7 @@ const AddFavor = () => {
     console.log(image);
     const requestFavor = await FavorService.addFavor(newFavor, image);
     setTimeout(() => {
-      // console.log('2 seconds after favor saved in backend');
-      // history.push(`/myFavors`);
+      history.push(`/myFavors`);
 
       //Clear message
       setSuccessText('');
