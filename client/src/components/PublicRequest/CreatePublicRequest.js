@@ -40,9 +40,9 @@ const CreatePublicRequest = () => {
       setSuccessText('Error! Please contact Admin');
     };
     //Clear message after 3000ms
-    setTimeout(() => {
-      setSuccessText('');
-    }, 3000);
+    // setTimeout(() => {
+    //   setSuccessText('');
+    // }, 3000);
   };
 
   return (
