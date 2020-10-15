@@ -51,11 +51,8 @@ export default {
           // Create favor
           const res = await axios.post(`/${env.favorrApiName}/${env.favorsPath}`, favor);
           const newFavorId = res.data._id;
-          // Construct form fields to hold image data
-          const data = new FormData();
-          data.append('file', image, image.name);
-          // Upload image
-          const uploadRes = await axios.post(`/${env.favorrApiName}/${env.uploadPath}/${newFavorId}`, data);
+          // Upload image when creating a favor
+          const uploadRes = await uploadImage(image, newFavorId, 'submit');
           console.log(uploadRes);
           //return 0 for add favor conditional
           return 0;
@@ -82,8 +79,8 @@ export default {
   },
   updateOwedByFavor: (favorId, updatePayload) => {
     return axios.patch(`/${env.favorrApiName}/${env.favorsPath}/f/owedByMe/${favorId}`, updatePayload)
-      .then(res => console.log(res))
-      .catch(err => console.error(err))
+      .then(res => res)
+      .catch(err => err)
   },
   updateOwedToFavor: (favorId, updatePayload) => {
     return axios.patch(`/${env.favorrApiName}/${env.favorsPath}/f/owedToMe/${favorId}`, updatePayload)
@@ -106,4 +103,17 @@ export default {
       return { message: 'Access denied.' }
     }
   },
+  markRepaidWithImage: async (image, favorId) => {
+    const res = await uploadImage(image, favorId, 'repaid');
+    return res
+  }
 };
+
+const uploadImage = async (image, newFavorId, type) => {
+  // Construct form fields to hold image data
+  const data = new FormData();
+  data.append('file', image, image.name);
+  // Upload image
+  const uploadRes = await axios.post(`/${env.favorrApiName}/${env.uploadPath}/${newFavorId}/${type}`, data);
+  return uploadRes;
+}

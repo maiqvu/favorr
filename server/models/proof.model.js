@@ -5,6 +5,10 @@ const ProofSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  favorFileType: {
+    type: String,
+    required: true
+  },
   fileLink: {
     type: String,
     required: true

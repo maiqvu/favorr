@@ -14,7 +14,7 @@ const AddReward = (props) => {
         >
           <option value="">Add a reward</option>
           {favors.map(favor => 
-            <option value={favor.item}>{favor.item}</option>
+            <option key={favor.item} value={favor.item}>{favor.item}</option>
           )}
         </select>
         <div className="input-group-append">

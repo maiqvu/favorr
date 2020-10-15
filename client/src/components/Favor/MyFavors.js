@@ -42,11 +42,21 @@ const MyFavors = () => {
     
     if (response.status === 200) {
       console.log(response.data);
-      setRefreshFavorList(true);
     } else {
       console.error(response);
     }
   };
+
+  const repaidOwedByMeFavor = async (favorId, image) => {
+    const updatePayload = { repaid: true };
+    const favorResponse = await FavorService.updateOwedByFavor(favorId, updatePayload);
+    const uploadResponse = await FavorService.markRepaidWithImage(image, favorId);
+    
+    if (favorResponse.status === 200 && uploadResponse.status === 200) {
+      console.log(favorResponse.data, uploadResponse.data);
+      setRefreshFavorList(!refreshFavorList);
+    }
+  }
 
   const PartyDetectMessage = () =>{
     let message = '';
@@ -105,7 +115,7 @@ const MyFavors = () => {
       <br/>
       
       <FavorsOwedByMe
-        handleMarkAsRepaid={repaidOwedToMeFavor}
+        handleMarkAsRepaid={repaidOwedByMeFavor}
         refresh={refreshFavorList}
       />
       <Modal

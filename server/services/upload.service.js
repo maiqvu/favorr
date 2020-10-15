@@ -13,7 +13,7 @@ const s3 = new AWS.S3({
 
 export default {
     upload: multer({ storage: storage }),
-    s3Upload: async (file, favorId) => {
+    s3Upload: async (file, favorId, favorFileType) => {
         // Prepare parameters for upload
         let params = {
             Bucket: process.env.BUCKET_NAME,
@@ -26,6 +26,7 @@ export default {
         const stored = await s3.upload(params).promise()
         let newFileUploaded = {
             favorId: favorId,
+            favorFileType: favorFileType,
             fileLink: process.env.AWS_UPLOADED_FILE_URL_LINK + params.Key, //file.originalname,
             s3Key: params.Key
         };

@@ -15,12 +15,14 @@ const FavorsOwedByMe = (props) => {
   const [limit, setLimit] = useState(5);
   const [skip, setSkip] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [refreshTable, setRefreshTable] = useState(false);
 
   useEffect(() => {
     if (authContext.user) {
       // get favors that are owed by me
       FavorService.getOwedByMeFavors(authContext.user._id, limit, skip).then(
         (data) => {
+          console.log(data);
           setFavors(data);
           setCurrentPage(skip / 5 + 1);
         }
@@ -30,7 +32,7 @@ const FavorsOwedByMe = (props) => {
         setFavorsCount(data);
       });
     }
-  }, [authContext.user, limit, skip]);
+  }, [authContext.user, limit, skip, refreshTable]);
 
   const handlePageSelection = (skip) => {
     setSkip(skip);
@@ -43,7 +45,6 @@ const FavorsOwedByMe = (props) => {
         <thead>
           <tr>
             <th className="text-left font-weight-bold">Description</th>
-            {/* <th className="text-left font-weight-bold">Owed by</th> */}
             <th className="text-left font-weight-bold">Owed to</th>
             <th className="text-left font-weight-bold">Status</th>
             <th></th>
@@ -56,6 +57,7 @@ const FavorsOwedByMe = (props) => {
               favor={favor}
               owedByMe={true}
               handleMarkAsRepaid={props.handleMarkAsRepaid}
+              refreshTableTrigger={() => setRefreshTable(!refreshTable)}
             />
           ))}
         </tbody>

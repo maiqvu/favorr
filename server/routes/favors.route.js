@@ -121,12 +121,13 @@ favorsRouter.get('/f/:id', async (req, res) => {
 // Update owed-by favor with new repaid status and proof image
 favorsRouter.patch('/f/owedByMe/:favorId', upload, async (req, res) => {
   try {
-    const repaid = req.body.repaid;
-    const image = req.file.path;
+    // const repaid = req.body.repaid;
+    // const image = req.file.path;
     
     const updatedFavor = await Favor.findByIdAndUpdate(
       req.params.favorId,
-      { repaid, image },
+      // { repaid, image },
+      { repaid: req.body.repaid },
       { new: true }   // Return the modified document instead of the original.
     );
     res.status(200).json(updatedFavor);

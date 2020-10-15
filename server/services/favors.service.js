@@ -35,8 +35,16 @@ export default {
             .populate('owedTo', 'username');
         
         for (const favor of favorsOwedByMe) {
-            const each = await Proof.find({ favorId: favor._id });
-            if (each.length > 0) favor.image = each[0].fileLink;
+            const eachSubmit = await Proof.find({ favorId: favor._id, favorFileType: 'submit' });
+            if (eachSubmit.length > 0) {
+                favor.submitImage = eachSubmit[0].fileLink;
+                favor.submitImageType = eachSubmit[0].favorFileType;
+            }
+            const eachRepaid = await Proof.find({ favorId: favor._id, favorFileType: 'repaid' });
+            if (eachRepaid.length > 0) {
+                favor.repaidImage = eachRepaid[0].fileLink;
+                favor.repaidImageType = eachRepaid[0].favorFileType;
+            }
         };
         
         return favorsOwedByMe;
@@ -49,8 +57,16 @@ export default {
             .populate('owedBy', 'username');
 
         for (const favor of favorsOwedToMe) {
-            const each = await Proof.find({ favorId: favor._id });
-            if (each.length > 0) favor.image = each[0].fileLink;
+            const eachSubmit = await Proof.find({ favorId: favor._id, favorFileType: 'submit' });
+            if (eachSubmit.length > 0) {
+                favor.submitImage = eachSubmit[0].fileLink;
+                favor.submitImageType = eachSubmit[0].favorFileType;
+            }
+            const eachRepaid = await Proof.find({ favorId: favor._id, favorFileType: 'repaid' });
+            if (eachRepaid.length > 0) {
+                favor.repaidImage = eachRepaid[0].fileLink;
+                favor.repaidImageType = eachRepaid[0].favorFileType;
+            }
         };
 
         return favorsOwedToMe;

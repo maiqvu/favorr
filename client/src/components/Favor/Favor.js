@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { Button, Collapse } from 'react-bootstrap';
 
+import FavorService from './FavorService';
+
 const Favor = (props) => {
-  const [ open, setOpen ] = useState(false);
+  // const [ open, setOpen ] = useState(false);
+  const [ openUpload, setOpenUpload ] = useState(false);
+  const [ image, setImage ] = useState('');
   
   return (
     <tr>
@@ -12,8 +16,46 @@ const Favor = (props) => {
       </td>
       <td width="15%">{props.favor.repaid ? 'Repaid' : 'Pending'}</td>
       <td width="35%" className="text-right">
-        {props.favor.repaid ?
-        <>
+        {!props.favor.repaid && props.owedByMe ? (
+            <div>
+              <Button
+                size="sm"
+                variant="outline-primary"
+                onClick={() => setOpenUpload(!openUpload)}
+              >
+                Mark as repaid
+              </Button>
+              <Collapse in={openUpload}>
+                <div id="favor-repaid-proof">
+                  <br/>
+                  <p>Upload an image as proof</p>
+                  <input
+                    type="file"
+                    id="image"
+                    accept=".jpg,.png"
+                    onChange={e => {
+                      setImage(e.target.files[0]);
+                    }}
+                  />
+                  <Button variant="primary" size='sm' disabled={!image} 
+                    onClick={() => {
+                        props.handleMarkAsRepaid(props.favor._id, image);
+                        props.refreshTableTrigger();
+                      }}>Upload</Button>
+                  <br/>
+                </div>
+              </Collapse>
+            </div>
+          ) : null
+        }
+      </td>
+    </tr>
+  );
+}
+
+export default Favor;
+
+{/* <>
           <Button
             size="sm"
             variant="outline-primary"
@@ -40,10 +82,4 @@ const Favor = (props) => {
           onClick={() => props.handleMarkAsRepaid(props.favor._id, props.favor.repaid)}
         >
           Mark as repaid
-        </Button>}
-      </td>
-    </tr>
-  );
-}
-
-export default Favor;
+        </Button> */}
