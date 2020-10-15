@@ -132,8 +132,9 @@ const AddFavor = () => {
             onChange={handleSelectFavor}
           >
             <option value="">Select a favor</option>
-            {favors.map(favor =>
-              <option value={favor.item}>{favor.item}</option>
+            {/* set the below option to use key=id instead of value to prevent error when map */}
+            {favors.map((favor,id) =>
+              <option key={id}>{favor.item}</option>
             )}
           </Form.Control>
         </Col>
