@@ -1,8 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
 // import jwt from 'jsonwebtoken';
-import Favor from '../models/favor.model';
-import { upload } from '../utils/multer';
 import FavorsService from '../services/favors.service';
 
 const favorsRouter = express.Router();
