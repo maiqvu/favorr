@@ -28,45 +28,46 @@ export default {
         return newFavor;
     },
     getOwedByUserFavors: async (userId, limit, skip) => {
-        const favorsOwedByMe = await Favor.find({ owedBy: userId })
+        let favorsOwedByMe = await Favor.find({ owedBy: userId })
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
             .populate('owedTo', 'username');
         
-        for (const favor of favorsOwedByMe) {
+        for (let [index, favor] of favorsOwedByMe.entries()) {
             const eachSubmit = await Proof.find({ favorId: favor._id, favorFileType: 'submit' });
             if (eachSubmit.length > 0) {
-                favor.submitImage = eachSubmit[0].fileLink;
-                favor.submitImageType = eachSubmit[0].favorFileType;
+                favor._doc = {...favor._doc, ...{submitImage: eachSubmit[0].fileLink}};
+                favor._doc = {...favor._doc, ...{submitImageType: eachSubmit[0].favorFileType}};
             }
             const eachRepaid = await Proof.find({ favorId: favor._id, favorFileType: 'repaid' });
             if (eachRepaid.length > 0) {
-                favor.repaidImage = eachRepaid[0].fileLink;
-                favor.repaidImageType = eachRepaid[0].favorFileType;
+                favor._doc = {...favor._doc, ...{repaidImage: eachRepaid[0].fileLink}};
+                favor._doc = {...favor._doc, ...{repaidImageType: eachRepaid[0].favorFileType}};
             }
+            favorsOwedByMe[index] = favor;
         };
-        
         return favorsOwedByMe;
     },
     getOwedToUserFavors: async (userId, limit, skip) => {
-        const favorsOwedToMe = await Favor.find({ owedTo: userId })
+        let favorsOwedToMe = await Favor.find({ owedTo: userId })
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
             .populate('owedBy', 'username');
 
-        for (const favor of favorsOwedToMe) {
+        for (let [index, favor] of favorsOwedToMe.entries()) {
             const eachSubmit = await Proof.find({ favorId: favor._id, favorFileType: 'submit' });
             if (eachSubmit.length > 0) {
-                favor.submitImage = eachSubmit[0].fileLink;
-                favor.submitImageType = eachSubmit[0].favorFileType;
+                favor._doc = {...favor._doc, ...{submitImage: eachSubmit[0].fileLink}};
+                favor._doc = {...favor._doc, ...{submitImageType: eachSubmit[0].favorFileType}};
             }
             const eachRepaid = await Proof.find({ favorId: favor._id, favorFileType: 'repaid' });
             if (eachRepaid.length > 0) {
-                favor.repaidImage = eachRepaid[0].fileLink;
-                favor.repaidImageType = eachRepaid[0].favorFileType;
+                favor._doc = {...favor._doc, ...{repaidImage: eachRepaid[0].fileLink}};
+                favor._doc = {...favor._doc, ...{repaidImageType: eachRepaid[0].favorFileType}};
             }
+            favorsOwedToMe[index] = favor;
         };
 
         return favorsOwedToMe;

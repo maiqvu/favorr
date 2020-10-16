@@ -6,6 +6,7 @@ import FavorService from './FavorService';
 const Favor = (props) => {
   // const [ open, setOpen ] = useState(false);
   const [ openUpload, setOpenUpload ] = useState(false);
+  const [ openRepaidProof, setOpenRepaidProof ] = useState(false);
   const [ image, setImage ] = useState('');
   
   return (
@@ -26,7 +27,7 @@ const Favor = (props) => {
                 Mark as repaid
               </Button>
               <Collapse in={openUpload}>
-                <div id="favor-repaid-proof">
+                <div id="favor-repaid-proof-upload">
                   <br/>
                   <p>Upload an image as proof</p>
                   <input
@@ -38,16 +39,36 @@ const Favor = (props) => {
                     }}
                   />
                   <Button variant="primary" size='sm' disabled={!image} 
-                    onClick={() => {
-                        props.handleMarkAsRepaid(props.favor._id, image);
-                        props.refreshTableTrigger();
-                      }}>Upload</Button>
+                    onClick={() => props.handleMarkAsRepaid(props.favor._id, image)}>Upload</Button>
                   <br/>
                 </div>
               </Collapse>
             </div>
           ) : null
         }
+        {props.favor.repaid && props.favor.hasOwnProperty('repaidImage') ? (
+          <div>
+            <Button
+              size="sm"
+              variant="outline-primary"
+              onClick={() => setOpenRepaidProof(!openRepaidProof)}
+              aria-controls="favor-repaid-proof"
+              aria-expanded={openRepaidProof}
+            >
+              See repaid proof
+            </Button>
+            <Collapse in={openRepaidProof}>
+              <div id="favor-repaid-proof-image">
+                <br/>
+                <img src={props.favor.repaidImage} 
+                  alt="favor-repaid-proof"
+                  width="400" height="200"
+                />
+                <br/>
+              </div>
+            </Collapse>
+          </div>
+        ) : null}
       </td>
     </tr>
   );
