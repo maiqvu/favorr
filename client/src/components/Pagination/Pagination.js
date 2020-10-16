@@ -8,7 +8,6 @@ const Pagination = (props) => {
     setTotalPageCount(
       Math.ceil(props.count / props.limit)
     );
-    console.log(props.count);
   }, [props.count])
   
   const nextPage = () => {

@@ -91,6 +91,14 @@ export default {
     deleteFavor: async (favorId) => {
         await Favor.findByIdAndDelete(favorId);
     },
+    markAsRepaid: async (favorId, repaid) => {
+        const updatedFavor = await Favor.findByIdAndUpdate(
+            favorId,
+            { repaid: repaid },
+            { new: true }   // Return the modified document instead of the original.
+        );
+        return updatedFavor;
+    },
     findCycle: async (userId) => {
         cycleList = [];
         hasCycle = false;

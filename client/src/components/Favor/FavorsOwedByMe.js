@@ -22,7 +22,6 @@ const FavorsOwedByMe = (props) => {
       // get favors that are owed by me
       FavorService.getOwedByMeFavors(authContext.user._id, limit, skip).then(
         (data) => {
-          console.log(data);
           setFavors(data);
           setCurrentPage(skip / 5 + 1);
         }

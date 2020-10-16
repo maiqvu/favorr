@@ -7,27 +7,32 @@ const Favor = (props) => {
   // const [ open, setOpen ] = useState(false);
   const [ openUpload, setOpenUpload ] = useState(false);
   const [ openRepaidProof, setOpenRepaidProof ] = useState(false);
+  const [ openSubmitProof, setOpenSubmitProof ] = useState(false);
   const [ image, setImage ] = useState('');
   
   return (
     <tr>
-      <td width="30%">{props.favor.description}</td>
+      <td width="25%">{props.favor.description}</td>
       <td width="20%">
         {props.owedByMe ? props.favor.owedTo.username : props.favor.owedBy.username}
       </td>
       <td width="15%">{props.favor.repaid ? 'Repaid' : 'Pending'}</td>
-      <td width="35%" className="text-right">
+      <td width="40%" className="text-right">
         {!props.favor.repaid && props.owedByMe ? (
             <div>
               <Button
                 size="sm"
                 variant="outline-primary"
-                onClick={() => setOpenUpload(!openUpload)}
+                onClick={() => {
+                  setOpenUpload(!openUpload);
+                  setOpenRepaidProof(false);
+                  setOpenSubmitProof(false);
+                }}
               >
                 Mark as repaid
               </Button>
               <Collapse in={openUpload}>
-                <div id="favor-repaid-proof-upload">
+                <div id="favor-repaid-proof-upload" className="text-right">
                   <br/>
                   <p>Upload an image as proof</p>
                   <input
@@ -44,14 +49,26 @@ const Favor = (props) => {
                 </div>
               </Collapse>
             </div>
-          ) : null
-        }
+          ) : null}
+        {!props.favor.repaid && !props.owedByMe ? (
+          <Button
+            size="sm"
+            variant="outline-primary"
+            onClick={() => props.handleMarkAsRepaid(props.favor._id)}
+          >
+            Mark as repaid
+          </Button>
+        ) : null}
         {props.favor.repaid && props.favor.hasOwnProperty('repaidImage') ? (
           <div>
             <Button
               size="sm"
               variant="outline-primary"
-              onClick={() => setOpenRepaidProof(!openRepaidProof)}
+              onClick={() => {
+                setOpenRepaidProof(!openRepaidProof);
+                setOpenUpload(false);
+                setOpenSubmitProof(false);
+              }}
               aria-controls="favor-repaid-proof"
               aria-expanded={openRepaidProof}
             >
@@ -62,6 +79,33 @@ const Favor = (props) => {
                 <br/>
                 <img src={props.favor.repaidImage} 
                   alt="favor-repaid-proof"
+                  width="400" height="200"
+                />
+                <br/>
+              </div>
+            </Collapse>
+          </div>
+        ) : null}
+        {props.favor.hasOwnProperty('submitImage') ? (
+          <div>
+            <Button
+              size="sm"
+              variant="outline-primary"
+              onClick={() => {
+                setOpenSubmitProof(!openSubmitProof);
+                setOpenRepaidProof(false);
+                setOpenUpload(false);
+              }}
+              aria-controls="favor-submit-proof"
+              aria-expanded={openSubmitProof}
+            >
+              See submit proof
+            </Button>
+            <Collapse in={openSubmitProof}>
+              <div id="favor-submit-proof-image">
+                <br/>
+                <img src={props.favor.submitImage} 
+                  alt="favor-submit-proof"
                   width="400" height="200"
                 />
                 <br/>

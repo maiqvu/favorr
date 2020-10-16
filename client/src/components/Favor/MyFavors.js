@@ -42,6 +42,7 @@ const MyFavors = () => {
     
     if (response.status === 200) {
       console.log(response.data);
+      setRefreshFavorList(!refreshFavorList);
     } else {
       console.error(response);
     }
