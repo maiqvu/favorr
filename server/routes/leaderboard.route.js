@@ -11,11 +11,12 @@ const limit = 5;
 
 //pipeline
 const pipepline = [
+    // {
+    //     '$match': {
+    //         'repaid': false
+    //     }
+    // }, 
     {
-        '$match': {
-            'repaid': false
-        }
-    }, {
         '$lookup': {
             'from': 'users',
             'localField': 'owedTo',
