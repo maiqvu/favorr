@@ -213,7 +213,7 @@ const Request = (props) => {
                           />
                         </Col>
                         <Col className="md-4 text-right">
-                          <Button variant="primary" onClick={() => resolve(props.request._id, props.index)}>Upload</Button>
+                          <Button variant="primary" disabled={!image} onClick={() => resolve(props.request._id, props.index)}>Upload</Button>
                         </Col>
                       </Row>
                     </div>
