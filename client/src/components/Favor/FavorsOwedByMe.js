@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { Table } from 'react-bootstrap';
 import Favor from './Favor';
 import Pagination from '../Pagination/Pagination';
@@ -15,6 +15,7 @@ const FavorsOwedByMe = (props) => {
   const [limit, setLimit] = useState(5);
   const [skip, setSkip] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const isFirstRun = useRef(true);
 
   useEffect(() => {
     if (authContext.user) {
@@ -32,6 +33,19 @@ const FavorsOwedByMe = (props) => {
     }
   }, [authContext.user, limit, skip]);
 
+  useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+    FavorService.getOwedByMeFavors(authContext.user._id, limit, skip).then(
+      (data) => {
+        setFavors(data);
+        setCurrentPage(skip / 5 + 1);
+      }
+    );
+  }, [props.refresh])
+
   const handlePageSelection = (skip) => {
     setSkip(skip);
   };
@@ -43,7 +57,6 @@ const FavorsOwedByMe = (props) => {
         <thead>
           <tr>
             <th className="text-left font-weight-bold">Description</th>
-            {/* <th className="text-left font-weight-bold">Owed by</th> */}
             <th className="text-left font-weight-bold">Owed to</th>
             <th className="text-left font-weight-bold">Status</th>
             <th></th>

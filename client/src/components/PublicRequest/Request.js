@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import RequestService from './RequestService';
 
 import AddReward from './AddReward';
@@ -10,11 +11,11 @@ const Request = (props) => {
   const [newReward, setNewReward] = useState('');
   const [removeRewardId, setRemoveRewardId] = useState('');
   const [showUploadOption, setShowUploadOption] = useState(false);
-  const [showGiveUpConfirmation, setShowGiveUpConfirmation] = useState(false);
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
   const [image, setImage] = useState('');
   const [resolved, setResolved] = useState(props.request.resolved);
+  const history = useHistory();
 
   useEffect(() => {
     // reset expand toggle when the request has changed
@@ -35,17 +36,7 @@ const Request = (props) => {
   };
 
   const toggleUploadOption = () => {
-    if (showGiveUpConfirmation === true) {
-      setShowGiveUpConfirmation(!showGiveUpConfirmation);
-    }
     setShowUploadOption(!showUploadOption);
-  };
-
-  const toggleGiveUpConfirmation = () => {
-    if (showUploadOption === true) {
-      setShowUploadOption(!showUploadOption);
-    }
-    setShowGiveUpConfirmation(!showGiveUpConfirmation);
   };
 
   // add a reward with reference to the logged in user and update the request
@@ -105,9 +96,8 @@ const Request = (props) => {
       image
     );
     props.updateRequest(updatedRequest, index);
-    // Hide resolve, give up and upload options
+    // Hide resolve and upload options
     setShowUploadOption(false);
-    setShowGiveUpConfirmation(false);
     // Show resolved message
     setResolved(true);
   }
@@ -206,13 +196,6 @@ const Request = (props) => {
                   props.user._id === props.request.claimedBy ? (
                     <div>
                       <Button onClick={toggleUploadOption}>Resolve</Button>
-                      &ensp;
-                      <Button
-                        onClick={toggleGiveUpConfirmation}
-                        variant="secondary"
-                      >
-                        Give Up
-                      </Button>
                     </div>
                   ) : null}
                   {showUploadOption ? (
@@ -230,21 +213,21 @@ const Request = (props) => {
                           />
                         </Col>
                         <Col className="md-4 text-right">
-                          <Button variant="primary" onClick={() => resolve(props.request._id, props.index)}>Upload</Button>
+                          <Button variant="primary" disabled={!image} onClick={() => resolve(props.request._id, props.index)}>Upload</Button>
                         </Col>
                       </Row>
                     </div>
                   ) : null}
-                  {showGiveUpConfirmation ? (
-                    <div>
-                      <br />
-                      <h6>Are you sure?</h6>
-                      <Button variant="danger">Yes</Button>
-                    </div>
-                  ) : null}
                   {resolved ? (
                     <div className='bg-light'>
-                      Check <a href='/myFavors'>my Favors</a> for updated list. | Resolved
+                      Go to updated favor list.{' '}
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => history.push(`/myFavors`)}
+                      >
+                        My Favors
+                      </Button> | Resolved
                     </div>
                   ) : null}
                 </div>

@@ -40,6 +40,7 @@ export default {
         .post(`/${env.favorrApiName}/${env.favorsPath}`, favor)
         .then(res => {
           if (res.status === 201) return res.data
+          // return 0
           else return { message: 'Failed to add new favor.' }
         });
     } else {   // Add favor owed to the logged in user
@@ -49,12 +50,10 @@ export default {
           // Create favor
           const res = await axios.post(`/${env.favorrApiName}/${env.favorsPath}`, favor);
           const newFavorId = res.data._id;
-          // Construct form fields to hold image data
-          const data = new FormData();
-          data.append('file', image, image.name);
-          // Upload image
-          const uploadRes = await axios.post(`/${env.favorrApiName}/${env.uploadPath}/${newFavorId}`, data);
+          // Upload image when creating a favor
+          const uploadRes = await uploadImage(image, newFavorId, 'submit');
           console.log(uploadRes);
+          return res.data;
         } else {
           return { message: 'Invalid file type.'}
         }
@@ -76,8 +75,13 @@ export default {
       //   .then(res => console.log(res))
     }
   },
-  updateFavor: (favorId, updatedValue) => {
-    return axios.patch(`/${env.favorrApiName}/${env.favorsPath}/${favorId}`, updatedValue)
+  updateOwedByFavor: (favorId, updatePayload) => {
+    return axios.patch(`/${env.favorrApiName}/${env.favorsPath}/f/owedByMe/${favorId}`, updatePayload)
+      .then(res => res)
+      .catch(err => err)
+  },
+  updateOwedToFavor: (favorId, updatePayload) => {
+    return axios.patch(`/${env.favorrApiName}/${env.favorsPath}/f/owedToMe/${favorId}`, updatePayload)
       .then(res => res)
       .catch(err => err)
   },
@@ -97,4 +101,17 @@ export default {
       return { message: 'Access denied.' }
     }
   },
+  markRepaidWithImage: async (image, favorId) => {
+    const res = await uploadImage(image, favorId, 'repaid');
+    return res
+  }
 };
+
+const uploadImage = async (image, newFavorId, type) => {
+  // Construct form fields to hold image data
+  const data = new FormData();
+  data.append('file', image, image.name);
+  // Upload image
+  const uploadRes = await axios.post(`/${env.favorrApiName}/${env.uploadPath}/${newFavorId}/${type}`, data);
+  return uploadRes;
+}

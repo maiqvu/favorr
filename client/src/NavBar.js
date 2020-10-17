@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { AuthContext } from './context/AuthContext';
@@ -7,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 
 const NavBar = (props) => {
   const { user, isAuthenticated } = useContext(AuthContext);
+  const history = useHistory();
 
   const unauthenticatedNavBar = () => {
     return (
@@ -25,6 +27,7 @@ const NavBar = (props) => {
 
   const logoutHandler = () => {
     AuthService.logout();
+    history.push(`/`);
     localStorage.setItem('user', null);
     localStorage.setItem('isAuthenticated', null);
     window.location.reload(false);

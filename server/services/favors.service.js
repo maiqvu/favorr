@@ -28,29 +28,46 @@ export default {
         return newFavor;
     },
     getOwedByUserFavors: async (userId, limit, skip) => {
-        const favorsOwedByMe = await Favor.find({ owedBy: userId })
+        let favorsOwedByMe = await Favor.find({ owedBy: userId })
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
             .populate('owedTo', 'username');
         
-        for (const favor of favorsOwedByMe) {
-            const each = await Proof.find({ favorId: favor._id });
-            if (each.length > 0) favor.image = each[0].fileLink;
+        for (let [index, favor] of favorsOwedByMe.entries()) {
+            const eachSubmit = await Proof.find({ favorId: favor._id, favorFileType: 'submit' });
+            if (eachSubmit.length > 0) {
+                favor._doc = {...favor._doc, ...{submitImage: eachSubmit[0].fileLink}};
+                favor._doc = {...favor._doc, ...{submitImageType: eachSubmit[0].favorFileType}};
+            }
+            const eachRepaid = await Proof.find({ favorId: favor._id, favorFileType: 'repaid' });
+            if (eachRepaid.length > 0) {
+                favor._doc = {...favor._doc, ...{repaidImage: eachRepaid[0].fileLink}};
+                favor._doc = {...favor._doc, ...{repaidImageType: eachRepaid[0].favorFileType}};
+            }
+            favorsOwedByMe[index] = favor;
         };
-        
         return favorsOwedByMe;
     },
     getOwedToUserFavors: async (userId, limit, skip) => {
-        const favorsOwedToMe = await Favor.find({ owedTo: userId })
+        let favorsOwedToMe = await Favor.find({ owedTo: userId })
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
             .populate('owedBy', 'username');
 
-        for (const favor of favorsOwedToMe) {
-            const each = await Proof.find({ favorId: favor._id });
-            if (each.length > 0) favor.image = each[0].fileLink;
+        for (let [index, favor] of favorsOwedToMe.entries()) {
+            const eachSubmit = await Proof.find({ favorId: favor._id, favorFileType: 'submit' });
+            if (eachSubmit.length > 0) {
+                favor._doc = {...favor._doc, ...{submitImage: eachSubmit[0].fileLink}};
+                favor._doc = {...favor._doc, ...{submitImageType: eachSubmit[0].favorFileType}};
+            }
+            const eachRepaid = await Proof.find({ favorId: favor._id, favorFileType: 'repaid' });
+            if (eachRepaid.length > 0) {
+                favor._doc = {...favor._doc, ...{repaidImage: eachRepaid[0].fileLink}};
+                favor._doc = {...favor._doc, ...{repaidImageType: eachRepaid[0].favorFileType}};
+            }
+            favorsOwedToMe[index] = favor;
         };
 
         return favorsOwedToMe;
@@ -73,6 +90,14 @@ export default {
     },
     deleteFavor: async (favorId) => {
         await Favor.findByIdAndDelete(favorId);
+    },
+    markAsRepaid: async (favorId, repaid) => {
+        const updatedFavor = await Favor.findByIdAndUpdate(
+            favorId,
+            { repaid: repaid },
+            { new: true }   // Return the modified document instead of the original.
+        );
+        return updatedFavor;
     },
     findCycle: async (userId) => {
         cycleList = [];

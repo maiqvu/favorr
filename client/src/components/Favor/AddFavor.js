@@ -75,20 +75,13 @@ const AddFavor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(image);
-    const requestFavor = await FavorService.addFavor(newFavor, image);
-    setTimeout(() => {
-      // console.log('2 seconds after favor saved in backend');
-      // history.push(`/myFavors`);
-
-      //Clear message
-      setSuccessText('');
-    }, 3000);
-
-    if (requestFavor) {
-      setSuccessText('Success! Request has been posted.');
+    const newFavorCreated = await FavorService.addFavor(newFavor, image);
+    if (newFavorCreated) {
+      setSuccessText(`Success! New favor has been created.\n Redirecting to My Favors list.....`);
       handleReset();
+      window.setTimeout(() => history.push(`/myFavors`), 2000);
     } else {
+      console.log(newFavorCreated);
       setSuccessText('Error! Please contact Admin');
     }
   };
@@ -137,8 +130,9 @@ const AddFavor = () => {
             onChange={handleSelectFavor}
           >
             <option value="">Select a favor</option>
-            {favors.map(favor => 
-              <option value={favor.item}>{favor.item}</option>
+            {/* set the below option to use key=id instead of value to prevent error when map */}
+            {favors.map((favor,id) =>
+              <option key={id}>{favor.item}</option>
             )}
           </Form.Control>
         </Col>

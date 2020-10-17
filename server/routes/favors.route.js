@@ -1,15 +1,12 @@
 import 'dotenv/config';
 import express from 'express';
 // import jwt from 'jsonwebtoken';
-import Favor from '../models/favor.model';
-import { upload } from '../utils/multer';
 import FavorsService from '../services/favors.service';
 
 const favorsRouter = express.Router();
 
 // Create a new favor
 favorsRouter.post('/', async (req, res) => {
-  // const token = req.headers.token;
   const description = req.body.description;
   const owedBy = req.body.owedBy;
   const owedTo = req.body.owedTo;
@@ -27,9 +24,6 @@ favorsRouter.post('/', async (req, res) => {
       owedTo
     )
     res.status(201).json(newFavor);
-    // } else {
-    //   res.status(401).json({ message: 'Invalid token. Access denied.' });
-    // }
   } catch (err) {
     res.status(500).send(err);
   }
@@ -118,17 +112,26 @@ favorsRouter.get('/f/:id', async (req, res) => {
   }
 });
 
-// Update one favor with new repaid status and proof image
-favorsRouter.patch('/:id', upload, async (req, res) => {
+// Update owed-by favor with new repaid status and proof image
+favorsRouter.patch('/f/owedByMe/:favorId', async (req, res) => {
   try {
     const repaid = req.body.repaid;
-    const image = req.file.path;
+    const favorId = req.params.favorId;
     
-    const updatedFavor = await Favor.findByIdAndUpdate(
-      req.params.id,
-      { repaid, image },
-      { new: true }   // Return the modified document instead of the original.
-    );
+    const updatedFavor = await FavorsService.markAsRepaid(favorId, repaid);
+    res.status(200).json(updatedFavor);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// Update owed-to favor with new repaid status
+favorsRouter.patch('/f/owedToMe/:favorId', async (req, res) => {
+  try {
+    const repaid = req.body.repaid;
+    const favorId = req.params.favorId;
+    
+    const updatedFavor = await FavorsService.markAsRepaid(favorId, repaid);
     res.status(200).json(updatedFavor);
   } catch (err) {
     res.status(500).send(err);

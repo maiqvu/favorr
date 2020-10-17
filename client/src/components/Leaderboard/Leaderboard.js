@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Container } from 'react-bootstrap';
 import axios from 'axios';
 import { environment as env } from '../../environments/environment';
@@ -15,8 +15,7 @@ const Leaderboard = () => {
     const response = await axios.get(`/${env.favorrApiName}/${env.leaderboardPath}/`);
     setData(response.data);
   };
-  //delay function to be developed to work with useEffect infinite loop
-  //currently use [], leaderboard will update when page refresh
+  //useEffect has [] to stop infinite loop, so leaderboard will update when page refresh
   useEffect(() => {
     fetchData();
   },
@@ -27,7 +26,7 @@ const Leaderboard = () => {
   return (
     <Container className="px-lg-5 mt-4">
       <h2 className="text-center mb-4">Leaderboard</h2>
-      <h4 className="text-center">People who earned the most favor</h4>
+      <h4 className="text-center">Who earned the most favor (All Time)</h4>
       <Table responsive striped hover responsive="sm" >
         <thead>
           <tr>
@@ -36,10 +35,11 @@ const Leaderboard = () => {
           </tr>
         </thead>
         <tbody className="text-center">
-          {data.map((person) => (
-            <tr key={person.id}>
-              {Object.values(person).map((val) => (
-                <td>{val}</td>
+          {/* use id and id2 as key to prevent error when rendering the table array */}
+          {data.map((name,id) => (
+            <tr key={id}>
+              {Object.values(name).map((count,id2) => (
+                <td key={id2}>{count}</td>
               ))}
             </tr>
           ))}
