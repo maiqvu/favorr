@@ -39,9 +39,8 @@ export default {
       return axios
         .post(`/${env.favorrApiName}/${env.favorsPath}`, favor)
         .then(res => {
-          if (res.status === 201) 
-          //return res.data
-          return 0
+          if (res.status === 201) return res.data
+          // return 0
           else return { message: 'Failed to add new favor.' }
         });
     } else {   // Add favor owed to the logged in user

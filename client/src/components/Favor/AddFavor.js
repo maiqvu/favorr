@@ -75,17 +75,15 @@ const AddFavor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(image);
-    const requestFavor = await FavorService.addFavor(newFavor, image);
-    console.log(requestFavor);
-    if (!requestFavor) {
-      setSuccessText('Success! Request has been posted.');
+    const newFavorCreated = await FavorService.addFavor(newFavor, image);
+    if (newFavorCreated) {
+      setSuccessText(`Success! New favor has been created.\n Redirecting to My Favors list.....`);
       handleReset();
+      window.setTimeout(() => history.push(`/myFavors`), 2000);
     } else {
+      console.log(newFavorCreated);
       setSuccessText('Error! Please contact Admin');
     }
-
-
   };
 
   return (

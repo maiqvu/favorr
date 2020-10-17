@@ -99,7 +99,7 @@ const Favor = (props) => {
               aria-controls="favor-submit-proof"
               aria-expanded={openSubmitProof}
             >
-              See submit proof
+              See creation proof
             </Button>
             <Collapse in={openSubmitProof}>
               <div id="favor-submit-proof-image">
@@ -119,32 +119,3 @@ const Favor = (props) => {
 }
 
 export default Favor;
-
-{/* <>
-          <Button
-            size="sm"
-            variant="outline-primary"
-            onClick={() => setOpen(!open)}
-            aria-controls="favor-repaid-proof"
-            aria-expanded={open}
-          >
-            See proof
-          </Button>
-          <Collapse in={open}>
-            <div id="favor-repaid-proof">
-              <br/>
-              <img src={props.favor.image} 
-                alt="favor-repaid-proof"
-                width="400" height="200"
-              />
-              <br/>
-            </div>
-          </Collapse>
-        </> : 
-        <Button
-          size="sm"
-          variant="outline-primary"
-          onClick={() => props.handleMarkAsRepaid(props.favor._id, props.favor.repaid)}
-        >
-          Mark as repaid
-        </Button> */}

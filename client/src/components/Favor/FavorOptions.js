@@ -15,5 +15,3 @@ export const favors = [
         item: 'Chocolate Bar'
     }
 ];
-
-export default { favors };
