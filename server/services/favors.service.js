@@ -127,7 +127,7 @@ export default {
     },
     findRewardCycle: () => {
         rewardList = [];
-        console.log(favorList);
+        //console.log(favorList);
 
         //find reward in favor between user and next_user in cycle list
         for (let i = 0; i<cycleList.length-1; i++){
@@ -137,8 +137,8 @@ export default {
         //find reward in favor between last_user and first_user in cycle list
         findReward(cycleList[cycleList.length-1], cycleList[0]);
         
-        console.log('reward List--------------------------')
-        console.log(rewardList);
+        //console.log('reward List--------------------------')
+        //console.log(rewardList);
 
         return rewardList;
     }
