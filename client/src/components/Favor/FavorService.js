@@ -53,8 +53,7 @@ export default {
           // Upload image when creating a favor
           const uploadRes = await uploadImage(image, newFavorId, 'submit');
           console.log(uploadRes);
-          //return 0 for add favor conditional
-          return 0;
+          return res.data;
         } else {
           return { message: 'Invalid file type.'}
         }

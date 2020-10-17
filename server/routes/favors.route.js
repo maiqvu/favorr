@@ -7,7 +7,6 @@ const favorsRouter = express.Router();
 
 // Create a new favor
 favorsRouter.post('/', async (req, res) => {
-  // const token = req.headers.token;
   const description = req.body.description;
   const owedBy = req.body.owedBy;
   const owedTo = req.body.owedTo;
@@ -25,9 +24,6 @@ favorsRouter.post('/', async (req, res) => {
       owedTo
     )
     res.status(201).json(newFavor);
-    // } else {
-    //   res.status(401).json({ message: 'Invalid token. Access denied.' });
-    // }
   } catch (err) {
     res.status(500).send(err);
   }
