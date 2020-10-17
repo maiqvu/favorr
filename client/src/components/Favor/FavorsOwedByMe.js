@@ -40,7 +40,6 @@ const FavorsOwedByMe = (props) => {
     }
     FavorService.getOwedByMeFavors(authContext.user._id, limit, skip).then(
       (data) => {
-        console.log(data);
         setFavors(data);
         setCurrentPage(skip / 5 + 1);
       }
