@@ -137,7 +137,7 @@ const Register = () => {
           </form>
           <div className="font-small grey-text d-flex justify-content-end">
             <span className="align-bottom">
-              Already a member?
+              <span className="align-middle">Already a member?</span>
               <Button
                 variant="link"
                 onClick={() => history.push(`/login`)}

@@ -71,7 +71,7 @@ const MyFavors = () => {
     {rewardList.map((item, idx)=>{
       if (idx === 0)
         return <b key={idx}> {item} </b>
-      else if (idx == rewardList.length-1)
+      else if (idx === rewardList.length-1)
         return <b key={idx}> and {item} </b>
       else 
         return <b key={idx}> , {item}</b>

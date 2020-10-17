@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
 import RequestService from './RequestService';
@@ -7,8 +8,10 @@ const CreatePublicRequest = () => {
   const [task, setTask] = useState('');
   const [reward, setReward] = useState('');
   const [successText, setSuccessText] = useState('');
+  const [showRequestsLink, setShowRequestsLink] = useState(false);
 
   const authContext = useContext(AuthContext);
+  const history = useHistory();
 
   const handleReset = () => {
     setTask('');
@@ -25,6 +28,7 @@ const CreatePublicRequest = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setShowRequestsLink(false);
 
     const request = await RequestService.createRequest(
       authContext.user.username,
@@ -34,15 +38,12 @@ const CreatePublicRequest = () => {
 
     if (request) {
       setSuccessText('Success! Request has been posted.');
+      setShowRequestsLink(true);
       setTask('');
       setReward('');
     } else {
       setSuccessText('Error! Please contact Admin');
     };
-    //Clear message after 3000ms
-    // setTimeout(() => {
-    //   setSuccessText('');
-    // }, 3000);
   };
 
   return (
@@ -97,7 +98,16 @@ const CreatePublicRequest = () => {
             Submit
           </Button>
           {' '}
-          {successText}
+          <span className="align-middle">{successText}</span>
+          {showRequestsLink ? (
+            <Button
+              variant="link"
+              className="align-center"
+              onClick={() => history.push(`/`)}
+            >
+              View updated requests list
+            </Button>
+          ) : null}
         </Form.Group>
       </Form>
     </Container>

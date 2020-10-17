@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Collapse } from 'react-bootstrap';
 
-import FavorService from './FavorService';
-
 const Favor = (props) => {
   // const [ open, setOpen ] = useState(false);
   const [ openUpload, setOpenUpload ] = useState(false);

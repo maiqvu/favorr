@@ -27,11 +27,11 @@ const Leaderboard = () => {
     <Container className="px-lg-5 mt-4">
       <h2 className="text-center mb-4">Leaderboard</h2>
       <h4 className="text-center">Who earned the most favor (All Time)</h4>
-      <Table responsive striped hover responsive="sm" >
+      <Table striped hover responsive="sm" >
         <thead>
           <tr>
             <th className="text-center font-weight-bold">User name</th>
-            <th className="text-center font-weight-bold">Most favor owned to</th>
+            <th className="text-center font-weight-bold">Most favor owed to</th>
           </tr>
         </thead>
         <tbody className="text-center">

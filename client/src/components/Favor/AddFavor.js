@@ -18,6 +18,7 @@ const AddFavor = () => {
   const [err, setErr] = useState('');
   const [successText, setSuccessText] = useState('');
   const [submitValidation, setSubmitValidation] = useState(false);
+  const [showMyFavorsLink, setShowMyFavorsLink] = useState(false);
 
   const authContext = useContext(AuthContext);
   const history = useHistory();
@@ -60,7 +61,7 @@ const AddFavor = () => {
             owedTo: authContext.user.username
           });
           //condition to enable submit button
-          if (image != '') setSubmitValidation(true);
+          if (image !== '') setSubmitValidation(true);
         }
       } else {
         setErr(`Invalid search. Please enter your friend's username.`);
@@ -75,11 +76,12 @@ const AddFavor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setShowMyFavorsLink(false);
     const newFavorCreated = await FavorService.addFavor(newFavor, image);
     if (newFavorCreated) {
-      setSuccessText(`Success! New favor has been created.\n Redirecting to My Favors list.....`);
+      setSuccessText(`Success! New favor has been created.`);
+      setShowMyFavorsLink(true);
       handleReset();
-      window.setTimeout(() => history.push(`/myFavors`), 2000);
     } else {
       console.log(newFavorCreated);
       setSuccessText('Error! Please contact Admin');
@@ -195,7 +197,7 @@ const AddFavor = () => {
             onChange={e => {
               setImage(e.target.files[0]);
               //condition to enable submit button
-              if (newFavor.owedTo != '') setSubmitValidation(true);
+              if (newFavor.owedTo !== '') setSubmitValidation(true);
             }}
           />
         </Col>
@@ -207,7 +209,15 @@ const AddFavor = () => {
         Submit
       </Button>
       {' '}
-      {successText}
+      <span className="align-middle">{successText}</span>
+      {showMyFavorsLink ? (
+        <Button
+          variant="link"
+          onClick={() => history.push(`/myFavors`)}
+        >
+          View updated favors list
+        </Button>
+      ) : null}
     </Form>
   );
 };

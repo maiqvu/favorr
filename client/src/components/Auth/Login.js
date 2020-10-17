@@ -110,7 +110,7 @@ const Login = (props) => {
 
           <div className="font-small grey-text d-flex justify-content-end">
             <span className="align-bottom">
-              Not a member?
+              <span className="align-middle">Not a member?</span>
               <Button
                 variant="link"
                 onClick={() => history.push(`/register`)}

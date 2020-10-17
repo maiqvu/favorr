@@ -8,7 +8,7 @@ const Pagination = (props) => {
     setTotalPageCount(
       Math.ceil(props.count / props.limit)
     );
-  }, [props.count])
+  }, [props.count, props.limit])
   
   const nextPage = () => {
       const newSkip = props.skip + props.limit
