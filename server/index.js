@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import cookieParser from'cookie-parser';
+import path from 'path';
 
 // Import route handlers
 import usersRouter from './routes/users.route';
@@ -43,6 +44,12 @@ app.use('/api/favors', favorsRouter);
 app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/upload', uploadRouter);
 
+// Add static route
+const buildDirectory = path.join(
+  __dirname,
+  '../client/build/'
+)
+app.use(express.static(buildDirectory));
 
 // Start the Express server
 app.listen(process.env.PORT, err => {
