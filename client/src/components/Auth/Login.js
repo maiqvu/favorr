@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { withRouter } from 'react-router-dom';
 
@@ -11,6 +12,7 @@ const Login = (props) => {
   const authContext = useContext(AuthContext);
   const [message, setMessage] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const history = useHistory();
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -56,7 +58,7 @@ const Login = (props) => {
     setShowModal(false);
 
     // Redirect back to Homepage
-    props.history.push('/');
+    history.push('/');
   };
 
   return (
@@ -106,12 +108,17 @@ const Login = (props) => {
             {message}
           </form>
 
-          <p className="font-small grey-text d-flex justify-content-end">
-            Not a member?
-            <a href="/register" className="blue-text ml-1">
-              Sign up
-            </a>
-          </p>
+          <div className="font-small grey-text d-flex justify-content-end">
+            <span className="align-bottom">
+              Not a member?
+              <Button
+                variant="link"
+                onClick={() => history.push(`/register`)}
+              >
+                Register
+              </Button>
+            </span>
+          </div>
         </Col>
       </Row>
       <Modal size="sm" show={showModal} id="myModal" backdrop="static">

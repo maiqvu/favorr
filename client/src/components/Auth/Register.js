@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import AuthService from '../../context/AuthService';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -12,6 +13,7 @@ const Register = () => {
   const [ passwordConfirmation, setPasswordConfirmation ] = useState('');
   const [ errorMessage, setErrorMessage ] = useState('');
   const [ successMessage, setSuccessfulMessage ] = useState('');
+  const history = useHistory();
 
   const handleUsernameInput = (e) => {
     setUsername(e.target.value);
@@ -133,12 +135,17 @@ const Register = () => {
               <p className="text-danger text-center">{errorMessage}</p>
             </div>
           </form>
-          <p className="font-small grey-text d-flex justify-content-end">
-            Already a member?
-            <a href="/login" className="blue-text ml-1">
-              Sign in
-            </a>
-          </p>
+          <div className="font-small grey-text d-flex justify-content-end">
+            <span className="align-bottom">
+              Already a member?
+              <Button
+                variant="link"
+                onClick={() => history.push(`/login`)}
+              >
+                Sign in
+              </Button>
+            </span>
+          </div>
         </Col>
       </Row>
     </Container>
