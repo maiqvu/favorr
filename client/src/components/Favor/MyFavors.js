@@ -38,30 +38,6 @@ const MyFavors = () => {
     }
   };
 
-  const PartyDetectMessage = () =>{
-    let message = '';
-    for (let i = 0; i < cycleList.length; i++){
-      if (i == 0)
-        message += 'You';
-      else if (i == cycleList.length - 1)
-        message += ' and ' + cycleList[i];
-      else
-      message += ', ' + cycleList[i];
-    }
-
-    message += 'can go for';
-
-    for (let i = 0; i < rewardList.length; i++){
-      if (i == rewardList.length - 1)
-        message += ' and ' + rewardList[i];
-      else
-      message += rewardList[i] + ', ' ;
-    }
-
-    message += 'together to clear the debt';
-
-    console.log(message);
-  }
 
   const userList = (
     <div>{cycleList.map((item, idx) => {
@@ -75,7 +51,7 @@ const MyFavors = () => {
     {rewardList.map((item, idx)=>{
       if (idx == 0)
         return <b key={idx}> {item} </b>
-      else if (idx == cycleList.length-1)
+      else if (idx == rewardList.length-1)
         return <b key={idx}> and {item} </b>
       else 
         return <b key={idx}> , {item}</b>
@@ -99,7 +75,7 @@ const MyFavors = () => {
       <FavorsOwedToMe 
         handleMarkAsRepaid={handleMarkAsRepaid}/>
       <div aria-live="polite" aria-atomic="true" style={{position: 'relative', minHeight: '100px'}}>
-        <Toast style={{position: 'absolute', top:-50, right: 0}}
+        <Toast style={{position: 'absolute', top:0, right: 0}}
           show={showToast} 
           onClose={() => setShowToast(false)}
         >
