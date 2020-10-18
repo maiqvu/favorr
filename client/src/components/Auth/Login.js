@@ -79,6 +79,7 @@ const Login = (props) => {
                 value={user.username}
                 onChange={handleChange}
                 className="form-control"
+                required
               />
             </div>
 
@@ -93,6 +94,7 @@ const Login = (props) => {
                 value={user.password}
                 onChange={handleChange}
                 className="form-control"
+                required
               />
             </div>
 
