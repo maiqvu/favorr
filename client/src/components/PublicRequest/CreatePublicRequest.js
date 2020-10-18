@@ -10,6 +10,7 @@ const CreatePublicRequest = () => {
   const [successText, setSuccessText] = useState('');
   const [showRequestsLink, setShowRequestsLink] = useState(false);
 
+  const maxWordLength = 30;
   const authContext = useContext(AuthContext);
   const history = useHistory();
 
@@ -30,20 +31,33 @@ const CreatePublicRequest = () => {
     event.preventDefault();
     setShowRequestsLink(false);
 
-    const request = await RequestService.createRequest(
-      authContext.user.username,
-      task,
-      reward
-    )
+    //Compare word length vs maxWordLength
+    let taskDetail = task.split(" ");
+    let wordValidation = true;
 
-    if (request) {
-      setSuccessText('Success! Request has been posted.');
-      setShowRequestsLink(true);
-      setTask('');
-      setReward('');
+    for (let i = 0; i < taskDetail.length; i++) {
+      if (taskDetail[i].length > maxWordLength) { wordValidation = false; }
+    }
+    if (!wordValidation) {
+      setSuccessText('Error! Invalid task details, a word max length cannot exceed ' + maxWordLength + ' characters');
     } else {
-      setSuccessText('Error! Please contact Admin');
-    };
+      //create Request if validated
+      const request = await RequestService.createRequest(
+        authContext.user.username,
+        task,
+        reward
+      )
+      if (request) {
+        setSuccessText('Success! Request has been posted.');
+        setShowRequestsLink(true);
+        setTask('');
+        setReward('');
+      } else {
+        setSuccessText('Error! Please try again or contact Admin');
+      }
+    }
+
+
   };
 
   return (
