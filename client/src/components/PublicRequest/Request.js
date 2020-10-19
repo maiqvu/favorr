@@ -14,6 +14,7 @@ const Request = (props) => {
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState('');
   const [resolved, setResolved] = useState(props.request.resolved);
+  const [errorMessage, setErrorMessage] = useState('');
   const history = useHistory();
 
   useEffect(() => {
@@ -93,11 +94,15 @@ const Request = (props) => {
       requestId,
       image
     );
-    props.updateRequest(updatedRequest, index);
-    // Hide resolve and upload options
-    setShowUploadOption(false);
-    // Show resolved message
-    setResolved(true);
+    if (updatedRequest) {
+      props.updateRequest(updatedRequest, index);
+      // Hide resolve and upload options
+      setShowUploadOption(false);
+      // Show resolved message
+      setResolved(true);
+    } else {
+      setErrorMessage('Unable to resolve request. Please try again later.')
+    }
   }
 
   return (
@@ -230,6 +235,8 @@ const Request = (props) => {
               </div>
             </div>
           ) : null}
+          {errorMessage ? 
+          <p className="text-right text-danger">{errorMessage}</p> : null}
         </div>
       </Collapse>
       <hr />
