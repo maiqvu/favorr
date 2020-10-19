@@ -25,8 +25,9 @@ const NavBar = (props) => {
     );
   };
 
-  const logoutHandler = () => {
-    AuthService.logout();
+  const logoutHandler = async (event) => {
+    event.preventDefault();
+    await AuthService.logout();
     history.push(`/`);
     localStorage.setItem('user', null);
     localStorage.setItem('isAuthenticated', null);
