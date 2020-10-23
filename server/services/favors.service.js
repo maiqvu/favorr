@@ -10,8 +10,6 @@ let hasCycle;
 
 export default {
     createFavor: async (description, owedBy, owedTo) => {
-        // const legit = jwt.verify(token, process.env.JWT_SECRET);
-        // console.log(`JWT verification result: ${JSON.stringify(legit)}`);
         
         const owedByUser = await User.findOne({ username: owedBy });
         const owedToUser = await User.findOne({ username: owedTo });
@@ -104,8 +102,7 @@ export default {
         hasCycle = false;
 
         favorList = await Favor.find({repaid: false}).populate('owedBy', 'username').populate('owedTo', 'username');
-        //console.log(favorList);
-        //console.log("Total: "+favorList.length);
+        
         let root_node = "";
         for (let i = 0; i<favorList.length; i++){
             if (favorList[i].owedBy._id.toString() == userId){
@@ -117,8 +114,6 @@ export default {
         if (root_node != ""){
             cycleList.push(root_node);
             DFS(root_node); //Root_user
-            // console.log('cycleList--------------------------')
-            // console.log(cycleList);
         }
 
         if (cycleList.length > 1) 
@@ -127,7 +122,6 @@ export default {
     },
     findRewardCycle: () => {
         rewardList = [];
-        //console.log(favorList);
 
         //find reward in favor between user and next_user in cycle list
         for (let i = 0; i<cycleList.length-1; i++){
@@ -136,9 +130,6 @@ export default {
 
         //find reward in favor between last_user and first_user in cycle list
         findReward(cycleList[cycleList.length-1], cycleList[0]);
-        
-        //console.log('reward List--------------------------')
-        //console.log(rewardList);
 
         return rewardList;
     }
@@ -178,17 +169,11 @@ const find = (Username) =>{
 }
 
 const DFS = (Username) => {
-
-    //console.log(cycleList);
     try {
         const nextUsers = find(Username);
-        //console.log(nextUsers);
         
         if (nextUsers.length > 0){
-            for (let i = 0; i< nextUsers.length; i++){
-
-                //console.log(cycleList);
-
+            for (let i = 0; i< nextUsers.length; i++) {
                 //check cycle
                 let UserNotFound = true;
                 if(cycleList.length > 1){

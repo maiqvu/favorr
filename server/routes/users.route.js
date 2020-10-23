@@ -10,6 +10,7 @@ const usersRouter = express.Router();
 
 const passportConfig = require('../utils/passport');
 
+// Helper function to create new user and save into database
 const createUser = async (username, email, password) => {
   const data = {
     username,
@@ -19,6 +20,15 @@ const createUser = async (username, email, password) => {
   return new User(data).save();
 };
 
+// Helper function to sign a token
+const signToken = (userId) => {
+  return jwt.sign(
+    { sub: userId },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
+}
+
 
 usersRouter.post('/register', validateRegistrationInput, async (req, res) => {
   const messages = validationResult(req);
@@ -27,8 +37,9 @@ usersRouter.post('/register', validateRegistrationInput, async (req, res) => {
     const { username, email, password, passwordConfirmation } = req.body;
     const user = await User.findOne({ username });
 
+    // Check for 400-type errors. If user inputs are all valid, create new user.
     if (user) {
-      res.status(403).json({ message: 'An account already exists for this email address.' });
+      res.status(400).json({ message: 'An account already exists for this credential.' });
     } else if (password !== passwordConfirmation) {
       res.status(400).json({ message: 'Password confirmation is incorrect.' });
     } else if (!messages.isEmpty()) {
@@ -50,23 +61,14 @@ usersRouter.post('/register', validateRegistrationInput, async (req, res) => {
       res.status(201).json( dataToReturn );
     }
   } catch (err) {
-    // console.log(err);
     res.status(500).json(err);
   }
 });   // end of .post('/register')
 
 
-const signToken = (userId) => {
-  return jwt.sign(
-    { sub: userId },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' }
-  );
-}
-
 usersRouter.post(
   '/login',
-  passport.authenticate('local', { session: false }),
+  passport.authenticate('local', { session: false }), // passport strategy to authenticate with a username and password
   (req, res) => {
     if (req.isAuthenticated()) {
       const { _id, username } = req.user;
@@ -99,9 +101,10 @@ usersRouter.patch('/:id', async (req, res) => {
 
 usersRouter.get(
   '/isAuthenticated',
-  passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }), // passport strategy to authenticate with a jwt
   (req, res) => {
     if (req.user.username) {
+      // If authentication is successful, send back to client the isAuthenticated status and the user object
       res.status(200).json({ 
         isAuthenticated: true,
         user: { 
@@ -118,7 +121,7 @@ usersRouter.get(
     res.clearCookie('access_token'),
     res.status(200).json({
       isAuthenticated: false,
-        user: {}
+      user: {}
     })
   }
 )
@@ -126,11 +129,7 @@ usersRouter.get(
 // Get all users if no condition attached OR find by username if username is passed as query string from request
 usersRouter.get('/' , async (req, res) => {
   const { username } = req.query;
-  const condition = username ?
-    // { username: {$regex: new RegExp(username), $options: "i"} } 
-    { username: username }
-    :
-    {};
+  const condition = username ? { username: username } : {};
   await User.find(condition).select('username')
     .then(data => {
       // 'data' is an array of all matches. If more than 1 match found, ask the user to search a full accurate username. Note: all usernames in the system are unique.

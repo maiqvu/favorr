@@ -1,37 +1,9 @@
 import 'dotenv/config';
 import express from 'express';
-import path from 'path';
-// import multer from 'multer';
-
 import UploadService from '../services/upload.service';
 
 const uploadRouter = express.Router();
 
-// var storage = multer.memoryStorage();
-// var upload = multer({ storage: storage });
-
-// uploadRouter.get('/', (req, res) => {
-//   console.log('image: ', req.file);
-//   const key = `${Date.now() + req.file.originalname}`;
-//   console.log(key);
-  
-//   // Pre-signing a putObject operation asynchronously
-//   s3.getSignedUrl(
-//     'putObject',
-//     {
-//       Bucket: 'something',
-//       Key: key
-//     },
-//     (err, url) => {
-//       if (err) {
-//         res.send(err);
-//       } else {
-//         console.log(`The URL is ${url}`)
-//         res.send({key, url})
-//       }
-//     }
-//   );
-// });
 
 uploadRouter.post('/:favorid/:type', UploadService.upload.single('file'), async (req, res) => {
   const file = req.file;

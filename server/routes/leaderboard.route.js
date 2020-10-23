@@ -1,21 +1,12 @@
 import express from 'express';
-// Import mongoose model
-// import PublicRequest from '../models/publicRequest.model';
-// import User from '../models/user.model';
 import Favor from '../models/favor.model';
-
 
 const leaderboardRouter = express.Router();
 
 const limit = 5;
 
-//pipeline
+// Pipeline to retrieve data and calculate top users with most owed-to-me favors
 const pipepline = [
-    // {
-    //     '$match': {
-    //         'repaid': false
-    //     }
-    // }, 
     {
         '$lookup': {
             'from': 'users',
@@ -42,8 +33,6 @@ const pipepline = [
         '$limit': limit
     }
 ];
-
-//
 
 // Get list of top 5 people with most unrepaid favors
 // Read from favors collection

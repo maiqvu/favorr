@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import express from 'express';
-// import jwt from 'jsonwebtoken';
 import FavorsService from '../services/favors.service';
 
 const favorsRouter = express.Router();
@@ -10,6 +9,7 @@ favorsRouter.post('/', async (req, res) => {
   const description = req.body.description;
   const owedBy = req.body.owedBy;
   const owedTo = req.body.owedTo;
+  
   // Check if all required fields are provided
   if (!description || !owedBy || !owedTo) {
     return res.status(400).json({ message: 'Please enter all required fields.' });
@@ -29,9 +29,10 @@ favorsRouter.post('/', async (req, res) => {
   }
 });
 
-// Get all favors owed by user
+// Get all favors owed by 1 user
 favorsRouter.get('/:userId/owedByMe', async (req, res) => {
   const userId = req.params.userId;
+  
   // pagination parameters
   const limit = parseInt(req.query.limit);
   const skip = parseInt(req.query.skip);
@@ -45,16 +46,16 @@ favorsRouter.get('/:userId/owedByMe', async (req, res) => {
   }
 });
 
-// Get all favors owed to user
+// Get all favors owed to 1 user
 favorsRouter.get('/:userId/owedToMe', async (req, res) => {
   const userId = req.params.userId;
+  
   // pagination parameters
   const limit = parseInt(req.query.limit);
   const skip = parseInt(req.query.skip);
   
   try {
     const favorsOwedToMe = await FavorsService.getOwedToUserFavors(userId, limit, skip);
-    
     res.status(200).json(favorsOwedToMe);
   } catch (err) {
     res.status(500).send(err);

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const LeaderBoardSchema = new mongoose.Schema({
-  
+  // Array of users. References the ObjectId in the 'User' collection.
     user: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

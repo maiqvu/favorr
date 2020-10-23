@@ -17,6 +17,7 @@ const UserSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+// Check if the user-inputted password matches the hashed password in database
 UserSchema.methods.comparePassword = function(password, cb) {
   bcrypt.compare(password, this.hashedPassword, (err, isMatch) => {
     if (err) {
