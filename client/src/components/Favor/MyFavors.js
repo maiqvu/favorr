@@ -32,7 +32,6 @@ const MyFavors = () => {
   
   const handleSubmitImage = e => {
     e.preventDefault();
-    console.log(image);
     setShowModal(false);
   }
   
@@ -41,7 +40,6 @@ const MyFavors = () => {
     const response = await FavorService.updateOwedToFavor(favorId, updatePayload);
     
     if (response.status === 200) {
-      console.log(response.data);
       setRefreshFavorList(!refreshFavorList);
     } else {
       console.error(response);
@@ -54,7 +52,6 @@ const MyFavors = () => {
     const uploadResponse = await FavorService.markRepaidWithImage(image, favorId);
     
     if (favorResponse.status === 200 && uploadResponse.status === 200) {
-      console.log(favorResponse.data, uploadResponse.data);
       setRefreshFavorList(!refreshFavorList);
     }
   }

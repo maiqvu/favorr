@@ -52,7 +52,6 @@ export default {
           const newFavorId = res.data._id;
           // Upload image when creating a favor
           const uploadRes = await uploadImage(image, newFavorId, 'submit');
-          console.log(uploadRes);
           return res.data;
         } else {
           return { message: 'Invalid file type.'}
@@ -61,18 +60,6 @@ export default {
         console.error(err);
         return { message: 'Unable to add new favor. Please try again later.'}
       }
-
-      // const imgConfig = await axios.get(`/${env.favorrApiName}/upload`);
-      // console.log(imgConfig);
-      
-      // await axios
-      //   .put(`${imgConfig.data.url}`, image, {headers: {'Content-Type': image.type}})
-      //   .then(res => console.log(res))
-      
-      // const payload = { ...favor, image: imgConfig.data.key }
-      // return axios
-      //   .post(`${env.favorrApiName}/${env.favorsPath}`, payload)
-      //   .then(res => console.log(res))
     }
   },
   updateOwedByFavor: (favorId, updatePayload) => {

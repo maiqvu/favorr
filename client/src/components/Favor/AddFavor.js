@@ -83,7 +83,6 @@ const AddFavor = () => {
       setShowMyFavorsLink(true);
       handleReset();
     } else {
-      console.log(newFavorCreated);
       setSuccessText('Error! Please contact Admin');
     }
   };

@@ -22,7 +22,6 @@ const Login = (props) => {
     e.preventDefault();
     try {
       await AuthService.login(user).then((data) => {
-        console.log('After successful login: ', data);
         const { isAuthenticated, user } = data;
         if (isAuthenticated) {
           authContext.setUser(user);
@@ -45,7 +44,6 @@ const Login = (props) => {
         }
       });
     } catch (err) {
-      console.log(err);
       setMessage(
         <div className="text-danger text-center">
           Unable to log in. Please try again later.

@@ -9,7 +9,6 @@ export default {
                 .get(`/${env.favorrApiName}/${env.requestsPath}/available?limit=${limit}&skip=${skip}`);
             return response.data;
         } catch (err) {
-            console.log(err);
             return null;
         }
     },
@@ -21,7 +20,6 @@ export default {
             // return value of count within response object
             return response.data.count;
         } catch (err) {
-            console.log(err);
             return null;
         }
     },
@@ -101,7 +99,6 @@ export default {
                 });
             return response.data;
         } catch (err) {
-            console.log(err);
             return null;
         }
     },
@@ -115,7 +112,6 @@ export default {
                 const response = await axios.patch(`/${env.favorrApiName}/${env.requestsPath}/${requestId}/resolve`, data);
                 return response.data;
             } catch (err) {
-                console.log(err);
                 return null;
             }
         }

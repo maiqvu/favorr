@@ -44,7 +44,6 @@ export default {
           password: password,
           passwordConfirmation: passwordConfirmation,
         });
-      console.log(response.data)
       return null;
     } catch (err) {
       console.error(err);

@@ -9,7 +9,6 @@ export default ({children}) => {
   
   useEffect(() => {
     AuthService.isAuthenticated().then(data => {
-      console.log(data);
       if (data.isAuthenticated) {
         setUser(data.user);
         setIsAuthenticated(data.isAuthenticated);
