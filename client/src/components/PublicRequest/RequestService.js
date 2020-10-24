@@ -25,6 +25,7 @@ export default {
             return null;
         }
     },
+    // delete a request
     deleteRequest: async (requestId) => {
         try {
             await axios.delete(`/${env.favorrApiName}/${env.requestsPath}/${requestId}`);
@@ -34,6 +35,7 @@ export default {
             return 1
         }
     },
+    // claim an available request
     claimRequest: async (requestId, username) => {
         try {
             let response = await axios
@@ -44,6 +46,7 @@ export default {
             return null;
         }
     },
+    // get user's claimed requests
     getClaimedRequests: async (username) => {
         try {
             const response = await axios
@@ -54,6 +57,7 @@ export default {
             return null;
         }
     },
+    // add reward to an available public request
     addReward: async (requestId, username, newReward) => {
         try {
             const response = await axios.post(
@@ -69,6 +73,7 @@ export default {
             return null;
         }
     },
+    // remove reward to an available public request
     removeReward: async (requestId, removeRewardId) => {
         try {
             const response = await axios.delete(
@@ -80,6 +85,7 @@ export default {
             return null;
         }
     },
+    // add a new request
     createRequest: async (username, task, reward) => {
         try {
             const response = await axios.post(`/${env.favorrApiName}/${env.requestsPath}`,
@@ -99,6 +105,7 @@ export default {
             return null;
         }
     },
+    // resolve a request with an image to turn it into favors
     resolveRequest: async (requestId, image) => {
         if (image.type.includes('image')) {
             try {

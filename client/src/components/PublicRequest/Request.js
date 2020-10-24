@@ -17,23 +17,27 @@ const Request = (props) => {
   const [errorMessage, setErrorMessage] = useState('');
   const history = useHistory();
 
+  // reset expand toggle when the request has changed
   useEffect(() => {
-    // reset expand toggle when the request has changed
     setOpen(false);
   }, [props.request._id])
 
+  // update add reward field
   const handleSelectNewReward = (e) => {
     setNewReward(e.target.value);
   };
 
+  // update remove reward field
   const handleSelectRemoveRewardId = (e) => {
     setRemoveRewardId(e.target.value);
   };
 
+  // open and close the request expansion view
   const expandRequestToggle = () => {
     setOpen(!open);
   };
 
+  // display the upload toggle if request is not resolved
   const toggleUploadOption = () => {
     setShowUploadOption(!showUploadOption);
   };
@@ -89,6 +93,7 @@ const Request = (props) => {
     return displayList;
   };
 
+  // resolve a request with an image to turn it into favors
   const resolve = async (requestId, index) => {
     const updatedRequest = await RequestService.resolveRequest(
       requestId,
@@ -105,6 +110,7 @@ const Request = (props) => {
     }
   }
 
+  // display individual request
   return (
     <React.Fragment>
       <Row>

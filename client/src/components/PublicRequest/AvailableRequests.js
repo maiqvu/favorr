@@ -28,7 +28,7 @@ const AvailableRequests = () => {
   const isFirstRun = useRef(true);
   const history = useHistory();
 
-  // triggers when authenicating user
+  // get available requests and total count
   useEffect(() => {
     getAvailableRequests(limit, skip);
     getAvailableRequestCount();
@@ -36,6 +36,7 @@ const AvailableRequests = () => {
 
   // get available requests when page changes
   useEffect(() => {
+    // ensure that this occurs only when changing pages and not when the page refreshes
     if (isFirstRun.current) {
       isFirstRun.current = false;
       return;
@@ -59,28 +60,31 @@ const AvailableRequests = () => {
     setRequestCount(count);
   };
 
+  // sets the next page's request index to retrieve
   const handlePageSelection = (skip) => {
     setSkip(skip)
   }
 
+  // search keywords from the request's task description
   const handleKeywordToSearchInput = (e) => {
     setKeywordToSearch(e.target.value);
   };
 
+  // remove filters when changing to search by keyword
   const handleSelectFilterByKeyword = (flag) => {
     setKeywordToSearch('');
     setRewardToSearch('');
     setFilterByKeyword(flag);
   };
 
+  // search requests by a single reward
   const handleRewardToSearchInput = (e) => {
     setRewardToSearch(e.target.value);
   };
 
+  // function to handle current page and total page count whenever
+  // a request is claimed or removed
   const updateListOnRequestRemoval = () => {
-    // function to handle current page and total page count whenever
-    // a request is claimed or removed
-
     // return to first page
     setSkip(0);
     // decrease the requests count by one
@@ -128,6 +132,7 @@ const AvailableRequests = () => {
     return itemList;
   };
 
+  // displays the list of available requests
   return (
     <Container className="px-lg-5 mt-4">
       {authContext.user ? (

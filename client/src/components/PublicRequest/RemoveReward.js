@@ -2,6 +2,7 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 
 const RemoveReward = (props) => {
+  // Displays all the rewards that are added by the user and an option to remove them
   return (
     <div className="input-group">
       <select

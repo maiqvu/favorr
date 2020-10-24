@@ -10,18 +10,20 @@ const ClaimedRequests = (props) => {
 
   const authContext = useContext(AuthContext);
 
+  // get all claimed requests of the user
   useEffect(() => {
-    // get all claimed requests of the user
-    const getClaimedRequests = async (username) => {
-      const requests = await RequestService.getClaimedRequests(username);
-      setClaimedRequests(requests);
-    };
-
     if (authContext.user) {
       getClaimedRequests(authContext.user.username);
     }
   }, [authContext.user]);
 
+  // get the user's claimed requests
+  const getClaimedRequests = async (username) => {
+    const requests = await RequestService.getClaimedRequests(username);
+    setClaimedRequests(requests);
+  };
+
+  // update the request when it is resolved by the user
   const updateRequest = (updatedRequest, index) => {
     let tmpRequests = [...claimedRequests];
 
@@ -32,6 +34,7 @@ const ClaimedRequests = (props) => {
     setClaimedRequests(tmpRequests);
   };
 
+  // displays user's claimed requests
   return (
     <Container className="px-lg-5 mt-4">
       <h4 className="text-center mb-4">My Claimed Requests</h4>
