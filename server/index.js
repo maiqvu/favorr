@@ -52,7 +52,7 @@ const buildDirectory = path.join(
 app.use(express.static(buildDirectory));
 
 // Start the Express server
-app.listen(process.env.PORT, err => {
+module.exports = app.listen(process.env.PORT, err => {
   if (err) {
     console.log(err);
   } else {
