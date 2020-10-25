@@ -17,9 +17,6 @@ const FavorSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  image: {
-    type: String
-  },
   // Status of a favor
   repaid: {
     type: Boolean,

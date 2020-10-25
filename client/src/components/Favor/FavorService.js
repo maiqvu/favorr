@@ -62,13 +62,8 @@ export default {
       }
     }
   },
-  updateOwedByFavor: (favorId, updatePayload) => {
-    return axios.patch(`/${env.favorrApiName}/${env.favorsPath}/f/owedByMe/${favorId}`, updatePayload)
-      .then(res => res)
-      .catch(err => err)
-  },
-  updateOwedToFavor: (favorId, updatePayload) => {
-    return axios.patch(`/${env.favorrApiName}/${env.favorsPath}/f/owedToMe/${favorId}`, updatePayload)
+  updateRepaidStatus: (favorId, updatePayload) => {
+    return axios.patch(`/${env.favorrApiName}/${env.favorsPath}/f/${favorId}`, updatePayload)
       .then(res => res)
       .catch(err => err)
   },
@@ -90,7 +85,7 @@ export default {
   },
   markRepaidWithImage: async (image, favorId) => {
     const res = await uploadImage(image, favorId, 'repaid');
-    return res
+    return res;
   }
 };
 

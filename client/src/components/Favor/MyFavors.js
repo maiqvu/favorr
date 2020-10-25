@@ -37,7 +37,7 @@ const MyFavors = () => {
   
   const repaidOwedToMeFavor = async (favorId) => {
     const updatePayload = { repaid: true };
-    const response = await FavorService.updateOwedToFavor(favorId, updatePayload);
+    const response = await FavorService.updateRepaidStatus(favorId, updatePayload);
     
     if (response.status === 200) {
       setRefreshFavorList(!refreshFavorList);
@@ -48,7 +48,7 @@ const MyFavors = () => {
 
   const repaidOwedByMeFavor = async (favorId, image) => {
     const updatePayload = { repaid: true };
-    const favorResponse = await FavorService.updateOwedByFavor(favorId, updatePayload);
+    const favorResponse = await FavorService.updateRepaidStatus(favorId, updatePayload);
     const uploadResponse = await FavorService.markRepaidWithImage(image, favorId);
     
     if (favorResponse.status === 200 && uploadResponse.status === 200) {

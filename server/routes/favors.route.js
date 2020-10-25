@@ -113,21 +113,12 @@ favorsRouter.get('/f/:id', async (req, res) => {
   }
 });
 
-// Update owed-by favor with new repaid status and proof image
-favorsRouter.patch('/f/owedByMe/:favorId', async (req, res) => {
-  try {
-    const repaid = req.body.repaid;
-    const favorId = req.params.favorId;
-    
-    const updatedFavor = await FavorsService.markAsRepaid(favorId, repaid);
-    res.status(200).json(updatedFavor);
-  } catch (err) {
-    res.status(500).send(err);
+// Update a favor with new repaid status
+favorsRouter.patch('/f/:favorId', async (req, res) => {
+  if (!req.body.repaid) {
+    return res.status(400).json({ message: 'Invalid PATCH request.' });
   }
-});
-
-// Update owed-to favor with new repaid status
-favorsRouter.patch('/f/owedToMe/:favorId', async (req, res) => {
+  
   try {
     const repaid = req.body.repaid;
     const favorId = req.params.favorId;
@@ -140,7 +131,7 @@ favorsRouter.patch('/f/owedToMe/:favorId', async (req, res) => {
 });
 
 // Delete one favor
-favorsRouter.delete('/:id', async (req, res) => {
+favorsRouter.delete('/f/:id', async (req, res) => {
   const favorId = req.params.id;
   try {
     await FavorsService.deleteFavor(favorId);
