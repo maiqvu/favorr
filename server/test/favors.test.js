@@ -205,4 +205,43 @@ describe('Favors API', () => {
         });
     });
   });
+  
+  /* PATCH a favor */
+  describe('PATCH /api/favors/f/:favorId', () => {
+    it('It should update a favor with new repaid status', done => {
+      const updatePayload = { repaid: true };
+      chai.request(server)
+        .patch('/api/favors/f/5f8a7f9b33be6d2e6b757553')
+        .send(updatePayload)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('repaid').eq(true);
+          done();
+        });
+    });
+    
+    it('It should not update a favor with a wrong payload', done => {
+      const updatePayload = { image: true };
+      chai.request(server)
+        .patch('/api/favors/f/5f8a7f9b33be6d2e6b757553')
+        .send(updatePayload)
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.have.property('message').eq('Invalid PATCH request.');
+          done();
+        });
+    });
+    
+    it('It should not update a favor when URL is wrong', done => {
+      const updatePayload = { repaid: true };
+      chai.request(server)
+        .patch('/api/favors/f/123')
+        .send(updatePayload)
+        .end((err, res) => {
+          res.should.have.status(500);
+          done();
+        });
+    });
+  });
 });
