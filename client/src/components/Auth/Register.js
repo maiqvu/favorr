@@ -31,6 +31,7 @@ const Register = () => {
     setPasswordConfirmation(e.target.value);
   };
 
+  // register a user
   const onSubmit = async (e) => {
       e.preventDefault();
   

@@ -1,3 +1,4 @@
+// list of favors that is used for requests and favors
 export const favors = [
     {
         item: 'Brownie'

@@ -33,6 +33,7 @@ const FavorsOwedByMe = (props) => {
     }
   }, [authContext.user, limit, skip]);
 
+  // run this only when user make changes and not on start up
   useEffect(() => {
     if (isFirstRun.current) {
       isFirstRun.current = false;

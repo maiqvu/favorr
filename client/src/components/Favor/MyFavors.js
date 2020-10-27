@@ -35,6 +35,7 @@ const MyFavors = () => {
     setShowModal(false);
   }
   
+  // update backend with favor as repaid to user
   const repaidOwedToMeFavor = async (favorId) => {
     const updatePayload = { repaid: true };
     const response = await FavorService.updateRepaidStatus(favorId, updatePayload);
@@ -46,6 +47,7 @@ const MyFavors = () => {
     }
   };
 
+  // update backend with favor as repaid by user
   const repaidOwedByMeFavor = async (favorId, image) => {
     const updatePayload = { repaid: true };
     const favorResponse = await FavorService.updateRepaidStatus(favorId, updatePayload);

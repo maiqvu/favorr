@@ -23,6 +23,7 @@ const AddFavor = () => {
   const authContext = useContext(AuthContext);
   const history = useHistory();
 
+  // resets the create favor form
   const handleReset = () => {
     setNewFavor({
       description: '',
@@ -41,6 +42,7 @@ const AddFavor = () => {
     setNewFavor({ ...newFavor, [e.target.name]: e.target.value });
   };
 
+  // search for a friend by typing their username
   const handleSearchMyFriend = () => {
     FavorService.findUserByUsername(myFriend).then(res => {
       if (res.username !== authContext.user.username) {
@@ -74,6 +76,7 @@ const AddFavor = () => {
     });
   }
 
+  // submit form to create favor
   const handleSubmit = async (e) => {
     e.preventDefault();
     setShowMyFavorsLink(false);
