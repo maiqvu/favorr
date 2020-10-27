@@ -18,6 +18,7 @@ const Login = (props) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
+  // submit login form
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -52,6 +53,7 @@ const Login = (props) => {
     }
   };
 
+  // hide modal and redirect to home page
   const redirect = () => {
     setShowModal(false);
 

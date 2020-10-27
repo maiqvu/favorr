@@ -3,6 +3,7 @@ import PublicRequest from '../models/publicRequest.model';
 import User from '../models/user.model';
 
 export default {
+    // create one request
     createRequest: async (creator, claimedBy, claimedByTime, task, reward) => {
         // Lookup user in users collection
         const creatorUser = await User.findOne({ username: creator });
@@ -24,6 +25,7 @@ export default {
         // return created request
         return newPublicRequest
     },
+    // add a reward to an existing request
     addReward: async (requestId, username, item) => {
         // get user id by username from users collection
         const user = await User.findOne({ username: username });
@@ -42,6 +44,7 @@ export default {
             .populate('rewards.user');
         return updatedRequest;
     },
+    // delete a reward from an existing request
     deleteReward: async (requestId, rewardId) => {
         const updatedRequest = await PublicRequest.findOneAndUpdate(
             { _id: requestId},
@@ -51,6 +54,7 @@ export default {
             .populate('rewards.user', 'username');
         return updatedRequest;
     },
+    // get all requests that have resolved flag as false
     getAvailableRequests: async (limit, skip) => {
         const availableRequests = await PublicRequest.find({
             claimedBy: {$eq: null}
@@ -62,10 +66,12 @@ export default {
         .populate('rewards.user', 'username');
         return availableRequests;
     },
+    // deletes a request completely
     deleteRequest: async (requestId) => {
         const content = await PublicRequest.findByIdAndDelete(requestId);
         return content;
     },
+    // claims a request so that it can be resolved
     claimRequest: async (requestId, username) => {
         const user = await User.findOne({ username: username });
         const userId = user._id.toString();
@@ -78,12 +84,14 @@ export default {
             .populate('rewards.user', 'username');
         return updatedRequest;
     },
+    // get the number of requests will resolved flag as false
     getAvailableRequestCount: async () => {
         const availableRequestCount = await PublicRequest.countDocuments({
             claimedBy: {$eq: null}
         });
         return availableRequestCount;
     },
+    // get all the claimed requests of a user
     getUserClaimedRequests: async (username) => {
         const user = await User.findOne({ username: username });
         const userId = user._id.toString();
@@ -95,6 +103,7 @@ export default {
             .populate('rewards.user', 'username');
         return userClaimedRequests;
     },
+    // resolve a claimed request
     resolveRequest: async (requestId) => {
         const updatedRequest = await PublicRequest.findOneAndUpdate(
             {_id: requestId},

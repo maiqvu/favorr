@@ -9,6 +9,7 @@ let favorList;
 let hasCycle;
 
 export default {
+    // creates one favor
     createFavor: async (description, owedBy, owedTo) => {
         
         const owedByUser = await User.findOne({ username: owedBy });
@@ -25,6 +26,7 @@ export default {
         await newFavor.save();
         return newFavor;
     },
+    // get all the favors that is owed by the logged in user
     getOwedByUserFavors: async (userId, limit, skip) => {
         let favorsOwedByMe = await Favor.find({ owedBy: userId })
             .sort({ createdAt: -1 })
@@ -47,6 +49,7 @@ export default {
         };
         return favorsOwedByMe;
     },
+    // get all the favors that is owed to the logged in user
     getOwedToUserFavors: async (userId, limit, skip) => {
         let favorsOwedToMe = await Favor.find({ owedTo: userId })
             .sort({ createdAt: -1 })
@@ -70,12 +73,14 @@ export default {
 
         return favorsOwedToMe;
     },
+    // get the number of favors that is owed by the user
     getOwedByUserFavorsCount: async (userId) => {
         const favorsOwedByMeCount = await Favor.countDocuments({
             owedBy: {$eq: userId}
         });
         return favorsOwedByMeCount;
     },
+    // get the number of favors that is owed to the user
     getOwedToUserFavorsCount: async (userId) => {
         const favorsOwedToMeCount = await Favor.countDocuments({
             owedTo: {$eq: userId}
@@ -89,6 +94,7 @@ export default {
     deleteFavor: async (favorId) => {
         await Favor.findByIdAndDelete(favorId);
     },
+    // mark favor as reqaid
     markAsRepaid: async (favorId, repaid) => {
         const updatedFavor = await Favor.findByIdAndUpdate(
             favorId,

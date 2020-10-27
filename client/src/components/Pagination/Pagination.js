@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 const Pagination = (props) => {
   const [totalPageCount, setTotalPageCount] = useState(props.count);
 
+  // when the count or limit changes, the total page count is recalculated
   useEffect(() => {
     setTotalPageCount(
       Math.ceil(props.count / props.limit)

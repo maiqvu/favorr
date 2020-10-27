@@ -6,6 +6,7 @@ import multer from 'multer';
 
 var storage = multer.memoryStorage();
 
+// AWS S3 configuration
 const s3 = new AWS.S3({
     accessKeyId: process.env.ACCESS_KEY_ID,
     secretAccessKey: process.env.SECRET_ACCESS_KEY
@@ -13,6 +14,7 @@ const s3 = new AWS.S3({
 
 export default {
     upload: multer({ storage: storage }),
+    // uploads an image to AWS S3 storage
     s3Upload: async (file, favorId, favorFileType) => {
         // Prepare parameters for upload
         let params = {
