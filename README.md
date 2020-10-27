@@ -2,7 +2,7 @@
 
 ## 1. About
 Web Application Developement Group Project for UTS subject: Advanced Internet Programming - Spring 2020 
-***
+
 ## 2. Problem definition
 #### Requirement:
 1. Non Moneytary transactional application
@@ -11,8 +11,8 @@ Web Application Developement Group Project for UTS subject: Advanced Internet Pr
 
 #### Solution:
 Implementing above requirement using MERN stack, that has good performance and responsive to work with all modern devices. 
-***
-### 3. Features
+
+## 3. Features
 #### Public Request / Create Public request
 - Showing list of users created request with their offered favor
 - Logged In users can claim or add more favors to a specific request
@@ -33,19 +33,19 @@ Implementing above requirement using MERN stack, that has good performance and r
 - create favors owne to you or owned by you
 #### Party detection
 - Auto matching you with other users to efficiently clear out owned favor
-***
-### 4. Tech stack
+
+## 4. Tech stack
 - Backend: Node, Express
 - Frontend: React
 - Database: MongoDB and Amazon S3
-***
-### 5. Installation
+
+## 5. Installation
 - For development purpose, clone this repository to your desktop and run **npm install** to install all dependecies. 
 you will need to create a .env file in Server folder and add pathing to your MongoDB database instance, configure JWT secret, and pathing to the image storing cloud of your choosing.
 - Once all dependencies are installed, you can run **npm start dev** in /server for developement and **npm start** to start the application. The application can be accessed at localhost:3000
 - It is required that you connect to your MongoDB intance by adding the link of MONGODB_URI in the .env file in /server
-***
-### 6. User Story
+
+## 6. User Story
 
 Below stories helpe the development process and demonstrate user workflow when using the app:
 
@@ -76,8 +76,8 @@ As Peter,
 > I logged in and check out the Request Board
 > I see Request detail & name of people offering rewards, I upload photo as proof and now see 2 people own me favor:
 > Carol owns me 1x coffee + 1x chocolate, Greg owns me 1x chocolate.
-***
-### 7. What libraries are being used in the app and why?
+
+## 7. What libraries are being used in the app and why?
 
 - **React** - this is the library we need to access for frontend
 - **React-DOM** - this is the library we need to access for frontend
@@ -91,7 +91,7 @@ As Peter,
 - **multer** - middleware to handle file upload
 - **bcryptjs** - hashing user passwords
 - **react-bootstrap** - Bootstrap compoenents built with React
-***
 
-### 7. Licence
+
+## 8. Licence
 All Rights are Reserved.
