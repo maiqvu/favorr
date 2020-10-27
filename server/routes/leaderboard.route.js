@@ -2,7 +2,7 @@ import express from 'express';
 import Favor from '../models/favor.model';
 
 const leaderboardRouter = express.Router();
-
+//Change to increase Max size of top people
 const limit = 5;
 
 // Pipeline to retrieve data and calculate top users with most owed-to-me favors
@@ -34,7 +34,7 @@ const pipepline = [
     }
 ];
 
-// Get list of top 5 people with most unrepaid favors
+// Get list of top 5 people with most favors (both repaid and unrepaid favors)
 // Read from favors collection
 leaderboardRouter.get('/', async (req, res) => {
     const topTenFavor = await Favor.aggregate(pipepline);
