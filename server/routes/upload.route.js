@@ -4,7 +4,7 @@ import UploadService from '../services/upload.service';
 
 const uploadRouter = express.Router();
 
-
+// Uploads an image
 uploadRouter.post('/:favorid/:type', UploadService.upload.single('file'), async (req, res) => {
   const file = req.file;
   const favorId = req.params.favorid;
